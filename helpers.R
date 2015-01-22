@@ -8,7 +8,7 @@ convert_to_factor <- function(df, which_vars) {
   return(df)
 }
 
-get_fixed_design_matrix <- function(df, predictors) {
+get_design_matrix <- function(df, predictors) {
   # given a set of predictors, get the design matrix, assuming all effects are fixed
   # IMPORTANT: since the model contains no constant, the first element of 
   # predictors will have its baseline included
@@ -31,3 +31,12 @@ reshape_data_by_unit <- function(data, rowvar, unitvar) {
   return(acast(melted, unitvar ~ rowvar ~ variable))
 } 
 
+extract_subset <- function(M, vars) {
+  # given a unit x rows x cols multidimensional array and a list of variables in vars,
+  # return the slice of the array along axis 2 corresponding to variable names containing
+  # any element in vars
+  
+  or_pattern <- paste(vars, collapse='|')
+  to_grab <- grepl(or_pattern, dimnames(M)[3][[1]])
+  return(M[,,to_grab])
+}
