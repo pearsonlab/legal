@@ -17,12 +17,13 @@ get_fixed_design_matrix <- function(df, predictors) {
   return(X_master)
 }
 
-reshape_data_by_sub <- function(df, rowvar, unitvar) {
+reshape_data_by_unit <- function(data, rowvar, unitvar) {
   # given the name of a row variable and a unit variable, reshapes the dataframe 
   # into a multidimensional array (rowvar, cols, unitvar)
   require(reshape2)
-  suppressWarnings(melted <- melt(df, id.vars=c(rowvar, unitvar)))
-  castform <- as.formula(paste(c(rowvar, 'variable', unitvar), collapse='~'))
-  return(acast(melted, castform))
+  df <- as.data.frame(cbind(rowvar, unitvar, data))
+  names(df)[1:2] <- c('rowvar', 'unitvar')
+  suppressWarnings(melted <- melt(df, id.vars=c('rowvar', 'unitvar')))
+  return(acast(melted, rowvar ~ variable ~ unitvar))
 } 
 
