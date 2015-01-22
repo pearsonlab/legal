@@ -24,6 +24,10 @@ reshape_data_by_unit <- function(data, rowvar, unitvar) {
   df <- as.data.frame(cbind(rowvar, unitvar, data))
   names(df)[1:2] <- c('rowvar', 'unitvar')
   suppressWarnings(melted <- melt(df, id.vars=c('rowvar', 'unitvar')))
-  return(acast(melted, rowvar ~ variable ~ unitvar))
+  
+  # now cast to unit x row x column
+  # this is per stan convention of reading array indices before matrix/vector 
+  # indices (cf. 23.8 on Type Inference in Stan Manual)
+  return(acast(melted, unitvar ~ rowvar ~ variable))
 } 
 
