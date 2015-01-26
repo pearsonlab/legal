@@ -36,55 +36,17 @@ for (oname in outcomes) {
 
 ############# let's try some models
 
-# single response
-fit1 <- MCMCglmm(fixed = rating ~ -1 + scenario + physical + history + witness + victim, 
-                 random = ~ idh(trait):ID, 
-                 family = c('gaussian'), 
-                 data = df)
-
-# multiple responses; subject-specific baseline; independent random effects; independent residuals 
-fit2 <- MCMCglmm(fixed = cbind(rating , rate_outrage ) ~ 
-                   -1 + trait:(scenario + physical + history + witness + victim), 
-                 random = ~ idh(trait):ID, 
-                 rcov = ~ idh(trait):units, 
-                 family = rep('gaussian', 2), 
-                 data = df)
-
-# multiple responses; random effect of scenario; independent random effects; correlated residuals 
-fit3 <- MCMCglmm(fixed = cbind(rating , rate_outrage ) ~ 
-                   -1 + trait:(scenario + physical + history + witness + victim), 
-                 random = ~ idh(trait):ID, 
-                 rcov = ~ us(trait):units, 
-                 family = rep('gaussian', 2), 
-                 data = df)
-
-# multiple responses; correlated random effects of scenario; correlated residuals 
-fit4 <- MCMCglmm(fixed = cbind(rating , rate_outrage ) ~ 
-                   -1 + trait:(scenario + physical + history + witness + victim), 
-                 random = ~ us(trait):ID, 
-                 rcov = ~ us(trait):units, 
-                 family = rep('gaussian', 2), 
-                 data = df)
-
-# all responses; correlated random effects of scenario; correlated residuals 
-fit5 <- MCMCglmm(fixed = cbind(rating , rate_outrage, rate_punishment, rate_threat) ~ 
-                   -1 + trait:(scenario + physical + history + witness + victim), 
-                 random = ~ us(trait):ID, 
-                 rcov = ~ us(trait):units, 
-                 family = rep('gaussian', 4), 
-                 data = df)
-
 # all responses; correlated random effects of scenario; correlated residuals; censoring
 form_string <- paste('cbind(', paste(cens_names, collapse=', '), ')', '~  -1 + trait:(scenario + physical + history + witness + victim)', collapse='')
 
-fit6 <- MCMCglmm(fixed = as.formula(form_string), 
+fit <- MCMCglmm(fixed = as.formula(form_string), 
                  random = ~ us(trait):ID, 
                  rcov = ~ us(trait):units, 
                  family = rep('cengaussian', length(outcomes)), 
                  data = df)
 
 ########### fit processing ###########
-thisobj <- fit6
+thisobj <- fit
 
 # coefficient plot of fixed effects
 X <- extract_fixed(thisobj)
