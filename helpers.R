@@ -120,3 +120,12 @@ assemble_cov_mats <- function(X) {
   }
   return(mlist)  
 }
+
+order_scenarios <- function(df, var) {
+  # reorder the levels of the predictor variable in df by the outcome var
+  # return dataframe
+  df$predictor <- droplevels(df$predictor)
+  pp <- reorder(df$predictor[se$outcome == var], df$post.mean[se$outcome == var])
+  df$predictor <- factor(df$predictor, levels(pp))
+  return(df)
+}
