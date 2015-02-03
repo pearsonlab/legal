@@ -44,7 +44,7 @@ fit <- MCMCglmm(fixed = as.formula(form_string),
                  rcov = ~ us(trait):units, 
                  family = rep('cengaussian', length(outcomes)), 
                  data = df)
-
+save(fit, file='model.obj')
 ########### fit processing ###########
 thisobj <- fit
 
