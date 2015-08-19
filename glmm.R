@@ -12,6 +12,16 @@ for (ind in 1:length(data_file_names)) {
 }
 df <- do.call('rbind.fill', dlist)
 
+# add a group variable denoting that these data sets are general population
+df['group'] = 'genpop'
+
+lawstudents_df <- read.csv('data/data_ipls.csv')
+lawstudents_df['group'] <- 'legal'
+lawstudents_df['hashedID'] <- lawstudents_df['uid']
+
+# bind these groups together
+df <- rbind.fill(df, lawstudents_df)
+
 # make an integer ID column from the hash
 df$ID <- as.integer(df$hashedID)
 
@@ -37,7 +47,7 @@ for (oname in outcomes) {
 ############# let's try some models
 
 # all responses; correlated random effects of scenario; correlated residuals; censoring
-form_string <- paste('cbind(', paste(cens_names, collapse=', '), ')', '~  -1 + trait:(scenario + physical + history + witness + victim)', collapse='')
+form_string <- paste('cbind(', paste(cens_names, collapse=', '), ')', '~  -1 + trait:group:(scenario + physical + history + witness + victim)', collapse='')
 
 fit <- MCMCglmm(fixed = as.formula(form_string), 
                  random = ~ us(trait):ID, 
