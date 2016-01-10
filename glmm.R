@@ -4,23 +4,34 @@ library(MCMCglmm)
 library(plyr)
 source('helpers.R')
 
+# change the variable below to include/remove law student population
+use_law_students <- TRUE
+
 # read data
-data_file_names <- c('data/data_mq_deid.csv', 'data/data_cu_deid.csv', 'data/data_sq_deid.csv', 'data/data_nb_deid.csv')
+datadir <- 'data/'
+data_file_names <- paste(datadir, c('data_mq_nothreat_deid.csv', 'data_cu_deid.csv', 'data_sq_nothreat_deid.csv', 'data_nb_deid.csv', 'data_th_deid.csv'), sep="")
 dlist <- list()
 for (ind in 1:length(data_file_names)) {
   dlist[[ind]] <- read.csv(data_file_names[[ind]])
 }
 df <- do.call('rbind.fill', dlist)
 
-# add a group variable denoting that these data sets are general population
-df['group'] = 'genpop'
-
-lawstudents_df <- read.csv('data/data_ipls.csv')
-lawstudents_df['group'] <- 'legal'
-lawstudents_df['hashedID'] <- lawstudents_df['uid']
-
-# bind these groups together
-df <- rbind.fill(df, lawstudents_df)
+if (use_law_students) {
+  # add a group variable denoting that these data sets are general population
+  df['group'] = 'genpop'
+  
+  lawstudents_df <- read.csv(paste(datadir, 'data_ipls.csv', sep=""))
+  lawstudents_df['group'] <- 'legal'
+  lawstudents_df['hashedID'] <- lawstudents_df['uid']
+  
+  # bind these groups together
+  df <- rbind.fill(df, lawstudents_df)
+  
+  # output object name
+  outobj <- 'turkers_only.obj'
+} else {
+  outobj <- 'turkers_and_law_students.obj'
+}
 
 # make an integer ID column from the hash
 df$ID <- as.integer(df$hashedID)
@@ -47,14 +58,19 @@ for (oname in outcomes) {
 ############# let's try some models
 
 # all responses; correlated random effects of scenario; correlated residuals; censoring
-form_string <- paste('cbind(', paste(cens_names, collapse=', '), ')', '~  -1 + trait:group:(scenario + physical + history + witness + victim)', collapse='')
+# if multiple groups included, use group as a factor as well
+if (use_law_students) {
+  form_string <- paste('cbind(', paste(cens_names, collapse=', '), ')', '~  -1 + trait:group:(scenario + physical + history + witness + victim)', collapse='') 
+} else {
+  form_string <- paste('cbind(', paste(cens_names, collapse=', '), ')', '~  -1 + trait:(scenario + physical + history + witness + victim)', collapse='') 
+}
 
 fit <- MCMCglmm(fixed = as.formula(form_string), 
                  random = ~ us(trait):ID, 
                  rcov = ~ us(trait):units, 
                  family = rep('cengaussian', length(outcomes)), 
                  data = df)
-save(fit, file='model.obj')
+save(fit, file=outobj)
 ########### fit processing ###########
 thisobj <- fit
 
