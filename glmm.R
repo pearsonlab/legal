@@ -55,7 +55,7 @@ for (oname in outcomes) {
   cens_names <- c(cens_names, dnname, upname)
 }
 
-############# let's try some models
+############# fit the model
 
 # all responses; correlated random effects of scenario; correlated residuals; censoring
 # if multiple groups included, use group as a factor as well
@@ -71,23 +71,3 @@ fit <- MCMCglmm(fixed = as.formula(form_string),
                  family = rep('cengaussian', length(outcomes)), 
                  data = df)
 save(fit, file=outobj)
-
-########### make some plots ###########
-library(ggplot2)
-
-# evidence effects
-fe <- fixed_effects[fixed_effects$predictor %in% ev_vars,]
-plt <- ggplot(data = fe)
-plt + geom_pointrange(aes(x=predictor, y=post.mean, ymin=l95.CI, ymax=u95.CI, color=outcome), size=1.75, position='jitter') + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-ggsave('evidence_effects.pdf', width=11, height=8.5, units='in')
-
-# scenario effects
-se <- fixed_effects[fixed_effects$predictor %in% sc_vars,]
-se <- order_scenarios(se, 'rating')
-plt <- ggplot(data = se)
-plt + geom_pointrange(aes(x=predictor, y=post.mean, ymin=l95.CI, ymax=u95.CI, color=outcome), size=1.75) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-ggsave('scenario_effects.pdf', width=11, height=8.5, units='in')
-
-library(corrplot)
-corrplot(cov2cor(random_effects$post.mean), method='ellipse')
-corrplot(cov2cor(residual_effects$post.mean), method='ellipse')
