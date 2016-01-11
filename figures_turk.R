@@ -1,6 +1,5 @@
 library(ggplot2)
 library(gridExtra)
-library(corrplot)
 library(dplyr)
 
 # load fit object containing mturkers only
