@@ -1,11 +1,9 @@
 #1A, 1B, 2A, 2B, 3A, 3B, 3C
 #1A, 3B, 3C
 
-#library(reshape2)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
-source('helpers.R')
 
 load('data/fit_mt_ls_conf_pun.obj')
 load('data/dat_rating_comb.rdata')
@@ -15,40 +13,37 @@ load('data/dat_ipls.rdata')
 fitobj <- fit_ms_ls_conf_pun
 source('process_fits.R')
 
-# give factor column a name
-names(fixed_effects)[3]<-paste("factor")
-
-dfpop <- fixed_effects[,c(1:6)]
-rownames(dfpop) <- seq(length=nrow(dfpop)) 
-dfpopsc <- dfpop[grepl('scenario',dfpop$factor),]
-
-dfpopconf <- dfpopsc[dfpopsc$outcome=="rating",]
-dfpoppun <- dfpopsc[dfpopsc$outcome=="rate_punishment",]
-
-ev_vars <- c("physical1","physical2","history1","history2","witness1")
-dfev <- dfpop[dfpop$factor %in% ev_vars,]
-
-dfevconf <- dfev[dfev$outcome=="rating",]
-dfevconfgen <- dfevconf[dfevconf$predictor=="groupgenpop",]
-dfevconfleg <- dfevconf[dfevconf$predictor=="grouplegal",]
-
-# confidence
-
-dfpopconfgen <- dfpopconf[dfpopconf$predictor=="groupgenpop",]
-dfpopconfleg <- dfpopconf[dfpopconf$predictor=="grouplegal",]
-
-sorted <- dfpopconfgen[order(dfpopconfgen$post.mean),]
-sorted["order"]<-seq(length=nrow(sorted))
-
-dfpopconfsort <- merge(sorted, dfpopconfleg, by="factor")
-
-dfpopconfsort <- dfpopconfsort[order(dfpopconfsort$order),]
-
-dfpopconfsort$outcome.x<-NULL
-dfpopconfsort$outcome.y<-NULL
-
-dfpopconfsortb<-dfpopconfsort[c(1,3,6,8)]
-colnames(dfpopconfsortb) <- c("scenario","genpop","order","lspop")
+# dfpop <- fixed_effects[,c(1:6)]
+# rownames(dfpop) <- seq(length=nrow(dfpop)) 
+# dfpopsc <- dfpop[grepl('scenario',dfpop$factor),]
+# 
+# dfpopconf <- dfpopsc[dfpopsc$outcome=="rating",]
+# dfpoppun <- dfpopsc[dfpopsc$outcome=="rate_punishment",]
+# 
+# ev_vars <- c("physical1","physical2","history1","history2","witness1")
+# dfev <- dfpop[dfpop$factor %in% ev_vars,]
+# 
+# dfevconf <- dfev[dfev$outcome=="rating",]
+# dfevconfgen <- dfevconf[dfevconf$predictor=="groupgenpop",]
+# dfevconfleg <- dfevconf[dfevconf$predictor=="grouplegal",]
+# 
+# # confidence
+# 
+# dfpopconfgen <- dfpopconf[dfpopconf$predictor=="groupgenpop",]
+# dfpopconfleg <- dfpopconf[dfpopconf$predictor=="grouplegal",]
+# 
+# sorted <- dfpopconfgen[order(dfpopconfgen$post.mean),]
+# sorted["order"]<-seq(length=nrow(sorted))
+# 
+# dfpopconfsort <- merge(sorted, dfpopconfleg, by="factor")
+# 
+# dfpopconfsort <- dfpopconfsort[order(dfpopconfsort$order),]
+# 
+# dfpopconfsort$outcome.x<-NULL
+# dfpopconfsort$outcome.y<-NULL
+# 
+# dfpopconfsortb<-dfpopconfsort[c(1,3,6,8)]
+# colnames(dfpopconfsortb) <- c("scenario","genpop","order","lspop")
 
 ################## FIGURE 1B - MODEL FIT TO OBSERVED RESULTS
 
@@ -64,9 +59,9 @@ vars <- c('scenario', 'physical', 'history', 'witness')
 flist <- list()
 for (v in vars) {
   this_fac <- fixed_effects %>% filter(outcome == 'rating', 
-                                                predictor == 'groupgenpop', 
-                                                grepl(v, factor)) %>% 
-    select(factor) %>% transmute(variable=as.character(factor))
+                                                predictor.1 == 'groupgenpop', 
+                                                grepl(v, predictor.2)) %>% 
+    select(predictor.2) %>% transmute(variable=as.character(predictor.2))
   
   # for variables other than scenario, we need to add level 0
   if (v != 'scenario') {
@@ -85,34 +80,34 @@ for (v in vars) {
 preds <- expand.grid(flist)
 
 # convert that dataframe to a matrix
-form <- ~ -1 + scenario + physical + history + witness 
+form <- ~ -1 + scenario + physical + history + witness
 X <- model.matrix(form, data=preds)
 beta <- fixed_effects %>% filter(outcome == 'rating',
-                                 predictor == 'groupgenpop') %>%
+                                 predictor.1 == 'groupgenpop') %>%
   select(post.mean) %>% rename(pred=post.mean)
 
 # get predictions for each scenario and add to preds dataframe
 pred.means <- as.matrix(X) %*% as.matrix(beta)
 preds <- cbind(preds, pred.means)
 
-# make a dataframe of the average rating per combo of variables and scenario
+# 2) make a dataframe of the average rating per combo of variables and scenario
 dat_per_scen <- dat_rating_comb %>% group_by(physical, history, witness, scenario) %>%
   summarise(mean=mean(rating, na.rm=TRUE)) %>% ungroup()
 for (v in c('physical', 'history', 'witness', 'scenario')) {
   dat_per_scen[[v]] <- factor(as.integer(dat_per_scen[[v]]), labels=levels(preds[[v]]))
 }
 
-# merge this with the prediction dataframe
+# 3) merge this with the prediction dataframe
 preds <- merge(preds, dat_per_scen)
 
-# now combine evidence variables into a single column, reorder this variable by its median
+# 4) now combine evidence variables into a single column, reorder this variable by its median
 # value across scenarios, and drop unneeded columns
-preds <- preds %>% mutate(combo=paste(physical, history, witness, sep="")) %>%
+preds <- preds %>% mutate(combo=paste(physical, witness, history, sep="")) %>%
   group_by(combo) %>% mutate(median=median(pred)) %>% ungroup() %>%
-  mutate(combo=reorder(combo, median)) %>%
+  mutate(combo=as.factor(combo)) %>%
   select(scenario, combo, pred, median, mean) 
 
-# plot boxplots and datapoints of mean values for each combination of scenario and evidence variables
+# 5) plot boxplots and datapoints of mean values for each combination of scenario and evidence variables
 # plot symbols for the median predicted value of the evidence combination across scenarios
 plt <- ggplot() +
   geom_boxplot(data=preds, aes(x=combo, y=mean), outlier.colour = NA) +
