@@ -120,17 +120,17 @@ ggsave(pltgrp, file="figure2_combined.pdf", width=12, height=7, units='in', useD
 #covariance matrix plots
 
 
-corr_rand<-cov2cor(random_effects$post.mean)
-colnames(corr_rand)<-c('Confidence','Threat','Outrage','Punishment')
-rownames(corr_rand)<-c('Confidence','Threat','Outrage','Punishment')
+corr_rand <- cov2cor(random_effects$post.mean)
+colnames(corr_rand) <- c('Confidence','Threat','Outrage','Punishment')
+rownames(corr_rand) <- c('Confidence','Threat','Outrage','Punishment')
 
 pdf("random_effects_covmatrix.pdf", width=7, height=7)
 corrplot.mixed(corr_rand, lower='ellipse', upper='number')
 dev.off()
 
-corr_resid<-cov2cor(residual_effects$post.mean)
-colnames(corr_resid)<-c('Confidence','Threat','Outrage','Punishment')
-rownames(corr_resid)<-c('Confidence','Threat','Outrage','Punishment')
+corr_resid <- cov2cor(residual_effects$post.mean)
+colnames(corr_resid) <- c('Confidence','Threat','Outrage','Punishment')
+rownames(corr_resid) <- c('Confidence','Threat','Outrage','Punishment')
 
 pdf("residual_effects_covmatrix.pdf", width=7, height=7)
 corrplot.mixed(corr_resid, lower='ellipse', upper='number')
