@@ -55,19 +55,22 @@ ggsave('figure2_evidence_effects.jpg', width=11, height=8, units='in', dpi=200)
 
 #=== broken down plots
 
-se <- fixed_effects[fixed_effects$predictor %in% sc_vars,]
-se_noconf<-subset(se,se$outcome!="rating")
+se <- fixed_effects %>% filter(predictor.1 %in% sc_vars)
+se_noconf <- se %>% filter(outcome != 'rating')
 
-plt_se_noconf <- ggplot(data = se_noconf, aes(x=outcome, y=post.mean))+
-  geom_boxplot(aes(stat="boxplot", color=factor(outcome)),lwd=1,fatten=2.5)+
-  geom_point(position=position_jitter(width=0.01), size=rel(4), aes(color=factor(outcome),alpha=0.5))+
-  scale_x_discrete(breaks=c("rate_outrage","rate_punishment","rate_threat"), labels=c("Outrage", "Punishment", "Threat"))+
-  scale_color_manual(values=c('rate_outrage'=color_outrage, 'rate_punishment'=color_punish, 'rate_threat'=color_threat))+
-  scale_fill_manual(values=c('rate_outrage'=color_outrage, 'rate_punishment'=color_punish, 'rate_threat'=color_threat))+
-  xlab("")+
-  coord_cartesian(ylim=c(0,100))+
-  labs(title="A", size=rel(3))+
-  ylab("Baseline rating (points)")+
+plt_se_noconf <- ggplot(data = se_noconf, aes(x=outcome, y=post.mean)) +
+  geom_boxplot(aes(stat="boxplot", color=factor(outcome)),lwd=1,fatten=2.5) +
+  geom_point(position=position_jitter(width=0.01), size=rel(4), aes(color=factor(outcome),alpha=0.5)) +
+  scale_x_discrete(breaks=c("rate_outrage","rate_punishment","rate_threat"), 
+                   labels=c("Outrage", "Punishment", "Threat")) +
+  scale_color_manual(values=c('rate_outrage'=color_outrage, 'rate_punishment'=color_punish, 
+                              'rate_threat'=color_threat)) +
+  scale_fill_manual(values=c('rate_outrage'=color_outrage, 'rate_punishment'=color_punish, 
+                             'rate_threat'=color_threat)) +
+  xlab("") +
+  coord_cartesian(ylim=c(0,100)) +
+  labs(title="A", size=rel(3)) +
+  ylab("Baseline rating (points)") +
   theme(
     panel.grid=element_blank(),
     panel.background = element_blank(),
@@ -81,18 +84,18 @@ plt_se_noconf <- ggplot(data = se_noconf, aes(x=outcome, y=post.mean))+
 ggsave('figure3_scenario_effects_noconf.pdf', width=11, height=8.5, units='in', useDingbats=FALSE)
 
 
-se_confonly<-subset(se,se$outcome=="rating")
+se_confonly <- se %>% filter(outcome == 'rating')
 
-plt_se_confonly <- ggplot(data = se_confonly, aes(x=outcome, y=post.mean))+
-  geom_boxplot(aes(stat="boxplot", fill=factor(outcome), alpha=0.5))+
-  geom_point(position=position_jitter(width=0.01), size=rel(3), aes(color=factor(outcome),alpha=0.5))+
-  scale_x_discrete(breaks=c("rating"), labels=c("Scenario\n\n"))+
-  scale_color_manual(values=c('rating'=color_conf))+
-  scale_fill_manual(values=c('rating'=color_conf))+
-  xlab("")+
-  coord_cartesian(ylim=c(0,40))+
-  labs(title="B")+
-  ylab("Baseline rating")+
+plt_se_confonly <- ggplot(data = se_confonly, aes(x=outcome, y=post.mean)) +
+  geom_boxplot(aes(stat="boxplot", fill=factor(outcome), alpha=0.5)) +
+  geom_point(position=position_jitter(width=0.01), size=rel(3), aes(color=factor(outcome),alpha=0.5)) +
+  scale_x_discrete(breaks=c("rating"), labels=c("Scenario\n\n")) +
+  scale_color_manual(values=c('rating'=color_conf)) +
+  scale_fill_manual(values=c('rating'=color_conf)) +
+  xlab("") +
+  coord_cartesian(ylim=c(0,40)) +
+  labs(title="B") +
+  ylab("Baseline rating") +
   theme(
     panel.grid=element_blank(),
     panel.background = element_blank(),
@@ -107,8 +110,7 @@ ggsave('figure3_scenario_effects_confonly.jpg', width=3, height=8.5, units='in')
 
 #=== combined plots
 
-pltgrp<-
-  arrangeGrob(plt_ev, plt_se_confonly, ncol=2 ,widths=c(3,1))
+pltgrp <- arrangeGrob(plt_ev, plt_se_confonly, ncol=2 ,widths=c(3,1))
 
 ggsave(pltgrp, file="figure2_combined.pdf", width=12, height=7, units='in', useDingbats=FALSE)
 
