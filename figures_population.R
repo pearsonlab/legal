@@ -153,387 +153,76 @@ plt_ev <- ggplot(data = fe) +
     legend.justification=c(1,1))
 
 ########## FIGURE 2B - MODEL FIT TO OBSERVED CONFIDENCE
+# calculate the evidence weight for each combination of variables
+vars <- c('scenario', 'physical', 'history', 'witness')
 
-dmg000 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_rating_comb, 
-                                   physical == 'No Physical' 
-                                   & history == 'No History' 
-                                   & witness == 'No Witness'),
-                     FUN=mean, na.rm=TRUE)
-dmg000mean <- mean(dmg000[0:nrow(dmg000),2])
-dmg000beta <- 0
+flist <- list()
+for (v in vars) {
+  this_fac <- fixed_effects %>% filter(outcome == 'rating', 
+                                                predictor.1 == 'groupgenpop', 
+                                                grepl(v, predictor.2)) %>% 
+    select(predictor.2) %>% transmute(variable=as.character(predictor.2))
+  
+  # for variables other than scenario, we need to add level 0
+  if (v != 'scenario') {
+    this_fac <- rbind(paste(v, '0', sep=''), this_fac)
+  }
+  this_fac <- this_fac %>% transmute(variable=as.factor(variable))
+  
+  # change the name back to what it should be
+  names(this_fac) <- v
+  
+  # append
+  flist <- c(flist, this_fac)
+}
+grpdf <- data.frame(group=levels(fixed_effects$predictor.1))
+preds <- expand.grid(c(grpdf, flist))
 
-dmg001 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_rating_comb, 
-                                   (physical == 'No Physical') 
-                                   & (history == 'No History') 
-                                   & witness == 'Yes Witness'),
-                     FUN=mean, na.rm=TRUE)
-dmg001mean <- mean(dmg001[0:nrow(dmg001),2])
-dmg001beta <- bw1
+# convert that dataframe to a matrix
+form <- ~ -1 + group:(scenario + physical + history + witness)
+X <- model.matrix(form, data=preds)
 
-dmg010 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_rating_comb, 
-                                   (physical == 'No Physical') 
-                                   & (history == 'Unrelated') 
-                                   & witness == 'No Witness'),
-                     FUN=mean, na.rm=TRUE)
-dmg010mean <- mean(dmg010[0:nrow(dmg010),2])
-dmg010beta <- bh1
+# get beta, setting all scenario effects to 0, so we only add evidence
+beta <- fixed_effects %>% filter(outcome == 'rating') %>%
+  mutate(pred=replace(post.mean, grepl('scenario', predictor.2), 0)) %>%
+  select(pred)
 
-dmg011 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_rating_comb, 
-                                   (physical == 'No Physical') 
-                                   & (history == 'Unrelated') 
-                                   & witness == 'Yes Witness'),
-                     FUN=mean, na.rm=TRUE)
-dmg011mean <- mean(dmg011[0:nrow(dmg011),2])
-dmg011beta <- bh1 + bw1
+# get predictions for each scenario and add to preds dataframe
+pred.means <- as.matrix(X) %*% as.matrix(beta)
+preds <- cbind(preds, pred.means)
 
-dmg020 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_rating_comb, 
-                                   (physical == 'No Physical') 
-                                   & (history == 'Related') 
-                                   & witness == 'No Witness'),
-                     FUN=mean, na.rm=TRUE)
-dmg020mean <- mean(dmg020[0:nrow(dmg020),2])
-dmg020beta <- bh2
+# get mean prediction across all scenarios
+preds_mean <- preds %>% group_by(group, physical, history, witness) %>%
+  summarise(mean_pred=mean(pred))
 
-dmg021 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_rating_comb, 
-                                   (physical == 'No Physical') 
-                                   & (history == 'Related') 
-                                   & witness == 'Yes Witness'),
-                     FUN=mean, na.rm=TRUE)
-dmg021mean <- mean(dmg021[0:nrow(dmg021),2])
-dmg021beta <- bh2 + bw1
+# get observed mean across all scenarios
+cols_to_keep <- c('scenario', 'physical', 'history', 'witness', 'group', 'rating')
+dat_all <- rbind(dat_rating_comb %>% mutate(group='groupgenpop') %>%
+                   select(one_of(cols_to_keep)), 
+                 dat_ipls %>% mutate(group='grouplegal') %>% 
+                   select(one_of(cols_to_keep)))
+dat_summary <- dat_all %>% group_by(group, physical, history, witness) %>%
+  summarise(mean_obs=mean(rating, na.rm=TRUE)) 
+for (v in c('physical', 'history', 'witness')) {
+  dat_summary[[v]] <- factor(as.integer(dat_summary[[v]]), labels=levels(preds_mean[[v]]))
+}
 
-dmg100 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_rating_comb, 
-                                   (physical == 'Non-DNA') 
-                                   & (history == 'No History') 
-                                   & witness == 'No Witness'),
-                     FUN=mean, na.rm=TRUE)
-dmg100mean <- mean(dmg100[0:nrow(dmg100),2])
-dmg100beta <- bp1
+# merge into a single dataframe
+preds_mean <- merge(preds_mean, dat_summary)
 
-dmg101 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_rating_comb, 
-                                   (physical == 'Non-DNA') 
-                                   & (history == 'No History') 
-                                   & witness == 'Yes Witness'),
-                     FUN=mean, na.rm=TRUE)
-dmg101mean <- mean(dmg101[0:nrow(dmg101),2])
-dmg101beta <- bp1 + bw1
-
-dmg110 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_rating_comb, 
-                                   (physical == 'Non-DNA') 
-                                   & (history == 'Unrelated') 
-                                   & witness == 'No Witness'),
-                     FUN=mean, na.rm=TRUE)
-dmg110mean <- mean(dmg110[0:nrow(dmg110),2])
-dmg110beta <- bp1 + bh1
-
-dmg111 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_rating_comb, 
-                                   (physical == 'Non-DNA') 
-                                   & (history == 'Unrelated') 
-                                   & witness == 'Yes Witness'),
-                     FUN=mean, na.rm=TRUE)
-dmg111mean <- mean(dmg111[0:nrow(dmg111),2])
-dmg111beta <- bp1 + bh1 + bw1
-
-dmg120 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_rating_comb, 
-                                   (physical == 'Non-DNA') 
-                                   & (history == 'Related') 
-                                   & witness == 'No Witness'),
-                     FUN=mean, na.rm=TRUE)
-dmg120mean <- mean(dmg120[0:nrow(dmg120),2])
-dmg120beta <- bp1 + bh2
-
-dmg121 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_rating_comb, 
-                                   (physical == 'Non-DNA') 
-                                   & (history == 'Related') 
-                                   & witness == 'Yes Witness'),
-                     FUN=mean, na.rm=TRUE)
-dmg121mean <- mean(dmg121[0:nrow(dmg121),2])
-dmg121beta <- bp1 + bh2 + bw1
-
-dmg200 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_rating_comb, 
-                                   (physical == 'DNA') 
-                                   & (history == 'No History') 
-                                   & witness == 'No Witness'),
-                     FUN=mean, na.rm=TRUE)
-dmg200mean <- mean(dmg200[0:nrow(dmg200),2])
-dmg200beta <- bp2
-
-dmg201 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_rating_comb, 
-                                   (physical == 'DNA') 
-                                   & (history == 'No History') 
-                                   & witness == 'Yes Witness'),
-                     FUN=mean, na.rm=TRUE)
-dmg201mean <- mean(dmg201[0:nrow(dmg201),2])
-dmg201beta <- bp2 + bw1
-
-dmg210 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_rating_comb, 
-                                   (physical == 'DNA') 
-                                   & (history == 'Unrelated') 
-                                   & witness == 'No Witness'),
-                     FUN=mean, na.rm=TRUE)
-dmg210mean <- mean(dmg210[0:nrow(dmg210),2])
-dmg210beta <- bp2 + bh1
-
-dmg211 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_rating_comb, 
-                                   (physical == 'DNA') 
-                                   & (history == 'Unrelated') 
-                                   & witness == 'Yes Witness'),
-                     FUN=mean, na.rm=TRUE)
-dmg211mean <- mean(dmg211[0:nrow(dmg211),2])
-dmg211beta <- bp2 + bh1 + bw1
-
-dmg220 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_rating_comb, 
-                                   (physical == 'DNA') 
-                                   & (history == 'Related') 
-                                   & witness == 'No Witness'),
-                     FUN=mean, na.rm=TRUE)
-dmg220mean <- mean(dmg220[0:nrow(dmg220),2])
-dmg220beta <- bp2 + bh2
-
-dmg221 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_rating_comb, 
-                                   (physical == 'DNA') 
-                                   & (history == 'Related') 
-                                   & witness == 'Yes Witness'),
-                     FUN=mean, na.rm=TRUE)
-dmg221mean <- mean(dmg221[0:nrow(dmg221),2])
-dmg221beta <- bp2 + bh2 + bw1
-
-dmgconf <- as.data.frame(rbind (dmg000mean, dmg001mean, dmg010mean, dmg011mean, dmg020mean, dmg021mean,
-                                dmg100mean, dmg101mean, dmg110mean, dmg111mean, dmg120mean, dmg121mean,
-                                dmg200mean, dmg201mean, dmg210mean, dmg211mean, dmg220mean, dmg221mean))
-
-dmgbeta <- as.data.frame(rbind (dmg000beta, dmg001beta, dmg010beta, dmg011beta, dmg020beta, dmg021beta,
-                                dmg100beta, dmg101beta, dmg110beta, dmg111beta, dmg120beta, dmg121beta,
-                                dmg200beta, dmg201beta, dmg210beta, dmg211beta, dmg220beta, dmg221beta))
-
-dmg <- cbind(dmgconf, dmgbeta)
-colnames(dmg)<-c('mt_mean_rating','mt_comb_beta')
-
-#=== LS population
-
-bp1ls<-44.0
-bp2ls<-43.9
-bh1ls<-3.01
-bh2ls<-13.2
-bw1ls<-29.4
-
-lsg000 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_ipls, 
-                                   physical == 'No Physical' 
-                                   & history == 'No History' 
-                                   & witness == 'No Witness'),
-                     FUN=mean, na.rm=TRUE)
-lsg000mean <- mean(lsg000[0:nrow(lsg000),2])
-lsg000beta <- 0
-
-lsg001 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_ipls, 
-                                   (physical == 'No Physical') 
-                                   & (history == 'No History') 
-                                   & witness == 'Yes Witness'),
-                     FUN=mean, na.rm=TRUE)
-lsg001mean <- mean(lsg001[0:nrow(lsg001),2])
-lsg001beta <- bw1ls
-
-lsg010 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_ipls, 
-                                   (physical == 'No Physical') 
-                                   & (history == 'Unrelated') 
-                                   & witness == 'No Witness'),
-                     FUN=mean, na.rm=TRUE)
-lsg010mean <- mean(lsg010[0:nrow(lsg010),2])
-lsg010beta <- bh1ls
-
-lsg011 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_ipls, 
-                                   (physical == 'No Physical') 
-                                   & (history == 'Unrelated') 
-                                   & witness == 'Yes Witness'),
-                     FUN=mean, na.rm=TRUE)
-lsg011mean <- mean(lsg011[0:nrow(lsg011),2])
-lsg011beta <- bh1ls + bw1ls
-
-lsg020 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_ipls, 
-                                   (physical == 'No Physical') 
-                                   & (history == 'Related') 
-                                   & witness == 'No Witness'),
-                     FUN=mean, na.rm=TRUE)
-lsg020mean <- mean(lsg020[0:nrow(lsg020),2])
-lsg020beta <- bh2ls
-
-lsg021 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_ipls, 
-                                   (physical == 'No Physical') 
-                                   & (history == 'Related') 
-                                   & witness == 'Yes Witness'),
-                     FUN=mean, na.rm=TRUE)
-lsg021mean <- mean(lsg021[0:nrow(lsg021),2])
-lsg021beta <- bh2ls + bw1ls
-
-lsg100 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_ipls, 
-                                   (physical == 'Non-DNA') 
-                                   & (history == 'No History') 
-                                   & witness == 'No Witness'),
-                     FUN=mean, na.rm=TRUE)
-lsg100mean <- mean(lsg100[0:nrow(lsg100),2])
-lsg100beta <- bp1ls
-
-lsg101 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_ipls, 
-                                   (physical == 'Non-DNA') 
-                                   & (history == 'No History') 
-                                   & witness == 'Yes Witness'),
-                     FUN=mean, na.rm=TRUE)
-lsg101mean <- mean(lsg101[0:nrow(lsg101),2])
-lsg101beta <- bp1ls + bw1ls
-
-lsg110 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_ipls, 
-                                   (physical == 'Non-DNA') 
-                                   & (history == 'Unrelated') 
-                                   & witness == 'No Witness'),
-                     FUN=mean, na.rm=TRUE)
-lsg110mean <- mean(lsg110[0:nrow(lsg110),2])
-lsg110beta <- bp1ls + bh1ls
-
-lsg111 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_ipls, 
-                                   (physical == 'Non-DNA') 
-                                   & (history == 'Unrelated') 
-                                   & witness == 'Yes Witness'),
-                     FUN=mean, na.rm=TRUE)
-lsg111mean <- mean(lsg111[0:nrow(lsg111),2])
-lsg111beta <- bp1ls + bh1ls + bw1ls
-
-lsg120 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_ipls, 
-                                   (physical == 'Non-DNA') 
-                                   & (history == 'Related') 
-                                   & witness == 'No Witness'),
-                     FUN=mean, na.rm=TRUE)
-lsg120mean <- mean(lsg120[0:nrow(lsg120),2])
-lsg120beta <- bp1ls + bh2ls
-
-lsg121 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_ipls, 
-                                   (physical == 'Non-DNA') 
-                                   & (history == 'Related') 
-                                   & witness == 'Yes Witness'),
-                     FUN=mean, na.rm=TRUE)
-lsg121mean <- mean(lsg121[0:nrow(lsg121),2])
-lsg121beta <- bp1ls + bh2ls + bw1ls
-
-lsg200 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_ipls, 
-                                   (physical == 'DNA') 
-                                   & (history == 'No History') 
-                                   & witness == 'No Witness'),
-                     FUN=mean, na.rm=TRUE)
-lsg200mean <- mean(lsg200[0:nrow(lsg200),2])
-lsg200beta <- bp2ls
-
-lsg201 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_ipls, 
-                                   (physical == 'DNA') 
-                                   & (history == 'No History') 
-                                   & witness == 'Yes Witness'),
-                     FUN=mean, na.rm=TRUE)
-lsg201mean <- mean(lsg201[0:nrow(lsg201),2])
-lsg201beta <- bp2ls + bw1ls
-
-lsg210 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_ipls, 
-                                   (physical == 'DNA') 
-                                   & (history == 'Unrelated') 
-                                   & witness == 'No Witness'),
-                     FUN=mean, na.rm=TRUE)
-lsg210mean <- mean(lsg210[0:nrow(lsg210),2])
-lsg210beta <- bp2ls + bh1ls
-
-lsg211 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_ipls, 
-                                   (physical == 'DNA') 
-                                   & (history == 'Unrelated') 
-                                   & witness == 'Yes Witness'),
-                     FUN=mean, na.rm=TRUE)
-lsg211mean <- mean(lsg211[0:nrow(lsg211),2])
-lsg211beta <- bp2ls + bh1ls + bw1ls
-
-lsg220 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_ipls, 
-                                   (physical == 'DNA') 
-                                   & (history == 'Related') 
-                                   & witness == 'No Witness'),
-                     FUN=mean, na.rm=TRUE)
-lsg220mean <- mean(lsg220[0:nrow(lsg220),2])
-lsg220beta <- bp2ls + bh2ls
-
-lsg221 <- aggregate (cbind(rating) ~ scenario, 
-                     data = subset(dat_ipls, 
-                                   (physical == 'DNA') 
-                                   & (history == 'Related') 
-                                   & witness == 'Yes Witness'),
-                     FUN=mean, na.rm=TRUE)
-lsg221mean <- mean(lsg221[0:nrow(lsg221),2])
-lsg221beta <- bp2ls + bh2ls + bw1ls
-
-lsgconf <- as.data.frame(rbind (lsg000mean, lsg001mean, lsg010mean, lsg011mean, lsg020mean, lsg021mean,
-                                lsg100mean, lsg101mean, lsg110mean, lsg111mean, lsg120mean, lsg121mean,
-                                lsg200mean, lsg201mean, lsg210mean, lsg211mean, lsg220mean, lsg221mean))
-
-lsgbeta <- as.data.frame(rbind (lsg000beta, lsg001beta, lsg010beta, lsg011beta, lsg020beta, lsg021beta,
-                                lsg100beta, lsg101beta, lsg110beta, lsg111beta, lsg120beta, lsg121beta,
-                                lsg200beta, lsg201beta, lsg210beta, lsg211beta, lsg220beta, lsg221beta))
-
-lsg <- cbind(lsgconf, lsgbeta)
-colnames(lsg)<-c('ls_mean_rating','ls_comb_beta')
-
-combdat = cbind(dmg,lsg)
-
-
-#=== plots
-
-
-ggplot(data=combdat) +
-  geom_point(aes(x=mt_comb_beta, y=mt_mean_rating, color='red'),size=3)+
-  geom_point(aes(x=ls_comb_beta, y=ls_mean_rating, color='blue'),size=3)+
-  geom_smooth(aes(mt_comb_beta, mt_mean_rating), method='lm', formula=y~x)+
-  geom_smooth(aes(ls_comb_beta, ls_mean_rating), method='lm', formula=y~x)+
+ggplot(data=preds_mean) +
+  geom_point(aes(x=mean_pred, y=mean_obs, color=group),size=3) +
+  geom_smooth(aes(x=mean_pred, y=mean_obs, color=group), method='lm', formula=y~x) +
   scale_color_discrete(labels=c("Law students", "mTurk")) +
-  xlim(0,100)+
-  ylim(0,100)+
+  xlim(0,100) +
+  ylim(0,100) +
   theme(
     panel.grid=element_blank(),
     panel.background = element_blank(),
     axis.line = element_line(color="black"),
-    #    axis.text.x = element_text(hjust = 0, size=rel(2), color='black'),
-    #    axis.text.y = element_text(hjust = 1, size=rel(2.5), color='black'),
-    #    axis.title.y = element_text(size=rel(1.5)),
-    #    plot.title=element_text(size=20,vjust=2),
-    #    legend.text = element_text(size=rel(1.5)),
-    #    legend.title = element_text(size=rel(1.5)),
     legend.position=c(1,1),
     legend.justification=c(1,1))
+
 
 ##### FIGURE 3A BASELINE CONFIDENCE IN GUILT VARIES BY SCENARIO
 
