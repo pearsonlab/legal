@@ -19,21 +19,25 @@ fe <- fixed_effects %>% filter(predictor.1 %in% ev_vars) %>%
   mutate(predictor=factor(predictor.1, levels=c('physical2', 'physical1','witness1','history2','history1')))
 
 plt_ev <- ggplot(data=fe) +
-  geom_pointrange(aes(x=predictor, y=post.mean, ymin=l95.CI, ymax=u95.CI, color=outcome), size=1.75, position=position_jitter(w=0.15)) + 
+  geom_pointrange(aes(x=predictor, y=post.mean, ymin=l95.CI, ymax=u95.CI, color=outcome), 
+                  size=1.75, position=position_jitter(w=0.15)) + 
   scale_x_discrete(breaks=c("history1","history2","physical1","physical2","witness1"), 
-                   labels=c("Unrelated \nprior crime", "Related \nprior crime", "Non-DNA \nphysical \nevidence", "DNA \nphysical \nevidence", "Witness \npresent"))+
-  scale_color_manual(values=c('rating'=color_conf,'rate_punishment'=color_punish,'rate_threat'=color_threat,'rate_outrage'=color_outrage),
+                   labels=c("Unrelated \nprior crime", "Related \nprior crime", 
+                            "Non-DNA \nphysical \nevidence", "DNA \nphysical \nevidence", 
+                            "Witness \npresent")) +
+  scale_color_manual(values=c('rating'=color_conf,'rate_punishment'=color_punish,
+                              'rate_threat'=color_threat,'rate_outrage'=color_outrage),
                       name='Rating',
                       breaks=c('rating','rate_outrage','rate_punishment','rate_threat'),
-                      labels=c('Confidence','Outrage','Punishment','Threat'))+
-  coord_cartesian(ylim=c(0,40))+
-  labs(title="A")+
-  ylab("Effect size (points above baseline)")+
-  xlab("")+
-  geom_vline(xintercept=1.5, colour='grey')+
-  geom_vline(xintercept=2.5, colour='grey')+
-  geom_vline(xintercept=3.5, colour='grey')+
-  geom_vline(xintercept=4.5, colour='grey')+
+                      labels=c('Confidence','Outrage','Punishment','Threat')) +
+  coord_cartesian(ylim=c(0,40)) +
+  labs(title="A") +
+  ylab("Effect size (points above baseline)") +
+  xlab("") +
+  geom_vline(xintercept=1.5, colour='grey') +
+  geom_vline(xintercept=2.5, colour='grey') +
+  geom_vline(xintercept=3.5, colour='grey') +
+  geom_vline(xintercept=4.5, colour='grey') +
   theme(
     panel.grid=element_blank(),
     panel.background = element_blank(),
