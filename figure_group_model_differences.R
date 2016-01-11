@@ -1,6 +1,7 @@
 # this code creates an illustrative plot showing evidence weight vs observed confidence
 # for each group and each combination of evidence variables
 # it is mostly to illustrate differences between model predictions for the groups
+# was figure 2B in poster
 
 ################# load data and packages: all groups ####################
 library(dplyr)
@@ -14,6 +15,7 @@ load('data/dat_ipls.rdata')
 
 fitobj <- fit_ms_ls_conf_pun
 source('process_fits.R')
+
 ########## FIGURE 2B - MODEL FIT TO OBSERVED CONFIDENCE
 # calculate the evidence weight for each combination of variables
 vars <- c('scenario', 'physical', 'history', 'witness')
