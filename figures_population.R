@@ -241,66 +241,13 @@ plt <- ggplot() +
 
 
 
-
 #=== correlation
-
-#dfconfthreat<-subset(se,outcome==c("rating","rate_threat"))
-
-# pltcor<-ggplot(data=se,aes(x=predictor, y=post.mean))
-# pltcor+
-#   geom_point(aes(color=outcome))
-
-df<-dcast(se, predictor~outcome, value.var="post.mean")
-
-# pltcor<-ggplot(data=df,aes(x=rate_threat, y=rate_punishment))
-# pltcor+
-#   geom_point()
-
-dfcorr<-dcast(se[c("outcome","predictor","post.mean")], predictor~outcome, value.var="post.mean")
-
-thr_pun<-dfcorr[c("predictor","rate_threat","rate_punishment")]
-thr_pun["contrast"]<-"Threat vs. Punishment"
-names(thr_pun)<-c("scenario","x","y",'contrast')
-
-thr_out<-dfcorr[c("predictor","rate_threat","rate_outrage")]
-thr_out["contrast"]<-"Threat vs. Outrage"
-names(thr_out)<-c("scenario","x","y",'contrast')
-
-thr_con<-dfcorr[c("predictor","rating","rate_threat")]
-thr_con["contrast"]<-"Confidence vs. Threat"
-names(thr_con)<-c("scenario","x","y",'contrast')
-
-pun_out<-dfcorr[c("predictor","rate_punishment","rate_outrage")]
-pun_out["contrast"]<-"Punish vs. Outrage"
-names(pun_out)<-c("scenario","x","y",'contrast')
-
-pun_con<-dfcorr[c("predictor","rating", "rate_punishment")]
-pun_con["contrast"]<-"Confidence vs. Punishment"
-names(pun_con)<-c("scenario","x","y",'contrast')
-
-out_con<-dfcorr[c("predictor","rating", "rate_outrage")]
-out_con["contrast"]<-"Confidence vs. Outrage"
-names(out_con)<-c("scenario","x","y",'contrast')
-
-allcorr<-rbind(thr_pun, thr_out, thr_con, pun_out, pun_con, out_con)
-
-ggplot(data=allcorr)+
-  geom_point(aes(x=x, y=y, color=contrast))+
-  stat_smooth(aes(x=x, y=y, color=contrast), method="lm")
-
-ggsave('figure4_correlations.pdf', width=11, height=8.5, units='in')
-
-dfcorr2<-dfcorr
-dfcorr2$predictor<-NULL
-
-dfcorr3<-dfcorr2[c('rating','rate_threat','rate_outrage','rate_punishment')]
-
-names(dfcorr3)<-c('Confidence\n in guilt','Threat','Outrage','Deserved\n punishment')
-
 library(corrplot)
+df <- se %>% select(predictor.1, outcome, post.mean) %>% spread(outcome, post.mean)
+names(df) <- c('Scenario', 'Confidence\n in guilt','Threat','Outrage','Deserved\n punishment')
 
 pdf("figure4_corrmatrix.pdf", width=5, height=5)
-corrplot.mixed(cor(dfcorr3), lower='ellipse', upper='number')
+corrplot.mixed(cor(df %>% select(-Scenario)), lower='ellipse', upper='number')
 dev.off()
 
 # combined plots correlations
@@ -311,75 +258,3 @@ pltgrp2<-
 ggsave(pltgrp2, file="figure3_combined.pdf", width=16, height=8, units='in', useDingbats=FALSE)
 
 
-#=== 12/5/2015
-
-dfpopsc
-dfpopscgen <- dfpopsc[dfpopsc$predictor=="groupgenpop",]
-dfpopscgenrate <- dfpopscgen[dfpopscgen$outcome=="rating",]
-dfpopscgenrate[,3]<-c(1:33)
-dfpopscgenrate<-dfpopscgenrate[,3:6]
-
-dfpopscleg <- dfpopsc[dfpopsc$predictor=="grouplegal",]
-dfpopsclegrate <- dfpopscleg[dfpopscleg$outcome=="rating",]
-dfpopsclegrate[,3]<-c(1:33)
-dfpopsclegrate<-dfpopsclegrate[,3:6]
-
-
-#=====
-load('./rdata/dat_rating_pun_comb.rdata')
-load('./rdata/dat_ipls.rdata')
-
-#=== genpop
-
-sc_pun_gen <- aggregate(rate_punishment ~ scenario, FUN=mean, data=dat_rating_pun_comb)
-sc_pun_gen_ord<-sc_pun_gen[order(sc_pun_gen[,2]),]
-
-#sc_pun_low<-c(3,6,27,1,2,25,13,19)
-#sc_pun_high<-c(26,32,7,11,10,28,23,16)
-
-sc_pun_gen_low<-as.data.frame(head(sc_pun_gen_ord[,1],8))
-sc_pun_gen_high<-as.data.frame(tail(sc_pun_gen_ord[,1],8))
-
-beta_gen_low<-dfpopscgenrate[(dfpopscgenrate[,1] %in% sc_pun_gen_low[,1]),]
-beta_gen_high<-dfpopscgenrate[(dfpopscgenrate[,1] %in% sc_pun_gen_high[,1]),]
-
-#=== lspop
-
-sc_pun_leg <- aggregate(rate_punishment ~ scenario, FUN=mean, data=dat_ipls)
-sc_pun_leg_ord<-sc_pun_leg[order(sc_pun_leg[,2]),]
-
-#leg low: (27,6,1,3,25,2,15,4)
-#leg high: (21,32,20,16,26,10,28,23)
-
-sc_pun_leg_low<-as.data.frame(head(sc_pun_leg_ord[,1],8))
-sc_pun_leg_high<-as.data.frame(tail(sc_pun_leg_ord[,1],8))
-
-beta_leg_low<-dfpopsclegrate[(dfpopsclegrate[,1] %in% sc_pun_leg_low[,1]),]
-beta_leg_high<-dfpopsclegrate[(dfpopsclegrate[,1] %in% sc_pun_leg_high[,1]),]
-
-beta_gen_low[5]<-'GenLowPun'
-beta_gen_high[5]<-'GenHighPun'
-beta_leg_low[5]<-'LegalLowPun'
-beta_leg_high[5]<-'LegalHighPun'
-
-beta_pun_comb<-rbind(beta_gen_low,beta_gen_high,beta_leg_low,beta_leg_high)
-
-colnames(beta_pun_comb)<-c('scenario','conf','low95','up95','group')
-
-library(ggplot2)
-
-pd <- position_dodge(width=0.1)
-
-ggplot(data=beta_pun_comb, aes(x=group, y=conf))+
-  geom_errorbar(aes(ymin=low95, ymax=up95), width=.2, position=pd)+
-  geom_point(size=2)+
-  geom_text(aes(label=scenario,hjust=0,vjust=0))
-
-
-  
-    geom_errorbar(aes(ymin=low95, ymax=up95), width=.1, position=pd) 
-
-  geom_line(position=pd) +
-  geom_point(position=pd)
-
-plt
