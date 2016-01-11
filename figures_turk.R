@@ -1,7 +1,7 @@
 library(ggplot2)
 library(gridExtra)
 library(corrplot)
-library(reshape2)
+library(dplyr)
 
 # load fit object containing mturkers only
 load('data/fit.rdata')
@@ -15,10 +15,10 @@ color_punish='#A69A60'
 color_threat='#D9BF3D'
 color_conf='#0656A3'
 
-fe <- fixed_effects[fixed_effects$predictor %in% ev_vars,]
-fe$predictor <- factor(fe$predictor, levels=c('physical2', 'physical1','witness1','history2','history1'))
+fe <- fixed_effects %>% filter(predictor.1 %in% ev_vars) %>%
+  mutate(predictor=factor(predictor.1, levels=c('physical2', 'physical1','witness1','history2','history1')))
 
-plt_ev <- ggplot(data = fe) +
+plt_ev <- ggplot(data=fe) +
   geom_pointrange(aes(x=predictor, y=post.mean, ymin=l95.CI, ymax=u95.CI, color=outcome), size=1.75, position=position_jitter(w=0.15)) + 
   scale_x_discrete(breaks=c("history1","history2","physical1","physical2","witness1"), 
                    labels=c("Unrelated \nprior crime", "Related \nprior crime", "Non-DNA \nphysical \nevidence", "DNA \nphysical \nevidence", "Witness \npresent"))+
