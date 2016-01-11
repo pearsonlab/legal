@@ -210,7 +210,7 @@ for (v in c('physical', 'history', 'witness')) {
 # merge into a single dataframe
 preds_mean <- merge(preds_mean, dat_summary)
 
-ggplot(data=preds_mean) +
+plt <- ggplot(data=preds_mean) +
   geom_point(aes(x=mean_pred, y=mean_obs, color=group),size=3) +
   geom_smooth(aes(x=mean_pred, y=mean_obs, color=group), method='lm', formula=y~x) +
   scale_color_discrete(labels=c("Law students", "mTurk")) +
@@ -225,10 +225,12 @@ ggplot(data=preds_mean) +
 
 
 ##### FIGURE 3A BASELINE CONFIDENCE IN GUILT VARIES BY SCENARIO
-
-plt <- ggplot()+
-  geom_boxplot(data=dfpopconf, aes(x=predictor, y=post.mean), outlier.colour = NA)+
-  geom_point(data=dfpopconf, aes(x=predictor, y=post.mean),position=position_jitter(width=0.1), size=3, color="grey")+
+se <- fixed_effects %>% filter(outcome == 'rating',
+                               grepl('scenario', predictor.2))
+plt <- ggplot() +
+  geom_boxplot(data=se, aes(x=predictor.1, y=post.mean), outlier.colour = NA) +
+  geom_point(data=se, aes(x=predictor.1, y=post.mean), 
+             position=position_jitter(width=0.1), size=3, color="grey") +
   theme(
     panel.grid=element_blank(),
     panel.background = element_blank(),
@@ -238,152 +240,6 @@ plt <- ggplot()+
 
 
 
-
-
-# # read data
-# data_file_names <- c('prepped/data_mq_deid.csv', 'prepped/data_cu_deid.csv', 'prepped/data_sq_deid.csv', 'prepped/data_th_deid.csv', 'prepped/data_tq_deid.csv')
-# dlist <- list()
-# for (ind in 1:length(data_file_names)) {
-#   dlist[[ind]] <- read.csv(data_file_names[[ind]])
-# }
-# df <- do.call('rbind.fill', dlist)
-# 
-# # add a group variable denoting that these data sets are general population
-# df['group'] = 'genpop'
-# 
-# lawstudents_df <- read.csv('prepped/data_ipls.csv')
-# lawstudents_df['group'] <- 'legal'
-# lawstudents_df['hashedID'] <- lawstudents_df['uid']
-# 
-# # bind these groups together
-# df <- rbind.fill(df, lawstudents_df)
-# 
-# # make an integer ID column from the hash
-# df$ID <- as.integer(df$hashedID)
-# 
-# # make sure some variables are appropriately encoded
-# predictors <- c('ID', 'scenario', 'physical', 'history', 'witness')
-# #outcomes <- c('rating', 'rate_outrage', 'rate_punishment', 'rate_threat')
-# outcomes <- c('rating', 'rate_punishment')
-# df <- convert_to_factor(df, predictors)
-# 
-# # upper and lower rating ranges
-# Rmin <- 0
-# Rmax <- 100
-# 
-# # make upper and lower variables for each outcome
-# cens_names <- c()
-# for (oname in outcomes) {
-#   upname <- paste(oname, 'max', sep='')
-#   dnname <- paste(oname, '', sep='')
-#   df[[upname]] <- ifelse(df[[oname]] == Rmax, Inf, df[[oname]])
-#   df[[dnname]] <- ifelse(df[[oname]] == Rmin, -Inf, df[[oname]])
-#   cens_names <- c(cens_names, dnname, upname)
-# }
-# 
-# 
-# ############# let's try some models
-# 
-# # all responses; correlated random effects of scenario; correlated residuals; censoring
-# form_string <- paste('cbind(', paste(cens_names, collapse=', '), ')', '~  -1 + trait:group:(scenario + physical + history + witness)', collapse='')
-# 
-# fit <- MCMCglmm(fixed = as.formula(form_string), 
-#                 random = ~ us(trait):ID, 
-#                 rcov = ~ us(trait):units, 
-#                 family = rep('cengaussian', length(outcomes)), 
-#                 data = df)
-# fit_ms_ls_conf_pun <- fit
-# save(fit_ms_ls_conf_pun, file='mt_ls_conf_pun.obj')
-# ########### fit processing ###########
-
-########### START FROM HERE WITH OBJ FILE
-
-#thisobj <- fit
-
-
-#dfpopconfsortb["diff"] <- dfpopconfsortb$genpop-dfpopconfsortb$lspop
-#
-# melted <- melt(dfpopconfsortb, id.vars=c("scenario","order"))
-#
-#### gsub global dataframe search and replace string
-# df2 <- as.data.frame(sapply(melted,gsub,pattern="scenario",replacement=""))
-# 
-# library(ggplot2)
-# 
-# plt <- ggplot(data=melted)
-# plt <- plt + 
-#   geom_point(aes(x=order, y=value, color=variable))+
-#   theme(
-#     panel.grid=element_blank(),
-#     panel.background = element_blank(),
-#     axis.line = element_line(color="black"),
-#     axis.text.x = element_text(hjust = 0, size=rel(2), color='black'),
-#     axis.text.y = element_text(hjust = 1, size=rel(2.5), color='black'),
-#     axis.title.y = element_text(size=rel(1.5)),
-#     plot.title=element_text(size=20,vjust=2),
-#     legend.text = element_text(size=rel(1.5)),
-#     legend.title = element_text(size=rel(1.5)),
-#     legend.position=c(1,1),
-#     legend.justification=c(1,1))
-# 
-# ggsave(plt, file="sc_mt_ls.pdf", width=12, height=7, units='in', useDingbats=FALSE)
-#
-### punishment
-#
-# dfpoppungen <- dfpoppun[dfpoppun$predictor=="groupgenpop",]
-# dfpoppunleg <- dfpoppun[dfpoppun$predictor=="grouplegal",]
-# 
-# sortedpun <- dfpoppungen[order(dfpoppungen$post.mean),]
-# sortedpun["order"]<-seq(length=nrow(sortedpun))
-# 
-# dfpoppunsort <- merge(sortedpun, dfpoppunleg, by="factor")
-# 
-# dfpoppunsort <- dfpoppunsort[order(dfpoppunsort$order),]
-# 
-# dfpoppunsort$outcome.x<-NULL
-# dfpoppunsort$outcome.y<-NULL
-# 
-# dfpoppunsortb<-dfpoppunsort[c(1,3,6,8)]
-# colnames(dfpoppunsortb) <- c("scenario","genpop","order","lspop")
-# 
-# dfpoppunsortb["diff"] <- dfpoppunsortb$genpop-dfpoppunsortb$lspop
-# 
-# 
-# meltedpun <- melt(dfpoppunsortb, id.vars=c("scenario","order"))
-# 
-# library(ggplot2)
-# 
-# plt <- ggplot(data=meltedpun)
-# plt<-plt + 
-#   geom_point(aes(x=order, y=value, color=variable))+
-#   theme(
-#     panel.grid=element_blank(),
-#     panel.background = element_blank(),
-#     axis.line = element_line(color="black"),
-#     axis.text.x = element_text(hjust = 0, size=rel(2), color='black'),
-#     axis.text.y = element_text(hjust = 1, size=rel(2.5), color='black'),
-#     axis.title.y = element_text(size=rel(1.5)),
-#     plot.title=element_text(size=20,vjust=2),
-#     legend.text = element_text(size=rel(1.5)),
-#     legend.title = element_text(size=rel(1.5)),
-#     legend.position=c(1,1),
-#     legend.justification=c(1,1))
-
-
-### corrplots ###
-# 
-# dfcorr <- dfpopsc[(1:4)]
-# dfcorrw<-dcast(dfcorr, factor ~ outcome+predictor)
-# colnames(dfcorrw)<-c("scenario","punish_gen","punish_ls","conf_gen","conf_ls")
-# dfcorrw<-dfcorrw[(2:5)]
-# #dfcorrw <- as.data.frame(sapply(dfcorrw,gsub,pattern="scenario",replacement=""))
-# 
-# 
-# library(corrplot)
-# 
-# pdf("corrmatrix_scenario_gen_lawstudent.pdf", width=5, height=5)
-# corrplot.mixed(cor(dfcorrw), lower='ellipse', upper='number')
-# dev.off()
 
 
 ########### make some plots ###########
