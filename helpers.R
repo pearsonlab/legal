@@ -79,7 +79,8 @@ process_fixed_names <- function(X) {
   stripped <- sapply(vnames, function(x) {substr(x, nchar(prestr) + 1, nchar(x))})
   split <- strsplit(stripped, ':')
   frame <- data.frame(matrix(unlist(split), nrow=length(split), byrow=T))
-  names(frame) <- c('outcome', 'predictor')
+  npreds <- length(split[[1]]) - 1
+  names(frame) <- c('outcome', paste('predictor', 1:npreds, sep='.'))
   return(frame)
 }
 

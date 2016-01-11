@@ -16,7 +16,8 @@ random_effects <- assemble_cov_mats(Z)
 residual_effects <- assemble_cov_mats(R)
 
 # separate out scenario and evidence variables
-pred_vars <- levels(fixed_effects$predictor)
+npreds <- sum(grepl('predictor', names(fixed_effects)))
+pred_vars <- levels(fixed_effects[[paste('predictor', npreds, sep='.')]])
 sc_vars <- pred_vars[grepl('scenario', pred_vars)]
 ev_vars <- setdiff(pred_vars, sc_vars)
 
