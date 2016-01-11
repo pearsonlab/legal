@@ -13,38 +13,6 @@ load('data/dat_ipls.rdata')
 fitobj <- fit_ms_ls_conf_pun
 source('process_fits.R')
 
-# dfpop <- fixed_effects[,c(1:6)]
-# rownames(dfpop) <- seq(length=nrow(dfpop)) 
-# dfpopsc <- dfpop[grepl('scenario',dfpop$factor),]
-# 
-# dfpopconf <- dfpopsc[dfpopsc$outcome=="rating",]
-# dfpoppun <- dfpopsc[dfpopsc$outcome=="rate_punishment",]
-# 
-# ev_vars <- c("physical1","physical2","history1","history2","witness1")
-# dfev <- dfpop[dfpop$factor %in% ev_vars,]
-# 
-# dfevconf <- dfev[dfev$outcome=="rating",]
-# dfevconfgen <- dfevconf[dfevconf$predictor=="groupgenpop",]
-# dfevconfleg <- dfevconf[dfevconf$predictor=="grouplegal",]
-# 
-# # confidence
-# 
-# dfpopconfgen <- dfpopconf[dfpopconf$predictor=="groupgenpop",]
-# dfpopconfleg <- dfpopconf[dfpopconf$predictor=="grouplegal",]
-# 
-# sorted <- dfpopconfgen[order(dfpopconfgen$post.mean),]
-# sorted["order"]<-seq(length=nrow(sorted))
-# 
-# dfpopconfsort <- merge(sorted, dfpopconfleg, by="factor")
-# 
-# dfpopconfsort <- dfpopconfsort[order(dfpopconfsort$order),]
-# 
-# dfpopconfsort$outcome.x<-NULL
-# dfpopconfsort$outcome.y<-NULL
-# 
-# dfpopconfsortb<-dfpopconfsort[c(1,3,6,8)]
-# colnames(dfpopconfsortb) <- c("scenario","genpop","order","lspop")
-
 ################## FIGURE 1B - MODEL FIT TO OBSERVED RESULTS
 
 # here, we want to make a boxplot of confidence ratings for each combination of evidence variables
@@ -250,10 +218,11 @@ pdf("figure4_corrmatrix.pdf", width=5, height=5)
 corrplot.mixed(cor(df %>% select(-Scenario)), lower='ellipse', upper='number')
 dev.off()
 
+corr_grob <- corrplot.mixed(cor(df %>% select(-Scenario)), lower='ellipse', upper='number')
+
 # combined plots correlations
 
-pltgrp2<-
-  arrangeGrob(plt_se_noconf, plt_se_noconf, ncol=2 ,widths=c(1,1))
+pltgrp2 <- arrangeGrob(plt_se_noconf, corr_grob, ncol=2 ,widths=c(1,1))
 
 ggsave(pltgrp2, file="figure3_combined.pdf", width=16, height=8, units='in', useDingbats=FALSE)
 
