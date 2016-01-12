@@ -4,6 +4,7 @@ library(ggplot2)
 library(gridExtra)
 library(dplyr)
 library(gtable)
+library(gridBase)
 
 # load fit object containing mturkers only
 load('data/fit.rdata')
@@ -24,7 +25,7 @@ fe <- fixed_effects %>% filter(predictor.1 %in% ev_vars, outcome == 'rating') %>
   mutate(predictor=factor(predictor.1, levels=c('physical2', 'physical1','witness1','history2','history1')))
 
 plt_1 <- ggplot(data=fe) +
-  geom_pointrange(aes(x=predictor, y=post.mean, ymin=l95.CI, ymax=u95.CI, color=outcome), size=1.5) + 
+  geom_pointrange(aes(x=predictor, y=post.mean, ymin=l95.CI, ymax=u95.CI, color=outcome), size=1.) + 
   scale_x_discrete(breaks=c("history1","history2","physical1","physical2","witness1"), 
                    labels=c("Unrelated \nprior crime", "Related \nprior crime", 
                             "Non-DNA \nphysical \nevidence", "DNA \nphysical \nevidence", 
