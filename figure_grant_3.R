@@ -103,6 +103,7 @@ pdf(plotname, width=5, height=5)
 corrplot.mixed(cor(df %>% select(-Scenario)), lower='ellipse', upper='number')
 dev.off()
 
+# make a blank panel where the matrix will be inserted
 plt_3 <- ggplot(df) + geom_blank() + 
   labs(title="C", size=rel(3)) +
   theme(plot.title=element_text(size=20,vjust=2),
