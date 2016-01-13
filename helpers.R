@@ -133,7 +133,7 @@ order_scenarios <- function(df, var) {
 
 standardize_heights <- function(...) {
   # given a list of ggplots, make sure the axes line up when plots stacked horizontally
-  grob_list <- lapply(..., ggplotGrob)  # convert ggplots to grobs
+  grob_list <- lapply(..., function(x) {if (is.grob(x)) x else ggplotGrob(x)})  # convert ggplots to grobs
   grob_heights <- lapply(grob_list, function(x) {x$heights[2:5]})  # get heights
   maxHeight <- do.call(grid::unit.pmax, grob_heights)  # take max
   grob_list <- lapply(grob_list, function(x) {x$heights[2:5] <- maxHeight; x}) # reassign heights
