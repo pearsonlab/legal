@@ -38,7 +38,7 @@ plt_1 <- ggplot(data=fe) +
   coord_cartesian(ylim=c(0,100)) +
   labs(title="A") +
   ylab("Confidence") +
-  xlab("Evidence Effect") +
+  xlab("Evidence Effects") +
   geom_vline(xintercept=1.5, colour='grey') +
   geom_vline(xintercept=2.5, colour='grey') +
   geom_vline(xintercept=3.5, colour='grey') +
@@ -158,7 +158,6 @@ plt_3 <- ggplot(data=preds_mean) +
     axis.title.y = element_text(size=rel(1.5)),
     plot.title=element_text(size=20,vjust=2),
     legend.position='none')
-plt
 
 
 ############### Combine into a single figure ##################################
