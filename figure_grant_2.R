@@ -1,5 +1,8 @@
 # second figure from the grant application
 
+# note: current ggplot2 and gridExtra do not play nicely with each other
+# required: install.packages("devtools"); library(devtools); install_github("hadley/ggplot2")
+
 library(ggplot2)
 library(gridExtra)
 library(dplyr)
@@ -35,7 +38,7 @@ plt_1 <- ggplot(data=fe) +
                       name='Rating',
                       breaks=c('rating','rate_outrage','rate_punishment','rate_threat'),
                       labels=c('Confidence','Outrage','Punishment','Threat')) +
-  coord_cartesian(ylim=c(0,100)) +
+  coord_cartesian(ylim=c(0,40)) +
   labs(title="A") +
   ylab("Confidence") +
   xlab("Evidence Effects") +
@@ -71,7 +74,7 @@ plt_2 <- ggplot(data = se, aes(x=outcome, y=post.mean)) +
   scale_fill_manual(values=c('rate_outrage'=color_outrage, 'rate_punishment'=color_punish, 
                              'rate_threat'=color_threat, 'rating'=color_conf)) +
   xlab("Baseline\nEffect") +
-  coord_cartesian(ylim=c(0,100)) +
+  coord_cartesian(ylim=c(0,40)) +
   labs(title="B", size=rel(3)) +
   ylab("Confidence") +
   theme(
@@ -141,10 +144,10 @@ for (v in c('physical', 'history', 'witness')) {
 preds_mean <- merge(preds_mean, dat_summary)
 
 plt_3 <- ggplot(data=preds_mean) +
-  geom_point(aes(x=mean_pred, y=mean_obs), color=color_conf, size=3) +
+  geom_point(aes(x=mean_pred, y=mean_obs, color=scenario), size=3) +
   geom_smooth(aes(x=mean_pred, y=mean_obs), color=color_conf, method='lm', formula=y~x) +
   xlab("Weight of Model \nEvidence (points)") +
-  coord_cartesian(xlim=c(0, 60), ylim=c(0,100)) +
+  coord_cartesian(xlim=c(-5, 60), ylim=c(0,100)) +
   labs(title="C", size=rel(3)) +
   ylab("Confidence (observed)") +
   theme(
@@ -169,4 +172,5 @@ grob_list <- standardize_heights(plt_list)
 plt_all <- arrangeGrob(grob_list[[1]], grob_list[[2]], grob_list[[3]], ncol=3, widths=c(1.1, 0.5, 1.25))
 
 # save to disk
+
 ggsave('figure_grant_2.pdf', plot=plt_all, width=11, height=4.5, units='in', useDingbats=FALSE)
