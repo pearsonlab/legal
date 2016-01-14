@@ -140,11 +140,15 @@ for (v in c('physical', 'history', 'witness')) {
   dat_summary[[v]] <- factor(as.integer(dat_summary[[v]]), labels=levels(preds_mean[[v]]))
 }
 
+# get observed mean for each scenario across all evidence conditions
+scen_mean <- dat_all %>% group_by(scenario) %>% summarise(sc_mean=mean(rating, na.rm=TRUE))
+
 # merge into a single dataframe
 preds_mean <- merge(preds_mean, dat_summary)
+preds_mean <- merge(preds_mean, scen_mean)
 
 plt_3 <- ggplot(data=preds_mean) +
-  geom_point(aes(x=mean_pred, y=mean_obs, color=scenario), size=3) +
+  geom_point(aes(x=mean_pred, y=mean_obs, color=sc_mean), size=3, alpha=0.5) +
   geom_smooth(aes(x=mean_pred, y=mean_obs), color=color_conf, method='lm', formula=y~x) +
   xlab("Weight of Model \nEvidence (points)") +
   coord_cartesian(xlim=c(-5, 60), ylim=c(0,100)) +
