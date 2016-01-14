@@ -141,7 +141,10 @@ for (v in c('physical', 'history', 'witness')) {
 }
 
 # get observed mean for each scenario across all evidence conditions
-scen_mean <- dat_all %>% group_by(scenario) %>% summarise(sc_mean=mean(rating, na.rm=TRUE))
+# scen_mean <- dat_all %>% group_by(scenario) %>% summarise(sc_mean=mean(rating, na.rm=TRUE))
+scen_mean <- se %>% mutate(scenario = as.numeric(sub('scenario','', predictor.1)),
+                           sc_mean = post.mean) %>%
+                    select(scenario, sc_mean)
 
 # merge into a single dataframe
 preds_mean <- merge(preds_mean, dat_summary)
