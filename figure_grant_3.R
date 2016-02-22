@@ -4,6 +4,7 @@ library(ggplot2)
 library(gridExtra)
 library(dplyr)
 library(gtable)
+library(tidyr)
 
 # load fit object containing mturkers only
 load('data/fit.rdata')
@@ -95,7 +96,8 @@ plt_2 <- ggplot(data = se, aes(x=outcome, y=post.mean)) +
 library(corrplot)
 se <- fixed_effects %>% filter(grepl('scenario', predictor.1))
 df <- se %>% select(predictor.1, outcome, post.mean) %>% spread(outcome, post.mean)
-names(df) <- c('Scenario', 'Confidence\nin guilt','Threat','Outrage','Deserved\n punishment')
+names(df) <- c('Scenario', 'Outrage','Deserved\n punishment','Threat','Confidence\nin guilt')
+df <- df[c(1,5,4,2,3)]
 
 # make a correlation matrix to be saved as pdf
 plotname <- "figure3_corrmatrix.pdf"
