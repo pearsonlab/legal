@@ -6,13 +6,14 @@ load('data/dat_rating_comb.rdata')
 load('data/dat_ipls.rdata')
 
 library(dplyr)
+library(tidyr)
 
 # do some cleaing of datasets prior to merge
-dat_ls <- dat_ipls %>% select(uid, scenario, physical, history, witness, rating) %>% 
+dat_ls <- dat_ipls %>% select(uid, scenario, physical, history, witness, rating) %>%
   mutate(group='legal')
 
 dat_turk <- dat_rating_comb %>% rename(uid=hashedID) %>% mutate(group='mturk')
-  
+
 # merge datasets
 dat <- rbind(dat_turk, dat_ls) %>% na.omit() %>% mutate(uid=as.integer(droplevels(uid)))
 Nsub <- length(unique(dat$uid))
@@ -29,10 +30,17 @@ datU <- dat %>% filter(rating == U)
 dat <- dat %>% filter(rating != U & rating != L)
 
 # get design matrix (i.e., convert categoricals to binaries)
-form <- as.formula("~ -1 + scenario + scenario:(physical + history + witness)")
+form <- as.formula("~ -1 + scenario:group + scenario:group:(physical + history + witness)")
 X <- model.matrix(form, data=dat)
 XL <- model.matrix(form, data=datL)
 XU <- model.matrix(form, data=datU)
+
+# make data frame of predictors corresponding to columns in X
+prednames <- colnames(X)
+preds <- data.frame(varname=prednames) %>%
+  separate(varname, c('scenario', 'group', 'evidence'), ':') %>%
+  mutate(evidence = replace(evidence, is.na(evidence), 'baseline')) %>%
+  mutate(evidence = as.factor(evidence))
 
 # break out ratings, subject mapping
 R <- dat$rating
@@ -57,5 +65,7 @@ options(mc.cores = parallel::detectCores())
 stan_dat <- list(L=L, U=U, Nsub=Nsub, N=N, NL=NL, NU=NU, P=P, R=R,
                  X=X, XL=XL, XU=XU, S=S, SL=SL, SU=SU)
 
-fit <- stan(file = 'model.stan', data = stan_dat, 
+fit <- stan(file = 'model.stan', data = stan_dat,
             iter = 1000, chains = 2)
+
+mu_samples <- extract(fit, pars='mu')$mu

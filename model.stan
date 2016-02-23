@@ -16,7 +16,7 @@ data {
 }
 transformed data {
   real M;
-  
+
   M <- (U + L)/2.;
 }
 parameters {
@@ -30,33 +30,35 @@ transformed parameters {
   real thetaL[NL];
   real thetaU[NU];
   vector[P] beta[Nsub];  # individual effects
-  
+
   # draw individual effects
   for (i in 1:Nsub)
     beta[i] <- mu + tau .* eps[i];
-  
-  # draw mean predictions  
+
+  # draw mean predictions
   for (j in 1:N)
     theta[j] <- dot_product(X[j], beta[S[j]]);
-    
+
   for (j in 1:NL)
     thetaL[j] <- dot_product(XL[j], beta[SL[j]]);
-    
+
   for (j in 1:NU)
     thetaU[j] <- dot_product(XU[j], beta[SU[j]]);
 }
 model {
   for (i in 1:Nsub)
     eps[i] ~ normal(0., 1.);
-  
+
   mu ~ normal(M, M);
   tau ~ cauchy(0, M);
+
   sigma ~ cauchy(0, M/10.);
-    
+
   R ~ normal(theta, sigma);
-  
+
   for (i in 1:NL)
     increment_log_prob(normal_cdf_log(L, thetaL[i], sigma));
   for (i in 1:NU)
     increment_log_prob(normal_ccdf_log(L, thetaL[i], sigma));
 }
+
