@@ -1,4 +1,5 @@
 load('data/stan_model_output.rdata')
+library(dplyr)
 library(ggplot2)
 color_genpop='#0656A3'
 color_lawstudents='#33a02c'
@@ -44,3 +45,4 @@ p <- p + geom_point(aes(x=baseline, y=slope, color=group), size=4) + xlab('Basel
                       breaks=c('groupmturk','grouplegal'),
                       labels=c('mTurk','Law Students'))
 ggsave('evidence_vs_baseline.pdf', plot=p, width=8, height=5, units='in', useDingbats=FALSE)
+
