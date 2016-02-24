@@ -19,7 +19,7 @@ dat <- rbind(dat_turk, dat_ls) %>% na.omit() %>% mutate(uid=as.integer(droplevel
 Nsub <- length(unique(dat$uid))
 
 # subsample for quick prototyping
-dat <- dat %>% sample_frac(0.1)
+#dat <- dat %>% sample_frac(0.1)
 
 # get upper and lower-bounded censored data
 L <- min(dat$rating)
@@ -37,10 +37,10 @@ XU <- model.matrix(form, data=datU)
 
 # make data frame of predictors corresponding to columns in X
 prednames <- colnames(X)
-preds <- data.frame(varname=prednames) %>%
+suppressWarnings(preds <- data.frame(varname=prednames) %>%
   separate(varname, c('scenario', 'group', 'evidence'), ':') %>%
   mutate(evidence = replace(evidence, is.na(evidence), 'baseline')) %>%
-  mutate(evidence = as.factor(evidence))
+  mutate(evidence = as.factor(evidence)))
 
 # break out ratings, subject mapping
 R <- dat$rating
@@ -66,6 +66,6 @@ stan_dat <- list(L=L, U=U, Nsub=Nsub, N=N, NL=NL, NU=NU, P=P, R=R,
                  X=X, XL=XL, XU=XU, S=S, SL=SL, SU=SU)
 
 fit <- stan(file = 'model.stan', data = stan_dat,
-            iter = 1000, chains = 2)
+            iter = 1000, chains = 4)
 
-mu_samples <- extract(fit, pars='mu')$mu
+save.image('data/stan_model_output.rdata')
