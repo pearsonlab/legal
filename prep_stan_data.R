@@ -8,6 +8,16 @@ load('data/dat_ipls.rdata')
 library(dplyr)
 library(tidyr)
 
+# load "no boxes" data
+nb_dat <- read.csv('data/data_nb_deid.csv')
+
+# make a dataframe of scenario ratings
+sc_pun <- nb_dat %>% filter(!is.na(rate_punishment)) %>%
+  group_by(scenario) %>%
+  select(rate_punishment) %>%
+  summarise(seriousness = mean(rate_punishment)) %>%
+  mutate(seriousness = (seriousness - mean(seriousness))/sd(seriousness), scenario=as.factor(scenario))
+
 # do some cleaing of datasets prior to merge
 dat_ls <- dat_ipls %>% select(uid, scenario, physical, history, witness, rating) %>%
   mutate(group='legal')
@@ -16,6 +26,7 @@ dat_turk <- dat_rating_comb %>% rename(uid=hashedID) %>% mutate(group='mturk')
 
 # merge datasets
 dat <- rbind(dat_turk, dat_ls) %>% na.omit() %>% mutate(uid=as.integer(droplevels(uid)))
+dat <- merge(sc_pun, dat)
 Nsub <- length(unique(dat$uid))
 
 # subsample for quick prototyping
@@ -30,7 +41,8 @@ datU <- dat %>% filter(rating == U)
 dat <- dat %>% filter(rating != U & rating != L)
 
 # get design matrix (i.e., convert categoricals to binaries)
-form <- as.formula("~ -1 + scenario:group + scenario:group:(physical + history + witness)")
+form <- as.formula("~ -1 + scenario:group + seriousness:group + scenario:group:(physical + history + witness)")
+#form <- as.formula("~ -1 + scenario:group + scenario:group:(physical + history + witness)")
 X <- model.matrix(form, data=dat)
 XL <- model.matrix(form, data=datL)
 XU <- model.matrix(form, data=datU)
