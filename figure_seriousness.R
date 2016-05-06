@@ -24,10 +24,6 @@ p <- p + geom_density(aes(x=value, color=key)) +
   scale_color_manual(values=c('mturk'=color_genpop,'legal'=color_lawstudents),
                       name='Group',
                       breaks=c('mturk','legal'),
-                      labels=c('mTurk','Law Students'))
-
-
-  geom_boxplot(aes(x=evidence, y=mu, color=group)) + xlab('Effect') + ylab('Effect size') +
-  scale_x_discrete(breaks=c("baseline", "historyUnrelated","historyRelated","physicalNon-DNA","physicalDNA","witnessYes Witness"),
-                   labels=c("Baseline", "Unrelated\nprior crime", "Related\nprior crime",
-                            "Non-DNA\nphysical \nevidence", "DNA\nphysical\nevidence", "Witness\npresent"))
+                      labels=c('mTurk','Law Students')) +
+  xlab("Slope (pts/standard deviation from mean)") +
+  ggtitle("Effect of crime seriousness on confidence")
