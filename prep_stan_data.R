@@ -4,6 +4,10 @@ set.seed(11157)
 
 load('data/dat_rating_comb.rdata')
 load('data/dat_ipls.rdata')
+dat_lsba <- read.csv('data/data_lsba_deid.csv')
+for (col in c('scenario', 'physical', 'history', 'witness')) {
+  dat_lsba[[col]] <- as.factor(dat_lsba[[col]])
+}
 
 library(dplyr)
 library(tidyr)
@@ -14,8 +18,11 @@ dat_ls <- dat_ipls %>% select(uid, scenario, physical, history, witness, rating)
 
 dat_turk <- dat_rating_comb %>% rename(uid=hashedID) %>% mutate(group='mturk')
 
+dat_lsba <- dat_lsba %>% select(uid, scenario, physical, history, witness, rating) %>%
+  mutate(group='lsba')
+
 # merge datasets
-dat <- rbind(dat_turk, dat_ls) %>% na.omit() %>% mutate(uid=as.integer(droplevels(uid)))
+dat <- rbind(dat_turk, dat_ls, dat_lsba) %>% na.omit() %>% mutate(uid=as.integer(droplevels(uid)))
 Nsub <- length(unique(dat$uid))
 
 # subsample for quick prototyping
