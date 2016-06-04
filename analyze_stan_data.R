@@ -1,25 +1,38 @@
-load('data/stan_model_output.rdata')
 library(dplyr)
 library(ggplot2)
-color_genpop='#0656A3'
-color_lawstudents='#33a02c'
+color_genpop='#1b9e77'
+color_lawstudents='#d95f02'
+color_lsba ='#7570b3'
 
 # get posterior means for effects
-mu_samples <- rstan::extract(fit, pars=c('mu'))$mu
-mu <- colMeans(mu_samples)
+datfiles <- c('data/stan_model_output_turk.rdata', 
+              'data/stan_model_output_ls.rdata',
+              'data/stan_model_output_lsba.rdata')
 
-# bind to variable names in regression
-effects <- cbind(mu, preds)
+eff_list <- list()
+for (dd in 1:length(datfiles)) {
+  load(datfiles[dd])
+  mu_samples <- rstan::extract(fit, pars=c('mu'))$mu
+  mu <- colMeans(mu_samples)
+  
+  # bind to variable names in regression
+  eff_list[[length(eff_list) + 1]] <- cbind(mu, preds)
+}
+effects <- bind_rows(eff_list)
+
+
 
 # plot
 
 # comparison of effects across populations
 p <- ggplot(data=effects)
 p <- p + geom_boxplot(aes(x=evidence, y=mu, color=group)) + xlab('Effect') + ylab('Effect size') +
-  scale_color_manual(values=c('groupmturk'=color_genpop,'grouplegal'=color_lawstudents),
+  scale_color_manual(values=c('mturk'=color_genpop,
+                              'legal'=color_lawstudents,
+                              'lsba'=color_lsba),
                       name='Group',
-                      breaks=c('groupmturk','grouplegal'),
-                      labels=c('mTurk','Law Students')) +
+                      breaks=c('legal', 'lsba', 'mturk'),
+                      labels=c('Law Students', 'Louisiana Bar', 'mTurk')) +
   scale_x_discrete(breaks=c("baseline", "historyUnrelated","historyRelated","physicalNon-DNA","physicalDNA","witnessYes Witness"),
                    labels=c("Baseline", "Unrelated\nprior crime", "Related\nprior crime",
                             "Non-DNA\nphysical \nevidence", "DNA\nphysical\nevidence", "Witness\npresent"))
@@ -40,9 +53,23 @@ eff_slope_and_baseline <- merge(eff_baselines, eff_slopes)
 p <- ggplot(data=eff_slope_and_baseline)
 p <- p + geom_point(aes(x=baseline, y=slope, color=group), size=4) + xlab('Baseline') + ylab('Evidence') +
   geom_smooth(aes(x=baseline, y=slope), method=lm, color="black") +
-  scale_color_manual(values=c('groupmturk'=color_genpop,'grouplegal'=color_lawstudents),
+  scale_color_manual(values=c('mturk'=color_genpop,
+                              'legal'=color_lawstudents,
+                              'lsba'=color_lsba),
                       name='Group',
-                      breaks=c('groupmturk','grouplegal'),
-                      labels=c('mTurk','Law Students'))
+                      breaks=c('legal', 'lsba', 'mturk'),
+                      labels=c('Law Students', 'Louisiana Bar', 'mTurk'))
 ggsave('evidence_vs_baseline.pdf', plot=p, width=8, height=5, units='in', useDingbats=FALSE)
 
+
+# correlation of scenario baselines
+baselines <- effects %>% filter(evidence=='baseline') %>% spread(group, mu)
+p <- ggplot(data=baselines)
+
+# now pick one scatter
+p <- p + geom_point(aes(x=legal, y=mturk))
+p <- p + geom_point(aes(x=lsba, y=mturk))
+p <- p + geom_point(aes(x=lsba, y=legal))
+ 
+# correlation matrix
+cor(baselines[,3:5])
