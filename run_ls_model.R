@@ -11,14 +11,8 @@ library(tidyr)
 dat_ls <- dat_ipls %>% select(uid, scenario, physical, history, witness, rating) %>%
   mutate(group='legal')
 
-dat_turk <- dat_rating_comb %>% rename(uid=hashedID) %>% mutate(group='mturk')
-
-dat_lsba <- dat_lsba %>% select(uid, scenario, physical, history, witness, rating) %>%
-  mutate(group='lsba')
-
 # merge datasets
-#dat <- rbind(dat_turk, dat_ls, dat_lsba) %>% na.omit() %>% mutate(uid=as.integer(droplevels(uid)))
-dat <- rbind(dat_ls) %>% na.omit() %>% mutate(uid=as.integer(droplevels(uid)))
+dat <- dat_ls %>% na.omit() %>% mutate(uid=as.integer(droplevels(uid)))
 Nsub <- length(unique(dat$uid))
 
 # subsample for quick prototyping
@@ -41,9 +35,10 @@ XU <- model.matrix(form, data=datU)
 # make data frame of predictors corresponding to columns in X
 prednames <- colnames(X)
 suppressWarnings(preds <- data.frame(varname=prednames) %>%
-  separate(varname, c('scenario', 'group', 'evidence'), ':') %>%
+  separate(varname, c('scenario', 'evidence'), ':') %>%
   mutate(evidence = replace(evidence, is.na(evidence), 'baseline')) %>%
-  mutate(evidence = as.factor(evidence)))
+  mutate(evidence = as.factor(evidence))) %>%
+  mutate(group=unique(dat$group))
 
 # break out ratings, subject mapping
 R <- dat$rating
