@@ -34,7 +34,7 @@ XU <- model.matrix(form, data=datU)
 
 # make data frame of predictors corresponding to columns in X
 prednames <- colnames(X)
-suppressWarnings(preds <- data.frame(varname=prednames) %>%
+preds <- suppressWarnings(data.frame(varname=prednames) %>%
   separate(varname, c('scenario', 'evidence'), ':') %>%
   mutate(evidence = replace(evidence, is.na(evidence), 'baseline')) %>%
   mutate(evidence = as.factor(evidence))) %>%
