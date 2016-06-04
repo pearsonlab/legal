@@ -5,9 +5,10 @@ set.seed(11157)
 load('data/dat_rating_comb.rdata')
 load('data/dat_ipls.rdata')
 dat_lsba <- read.csv('data/data_lsba_deid.csv')
-for (col in c('scenario', 'physical', 'history', 'witness')) {
-  dat_lsba[[col]] <- as.factor(dat_lsba[[col]])
-}
+dat_lsba$scenario <- as.factor(dat_lsba$scenario)
+dat_lsba$physical <- factor(dat_lsba$physical, labels=c('No Physical', 'Non-DNA', 'DNA'))
+dat_lsba$history <- factor(dat_lsba$history, labels=c('No History', 'Unrelated', 'Related'))
+dat_lsba$witness <- factor(dat_lsba$witness, labels=c('No Witness', 'Yes Witness'))
 
 library(dplyr)
 library(tidyr)
