@@ -1,3 +1,4 @@
+library(tidyr)
 library(dplyr)
 library(ggplot2)
 color_genpop='#1b9e77'
@@ -12,11 +13,12 @@ datfiles <- c('data/stan_model_output_turk.rdata',
 eff_list <- list()
 for (dd in 1:length(datfiles)) {
   load(datfiles[dd])
-  mu_samples <- rstan::extract(fit, pars=c('mu'))$mu
-  mu <- colMeans(mu_samples)
+  samples <- rstan::extract(fit, pars=c('mu', 'tau'))
+  mu <- colMeans(samples$mu)
+  tau <- colMeans(samples$tau)
   
   # bind to variable names in regression
-  eff_list[[length(eff_list) + 1]] <- cbind(mu, preds)
+  eff_list[[length(eff_list) + 1]] <- cbind(mu, tau, preds)
 }
 effects <- bind_rows(eff_list)
 
@@ -63,7 +65,8 @@ ggsave('evidence_vs_baseline.pdf', plot=p, width=8, height=5, units='in', useDin
 
 
 # correlation of scenario baselines
-baselines <- effects %>% filter(evidence=='baseline') %>% spread(group, mu)
+baselines <- effects %>% select(-tau) %>% filter(evidence=='baseline') %>% spread(group, mu)
+variances <- effects %>% select(-mu) %>% filter(evidence=='baseline') %>% spread(group, tau)
 p <- ggplot(data=baselines)
 
 # now pick one scatter
@@ -73,3 +76,22 @@ p <- p + geom_point(aes(x=lsba, y=legal))
  
 # correlation matrix
 cor(baselines[,3:5])
+
+# comparison of variability of baselines within and between groups
+baseline_between <- cbind(baselines, std=apply(baselines[3:dim(baselines)[2]], 1, sd))
+variance_comparison <- gather(cbind(variances, between=baseline_between$std), 
+                              key=group, value=std, legal, lsba, mturk, between) %>%
+  mutate(scenario=as.numeric(sub("scenario","",scenario))) %>%
+  arrange(scenario) %>%
+  mutate(scenario=as.factor(scenario))
+p <- ggplot(data=variance_comparison)
+p <- p + geom_point(aes(x=scenario, y=std, color=group)) + 
+  scale_color_manual(values=c('mturk'=color_genpop,
+                              'legal'=color_lawstudents,
+                              'lsba'=color_lsba,
+                              'between'='black'),
+                      name='Group',
+                      breaks=c('legal', 'lsba', 'mturk', 'between'),
+                      labels=c('Law Students', 'Louisiana Bar', 'mTurk', 'Between Groups')) +
+  xlab("Scenario") +
+  ylab("Standard Deviation")
