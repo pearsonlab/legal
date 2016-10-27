@@ -17,7 +17,7 @@ data {
 transformed data {
   real M;
 
-  M <- (U + L)/2.;
+  M = (U + L)/2.;
 }
 parameters {
   vector[P] mu;  # population effect mean
@@ -33,17 +33,17 @@ transformed parameters {
 
   # draw individual effects
   for (i in 1:Nsub)
-    beta[i] <- mu + tau .* eps[i];
+    beta[i] = mu + tau .* eps[i];
 
   # draw mean predictions
   for (j in 1:N)
-    theta[j] <- dot_product(X[j], beta[S[j]]);
+    theta[j] = dot_product(X[j], beta[S[j]]);
 
   for (j in 1:NL)
-    thetaL[j] <- dot_product(XL[j], beta[SL[j]]);
+    thetaL[j] = dot_product(XL[j], beta[SL[j]]);
 
   for (j in 1:NU)
-    thetaU[j] <- dot_product(XU[j], beta[SU[j]]);
+    thetaU[j] = dot_product(XU[j], beta[SU[j]]);
 }
 model {
   for (i in 1:Nsub)
@@ -57,7 +57,7 @@ model {
   R ~ normal(theta, sigma);
 
   for (i in 1:NL)
-    increment_log_prob(normal_cdf_log(L, thetaL[i], sigma));
+    increment_log_prob(normal_lcdf_log(L, thetaL[i], sigma));
   for (i in 1:NU)
     increment_log_prob(normal_ccdf_log(L, thetaL[i], sigma));
 }
