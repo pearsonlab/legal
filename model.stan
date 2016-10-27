@@ -57,8 +57,8 @@ model {
   R ~ normal(theta, sigma);
 
   for (i in 1:NL)
-    increment_log_prob(normal_lcdf_log(L, thetaL[i], sigma));
+    target += normal_lcdf(L | thetaL[i], sigma);
   for (i in 1:NU)
-    increment_log_prob(normal_ccdf_log(L, thetaL[i], sigma));
+    target += normal_lccdf(L | thetaL[i], sigma);
 }
 
