@@ -85,13 +85,17 @@ variance_comparison <- gather(cbind(variances, between=baseline_between$std),
   arrange(scenario) %>%
   mutate(scenario=as.factor(scenario))
 p <- ggplot(data=variance_comparison)
-p <- p + geom_point(aes(x=scenario, y=std, color=group)) + 
+p <- p + geom_boxplot(aes(x=group, y=std, color=group)) + 
   scale_color_manual(values=c('mturk'=color_genpop,
                               'legal'=color_lawstudents,
                               'lsba'=color_lsba,
                               'between'='black'),
                       name='Group',
                       breaks=c('legal', 'lsba', 'mturk', 'between'),
+                      guide=FALSE,
                       labels=c('Law Students', 'Louisiana Bar', 'mTurk', 'Between Groups')) +
-  xlab("Scenario") +
-  ylab("Standard Deviation")
+  scale_x_discrete(name='Group',
+                      breaks=c('legal', 'lsba', 'mturk', 'between'),
+                      labels=c('Law Students', 'Louisiana Bar', 'mTurk', 'Between Groups')) +
+  ylab("Standard Deviation") +
+  ggtitle("Population baseline variance\nbetween vs. within groups")
