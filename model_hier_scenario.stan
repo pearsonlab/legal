@@ -3,7 +3,6 @@ data {
   int U;  # upper censoring
   int<lower=0> Nsub;  # number of subjects
   int<lower=0> Nc;  # number of cases
-  int<lower=0> Ng;  # number of groups
   int<lower=0> N;  # number of observations
   int<lower=0> NL;  # number of lower censored data
   int<lower=0> NU;  # number of upper censored data
@@ -18,48 +17,42 @@ data {
   int<lower=0> C[N];  # case corresponding to each rating
   int<lower=0> CL[NL];  # case corresponding to each lower censored rating
   int<lower=0> CU[NU];  # case corresponding to each upper censored rating
-  int<lower=0> G[Nsub];  # group corresponding to each subject
 }
 transformed data {
   real M;
-  int<lower=0> GG[N];  # group for each trial
 
   M = (U + L)/2.;
-  GG = G[S];
-  
 }
 parameters {
-  # mean and variance across scenarios for each regressor within group
-  vector[P] mu[Ng];  
-  vector<lower=0>[P] eta[Ng];  
+  # mean and variance across scenarios for each regressor 
+  vector[P] mu;  
+  vector<lower=0>[P] eta;  
   
-  # mean and variance across subjects within scenario for each group
-  vector<lower=0>[P] tau[Ng, Nc];
+  # mean and variance across subjects within scenario 
+  vector<lower=0>[P] tau[Nc];
   
   # residuals
-  vector[P] delta[Ng, Nc];  # scenario, group specific
+  vector[P] delta[Nc];  # scenario-specific
   vector[P] eps[Nsub];  # subject-specific
-  real<lower=0> sigma[Ng];  # observation noise
+  real<lower=0> sigma;  # observation noise
   
 }
 transformed parameters {
   real theta[N];
   real thetaL[NL];
   real thetaU[NU];
-  vector[P] gamma[Ng, Nc];  # scenario effects
+  vector[P] gamma[Nc];  # scenario effects
   vector[P] beta[Nsub, Nc];  # individual effects
   
   # draw scenario effects for each group
-  for (g in 1:Ng) {
-    for (c in 1:Nc) {
-      gamma[g, c] = mu[g] + eta[g] .* delta[g, c];
-    }
+  for (c in 1:Nc) {
+    gamma[c] = mu + eta .* delta[c];
   }
 
   # draw individual effects
   for (c in 1:Nc) {
     for (i in 1:Nsub) {
-      beta[i, c] = gamma[G[i], c] + tau[G[i], c] .* eps[i];
+      beta[i, c] = gamma[c] + tau[c] .* eps[i];
     }
   }
 
@@ -77,24 +70,20 @@ model {
   for (i in 1:Nsub)
     eps[i] ~ normal(0., 1.);
 
-  for (g in 1:Ng) {
-    for (c in 1:Nc) {
-      delta[g, c] ~ normal(0., 1.);
-    }
+  for (c in 1:Nc) {
+    delta[c] ~ normal(0., 1.);
   }
   
-  for (g in 1:Ng) {
-    mu[g] ~ normal(M, M);
-    eta[g] ~ cauchy(0, M);
-  }
+  mu ~ normal(M, M);
+  eta ~ cauchy(0, M);
 
   sigma ~ cauchy(0, M/10.);
 
-  R ~ normal(theta, sigma[GG]);
+  R ~ normal(theta, sigma);
 
   for (i in 1:NL)
-    target += normal_lcdf(L | thetaL[i], sigma[GG[i]]);
+    target += normal_lcdf(L | thetaL[i], sigma);
   for (i in 1:NU)
-    target += normal_lccdf(L | thetaL[i], sigma[GG[i]]);
+    target += normal_lccdf(L | thetaL[i], sigma);
 }
 
