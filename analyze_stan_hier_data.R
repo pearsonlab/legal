@@ -48,7 +48,8 @@ for (dd in 1:length(datfiles)) {
   eff_list[[length(eff_list) + 1]] <- df
 }
 # effects <- bind_rows(eff_list) %>% mutate(group=factor(group)) %>%
-effects <- bind_rows(eff_list) %>% mutate(group=factor(group))
+effects <- bind_rows(eff_list) %>% mutate(group=factor(group)) %>%
+  mutate(scenario=factor(as.numeric(scenario)))
 
 # plot
 
@@ -96,8 +97,9 @@ ggsave('evidence_vs_baseline_hier.pdf', plot=p, width=8, height=5, units='in', u
 
 
 # correlation of scenario baselines
-baselines <- effects %>% select(-c(tau, sig)) %>% filter(evidence=='baseline') %>% spread(group, mu)
-variances <- effects %>% select(-c(mu, sig)) %>% filter(evidence=='baseline') %>% spread(group, tau)
+baselines <- effects %>% filter(evidence=='baseline', variable=='gamma') %>% 
+  select(mean, scenario, group) %>% spread(group, mean) %>% arrange(scenario)
+#variances <- effects %>% select(-c(mu, sig)) %>% filter(evidence=='baseline') %>% spread(group, tau)
 p <- ggplot(data=baselines)
 
 # now pick one scatter
@@ -106,7 +108,7 @@ p <- p + geom_point(aes(x=lsba, y=mturk))
 p <- p + geom_point(aes(x=lsba, y=legal))
  
 # correlation matrix
-cor(baselines[,3:6], method = 'spearman')
+cor(baselines[,-1], method = 'spearman')
 
 # comparison of variability of baselines within and between groups
 baseline_between <- cbind(baselines, std=apply(baselines[3:dim(baselines)[2]], 1, sd))
