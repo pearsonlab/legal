@@ -1,5 +1,7 @@
 data
 .Rhistory
 *.pdf
+*.png
 *.obj
 *.jpg
+*.rda
