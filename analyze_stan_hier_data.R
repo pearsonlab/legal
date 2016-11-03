@@ -15,47 +15,46 @@ datfiles <- c('data/stan_model_output_hier_mturk.rdata',
               'data/stan_model_output_hier_lsba.rdata',
               'data/stan_model_output_hier_ilsa.rdata')
 
+renamer <- function(x) {
+  gsub("\\[\\s*(\\d+)(,\\s*(\\d+))*\\s*\\]", "_\\3\\_\\1", x, perl=TRUE)
+}
+qprobs <- c(0.025, 0.5, 0.975)
 eff_list <- list()
 for (dd in 1:length(datfiles)) {
   load(datfiles[dd])
-  samples <- rstan::extract(fit, pars=c('mu', 'eta', 'gamma', 'tau', 'sigma'))
-  mu <- colMeans(samples$mu)
   
-  eta <- colMeans(samples$eta)
+  # get matrix of summary statistics for each variable of interest
+  ss <- data.frame(summary(fit, pars=c('mu', 'eta', 'gamma', 'tau', 'sigma'), probs=qprobs)$summary)
   
-  gamma <- t(colMeans(samples$gamma))
-  gamma_names <- paste("gamma", 1:dim(gamma)[2], sep="")
-  colnames(gamma) <- gamma_names
+  # change rownames to make them easy to parse
+  rownames(ss) <- sapply(rownames(ss), renamer)
   
-  tau <- t(colMeans(samples$tau))
-  tau_names <- paste("tau", 1:dim(tau)[2], sep="")
-  colnames(tau) <- tau_names
+  # make row names into a column
+  ss$var <- rownames(ss)
+  rownames(ss) <- NULL
   
-  sig <- mean(samples$sig)
+  # make var into separate columns for variable, evidence code, and scenario
+  ss <- ss %>% separate(var, into=c("variable", "evidence_num", "scenario"))
   
+  # make group a character vector so we can merge without worrying about factor levels
   preds$group <- as.character(preds$group)
   
-  # handle replication of variables for each scenario, making data tidy
-  df <- cbind(mu, eta, sig, preds)
+  # create a trivial evidence code column
+  preds$evidence_num <- rownames(preds)
   
-  df2 <- cbind(gamma, preds)
-  df2 <- df2 %>% gather_("scenario", "gamma", gamma_names) %>%
-    mutate(scenario=factor(as.numeric(gsub("gamma", "", scenario))))
-  
-  df3 <- cbind(tau, preds)
-  df3 <- df3 %>% gather_("scenario", "tau", tau_names) %>%
-    mutate(scenario=factor(as.numeric(gsub("tau", "", scenario))))
-    
-  eff_list[[length(eff_list) + 1]] <- merge(merge(df, df2), df3)
+  # bind variables columnwise
+  df <- left_join(ss, preds, by="evidence_num")
+  df$group <- df$group[1]  # make sure group is present in all rows and the same
+  eff_list[[length(eff_list) + 1]] <- df
 }
+# effects <- bind_rows(eff_list) %>% mutate(group=factor(group)) %>%
 effects <- bind_rows(eff_list) %>% mutate(group=factor(group))
-  
 
 # plot
 
 # comparison of effects across populations
-p <- ggplot(data=(effects %>% filter(scenario == 1)))
-p <- p + geom_jitter(aes(x=evidence, y=mu, color=group), width = 0.25) + xlab('Effect') + ylab('Effect size') +
+p <- ggplot(data=(effects %>% filter(variable=='mu')))
+p <- p + geom_jitter(aes(x=evidence, y=mean, color=group), width = 0.25) + xlab('Effect') + ylab('Effect size') +
   scale_color_manual(values=c('mturk'=color_genpop,
                               'legal'=color_lawstudents,
                               'lsba'=color_lsba,
@@ -70,13 +69,16 @@ ggsave('evidence_effects_hier.pdf', plot=p, width=11, height=4.5, units='in', us
 
 # correlation between baselines and "slopes"
 # "slope" is a sum of effect sizes for evidence types
-eff_slopes <- effects %>% group_by(scenario, group) %>%
+eff_slopes <- effects %>% filter(variable=='gamma') %>% 
+  group_by(scenario, group) %>%
   filter(evidence != 'baseline') %>%
-  summarise(slope=mean(gamma))
+  summarise(slope=mean(mean))
 
-eff_baselines <- effects %>% group_by(scenario, group) %>%
-  filter(evidence == 'baseline') %>% select(-evidence) %>%
-  rename(baseline=gamma)
+eff_baselines <- effects %>% filter(variable=='gamma', evidence=='baseline') %>%
+  select(-evidence) %>%
+  group_by(scenario, group) %>%
+  rename(baseline=mean) %>%
+  select(baseline, scenario, group)
 
 eff_slope_and_baseline <- merge(eff_baselines, eff_slopes)
 
