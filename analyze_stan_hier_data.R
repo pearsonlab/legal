@@ -47,7 +47,6 @@ for (dd in 1:length(datfiles)) {
   df$group <- df$group[1]  # make sure group is present in all rows and the same
   eff_list[[length(eff_list) + 1]] <- df
 }
-# effects <- bind_rows(eff_list) %>% mutate(group=factor(group)) %>%
 effects <- bind_rows(eff_list) %>% mutate(group=factor(group)) %>%
   mutate(scenario=factor(as.numeric(scenario)))
 
@@ -55,7 +54,9 @@ effects <- bind_rows(eff_list) %>% mutate(group=factor(group)) %>%
 
 # comparison of effects across populations
 p <- ggplot(data=(effects %>% filter(variable=='mu')))
-p <- p + geom_jitter(aes(x=evidence, y=mean, color=group), width = 0.25) + xlab('Effect') + ylab('Effect size') +
+p <- p + geom_pointrange(aes(x=evidence, y=X50., ymin=X2.5., ymax=X97.5., color=group), 
+                         position=position_dodge(width = 0.25)) + 
+  xlab('Evidence') + ylab('Effect size (points)') +
   scale_color_manual(values=c('mturk'=color_genpop,
                               'legal'=color_lawstudents,
                               'lsba'=color_lsba,
@@ -99,9 +100,8 @@ ggsave('evidence_vs_baseline_hier.pdf', plot=p, width=8, height=5, units='in', u
 # correlation of scenario baselines
 baselines <- effects %>% filter(evidence=='baseline', variable=='gamma') %>% 
   select(mean, scenario, group) %>% spread(group, mean) %>% arrange(scenario)
-#variances <- effects %>% select(-c(mu, sig)) %>% filter(evidence=='baseline') %>% spread(group, tau)
-p <- ggplot(data=baselines)
 
+p <- ggplot(data=baselines)
 # now pick one scatter
 p <- p + geom_point(aes(x=legal, y=mturk))
 p <- p + geom_point(aes(x=lsba, y=mturk))
@@ -110,27 +110,30 @@ p <- p + geom_point(aes(x=lsba, y=legal))
 # correlation matrix
 cor(baselines[,-1], method = 'spearman')
 
-# comparison of variability of baselines within and between groups
-baseline_between <- cbind(baselines, std=apply(baselines[3:dim(baselines)[2]], 1, sd))
-variance_comparison <- gather(cbind(variances, between=baseline_between$std), 
-                              key=group, value=std, legal, lsba, ilsa, mturk, between) %>%
-  mutate(scenario=as.numeric(sub("scenario","",scenario))) %>%
-  arrange(scenario) %>%
-  mutate(scenario=as.factor(scenario))
-p <- ggplot(data=variance_comparison)
-p <- p + geom_boxplot(aes(x=group, y=std, color=group)) + 
+# comparison of variability within and between groups
+variance_comparision <- effects %>% 
+  filter(variable %in% c('eta', 'tau', 'sigma'), (evidence=='baseline') | (variable == 'sigma')) %>% 
+  select(X2.5., X50., X97.5., variable, scenario, group) %>%
+  mutate(variable = factor(variable, levels=c('eta', 'tau', 'sigma')))
+
+p <- ggplot() +
+  geom_pointrange(data=variance_comparision %>% filter(variable %in% c('eta', 'sigma')),
+                  aes(x=variable, y=X50., ymin=X2.5., ymax=X97.5., color=group), 
+                  position=position_dodge(width=0.5)) +
+  geom_boxplot(data=variance_comparision %>% filter(variable=='tau'),
+               aes(x=variable, y=X50., color=group)) +
+  scale_x_discrete(name='',
+                      breaks=c('eta', 'tau', 'sigma'),
+                      limits=c('eta', 'tau', 'sigma'),
+                      labels=c('Across Scenarios', 'Across Subjects', 'Within Subjects')) +
   scale_color_manual(values=c('mturk'=color_genpop,
                               'legal'=color_lawstudents,
                               'lsba'=color_lsba,
-                              'ilsa'=color_ilsa,
-                              'between'='black'),
+                              'ilsa'=color_ilsa),
                       name='Group',
-                      breaks=c('legal', 'lsba', 'ilsa', 'mturk', 'between'),
-                      guide=FALSE,
-                      labels=c('Law Students', 'Louisiana Bar', 'Illinois Prosecutors', 'mTurk', 'Between Groups')) +
-  scale_x_discrete(name='Group',
-                      breaks=c('legal', 'lsba', 'ilsa', 'mturk', 'between'),
-                      labels=c('Law Students', 'Louisiana Bar', 'Illinois Prosecutors', 'mTurk', 'Between Groups')) +
-  ylab("Standard Deviation") +
-  ggtitle("Population baseline variance\nbetween vs. within groups")
-ggsave('within_vs_between_variance.pdf', plot=p, width=8, height=5, units='in', useDingbats=FALSE)
+                      breaks=c('legal', 'lsba', 'ilsa', 'mturk'),
+                      labels=c('Law Students', 'Louisiana Bar', 'Illinois Prosecutors', 'mTurk')) +
+  ylim(0, 60) +
+  ylab("Standard Deviation (points)")
+ggsave('within_vs_between_variance_hier.pdf', plot=p, width=8, height=5, units='in', useDingbats=FALSE)
+  

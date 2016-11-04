@@ -76,6 +76,8 @@ model {
   
   mu ~ normal(M, M);
   eta ~ cauchy(0, M);
+  for (c in 1:Nc)
+    tau[c] ~ cauchy(0, M);
 
   sigma ~ cauchy(0, M/10.);
 
