@@ -1,6 +1,7 @@
 library(tidyr)
 library(dplyr)
 library(ggplot2)
+library(rstan)
 color_genpop='#1b9e77'
 color_lawstudents='#d95f02'
 color_lsba ='#7570b3'
@@ -10,10 +11,10 @@ color_ilsa ='#9e331b'
 # #b39470
 
 # get posterior means for effects
-datfiles <- c('data/stan_model_output_hier_mturk.rdata', 
-              'data/stan_model_output_hier_ipls.rdata',
-              'data/stan_model_output_hier_lsba.rdata',
-              'data/stan_model_output_hier_ilsa.rdata')
+datfiles <- c('data/stan_model_output_hier_cauchy_mturk.rdata', 
+              'data/stan_model_output_hier_cauchy_ipls.rdata',
+              'data/stan_model_output_hier_cauchy_lsba.rdata',
+              'data/stan_model_output_hier_cauchy_ilsa.rdata')
 
 renamer <- function(x) {
   gsub("\\[\\s*(\\d+)(,\\s*(\\d+))*\\s*\\]", "_\\3\\_\\1", x, perl=TRUE)

@@ -100,4 +100,4 @@ stan_dat <- list(L=L, U=U, Nsub=Nsub, Nc=Nc, N=N, NL=NL, NU=NU, P=P, R=R,
 fit <- stan(file = 'model_hier_scenario.stan', data = stan_dat,
             iter = iter, chains = 4, thin=thin)
 
-save.image(paste('data/stan_model_output_hier_', dset, '.rdata', sep=''))
+save.image(paste('data/stan_model_output_hier_cauchy_', dset, '.rdata', sep=''))

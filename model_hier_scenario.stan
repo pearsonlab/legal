@@ -68,10 +68,10 @@ transformed parameters {
 }
 model {
   for (i in 1:Nsub)
-    eps[i] ~ normal(0., 1.);
+    eps[i] ~ cauchy(0., 1.);
 
   for (c in 1:Nc) {
-    delta[c] ~ normal(0., 1.);
+    delta[c] ~ cauchy(0., 1.);
   }
   
   mu ~ normal(M, M);
