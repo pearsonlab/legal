@@ -11,10 +11,10 @@ color_ilsa ='#9e331b'
 # #b39470
 
 # get posterior means for effects
-datfiles <- c('data/stan_model_output_hier_cauchy_mturk.rdata', 
-              'data/stan_model_output_hier_cauchy_ipls.rdata',
-              'data/stan_model_output_hier_cauchy_lsba.rdata',
-              'data/stan_model_output_hier_cauchy_ilsa.rdata')
+datfiles <- c('data/stan_model_output_hier_t_mturk.rdata', 
+              'data/stan_model_output_hier_t_ipls.rdata',
+              'data/stan_model_output_hier_t_lsba.rdata',
+              'data/stan_model_output_hier_t_ilsa.rdata')
 
 renamer <- function(x) {
   gsub("\\[\\s*(\\d+)(,\\s*(\\d+))*\\s*\\]", "_\\3\\_\\1", x, perl=TRUE)
@@ -112,16 +112,16 @@ p <- p + geom_point(aes(x=lsba, y=legal))
 cor(baselines[,-1], method = 'spearman')
 
 # comparison of variability within and between groups
-variance_comparision <- effects %>% 
+variance_comparison <- effects %>% 
   filter(variable %in% c('eta', 'tau', 'sigma'), (evidence=='baseline') | (variable == 'sigma')) %>% 
   select(X2.5., X50., X97.5., variable, scenario, group) %>%
   mutate(variable = factor(variable, levels=c('eta', 'tau', 'sigma')))
 
 p <- ggplot() +
-  geom_pointrange(data=variance_comparision %>% filter(variable %in% c('eta', 'sigma')),
+  geom_pointrange(data=variance_comparison %>% filter(variable %in% c('eta', 'sigma')),
                   aes(x=variable, y=X50., ymin=X2.5., ymax=X97.5., color=group), 
                   position=position_dodge(width=0.5)) +
-  geom_boxplot(data=variance_comparision %>% filter(variable=='tau'),
+  geom_boxplot(data=variance_comparison %>% filter(variable=='tau'),
                aes(x=variable, y=X50., color=group)) +
   scale_x_discrete(name='',
                       breaks=c('eta', 'tau', 'sigma'),

@@ -36,6 +36,10 @@ parameters {
   vector[P] eps[Nsub];  # subject-specific
   real<lower=0> sigma;  # observation noise
   
+  # degrees of freedom
+  real<lower=1> nu_eps;
+  real<lower=1> nu_delta;
+  
 }
 transformed parameters {
   real theta[N];
@@ -68,11 +72,14 @@ transformed parameters {
 }
 model {
   for (i in 1:Nsub)
-    eps[i] ~ cauchy(0., 1.);
+    eps[i] ~ student_t(nu_eps, 0., 1.);
 
   for (c in 1:Nc) {
-    delta[c] ~ cauchy(0., 1.);
+    delta[c] ~ student_t(nu_delta, 0., 1.);
   }
+  
+  nu_eps ~ normal(0, 100);
+  nu_delta ~ normal(0, 100);
   
   mu ~ normal(M, M);
   eta ~ cauchy(0, M);
