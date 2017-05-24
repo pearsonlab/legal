@@ -51,6 +51,15 @@ for (dd in 1:length(datfiles)) {
 effects <- bind_rows(eff_list) %>% mutate(group=factor(group)) %>%
   mutate(scenario=factor(as.numeric(scenario)))
 
+# how do scenario baselines correspond across groups?
+# make a dataframe of scenario baseline means
+baseline_means <- effects %>% filter(variable == 'gamma', evidence == 'baseline') %>% 
+                  select(mean, scenario, group) %>%
+                  spread(group, mean)
+
+pcorr <- cor(baseline_means[,-1])
+rcorr <- cor(baseline_means[,-1], method='spearman')
+
 # plot
 
 # comparison of effects across populations
