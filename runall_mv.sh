@@ -1,0 +1,4 @@
+Rscript run_hier_model_multivariate.R mturk
+Rscript run_hier_model_multivariate.R ipls
+Rscript run_hier_model_multivariate.R lsba
+Rscript run_hier_model_multivariate.R ilsa
