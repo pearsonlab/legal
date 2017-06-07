@@ -11,7 +11,7 @@ color_ilsa ='#9e331b'
 # #b39470
 
 # get posterior means for effects
-datfiles <- c('data/stan_model_output_hier_t_mturk.rdata', 
+datfiles <- c('data/stan_model_output_hier_t_mturk.rdata',
               'data/stan_model_output_hier_t_ipls.rdata',
               'data/stan_model_output_hier_t_lsba.rdata',
               'data/stan_model_output_hier_t_ilsa.rdata')
@@ -23,26 +23,26 @@ qprobs <- c(0.025, 0.5, 0.975)
 eff_list <- list()
 for (dd in 1:length(datfiles)) {
   load(datfiles[dd])
-  
+
   # get matrix of summary statistics for each variable of interest
   ss <- data.frame(summary(fit, pars=c('mu', 'eta', 'gamma', 'tau', 'sigma'), probs=qprobs)$summary)
-  
+
   # change rownames to make them easy to parse
   rownames(ss) <- sapply(rownames(ss), renamer)
-  
+
   # make row names into a column
   ss$var <- rownames(ss)
   rownames(ss) <- NULL
-  
+
   # make var into separate columns for variable, evidence code, and scenario
   ss <- ss %>% separate(var, into=c("variable", "evidence_num", "scenario"))
-  
+
   # make group a character vector so we can merge without worrying about factor levels
   preds$group <- as.character(preds$group)
-  
+
   # create a trivial evidence code column
   preds$evidence_num <- rownames(preds)
-  
+
   # bind variables columnwise
   df <- left_join(ss, preds, by="evidence_num")
   df$group <- df$group[1]  # make sure group is present in all rows and the same
@@ -53,7 +53,7 @@ effects <- bind_rows(eff_list) %>% mutate(group=factor(group)) %>%
 
 # how do scenario baselines correspond across groups?
 # make a dataframe of scenario baseline means
-baseline_means <- effects %>% filter(variable == 'gamma', evidence == 'baseline') %>% 
+baseline_means <- effects %>% filter(variable == 'gamma', evidence == 'baseline') %>%
                   select(mean, scenario, group) %>%
                   spread(group, mean)
 
@@ -64,8 +64,8 @@ rcorr <- cor(baseline_means[,-1], method='spearman')
 
 # comparison of effects across populations
 p <- ggplot(data=(effects %>% filter(variable=='mu')))
-p <- p + geom_pointrange(aes(x=evidence, y=X50., ymin=X2.5., ymax=X97.5., color=group), 
-                         position=position_dodge(width = 0.25)) + 
+p <- p + geom_pointrange(aes(x=evidence, y=X50., ymin=X2.5., ymax=X97.5., color=group),
+                         position=position_dodge(width = 0.25)) +
   xlab('Evidence') + ylab('Effect size (points)') +
   scale_color_manual(values=c('mturk'=color_genpop,
                               'legal'=color_lawstudents,
@@ -81,7 +81,7 @@ ggsave('evidence_effects_hier.pdf', plot=p, width=11, height=4.5, units='in', us
 
 # correlation between baselines and "slopes"
 # "slope" is a sum of effect sizes for evidence types
-eff_slopes <- effects %>% filter(variable=='gamma') %>% 
+eff_slopes <- effects %>% filter(variable=='gamma') %>%
   group_by(scenario, group) %>%
   filter(evidence != 'baseline') %>%
   summarise(slope=mean(mean))
@@ -108,7 +108,7 @@ ggsave('evidence_vs_baseline_hier.pdf', plot=p, width=8, height=5, units='in', u
 
 
 # correlation of scenario baselines
-baselines <- effects %>% filter(evidence=='baseline', variable=='gamma') %>% 
+baselines <- effects %>% filter(evidence=='baseline', variable=='gamma') %>%
   select(mean, scenario, group) %>% spread(group, mean) %>% arrange(scenario)
 
 p <- ggplot(data=baselines)
@@ -116,26 +116,26 @@ p <- ggplot(data=baselines)
 p <- p + geom_point(aes(x=legal, y=mturk))
 p <- p + geom_point(aes(x=lsba, y=mturk))
 p <- p + geom_point(aes(x=lsba, y=legal))
- 
+
 # correlation matrix
 cor(baselines[,-1], method = 'spearman')
 
 # comparison of variability within and between groups
-variance_comparison <- effects %>% 
-  filter(variable %in% c('eta', 'tau', 'sigma'), (evidence=='baseline') | (variable == 'sigma')) %>% 
+variance_comparison <- effects %>%
+  filter(variable %in% c('eta', 'tau', 'sigma'), (evidence=='baseline') | (variable == 'sigma')) %>%
   select(X2.5., X50., X97.5., variable, scenario, group) %>%
   mutate(variable = factor(variable, levels=c('eta', 'tau', 'sigma')))
 
 p <- ggplot() +
   geom_pointrange(data=variance_comparison %>% filter(variable %in% c('eta', 'sigma')),
-                  aes(x=variable, y=X50., ymin=X2.5., ymax=X97.5., color=group), 
+                  aes(x=variable, y=X50., ymin=X2.5., ymax=X97.5., color=group),
                   position=position_dodge(width=0.5)) +
   geom_boxplot(data=variance_comparison %>% filter(variable=='tau'),
                aes(x=variable, y=X50., color=group)) +
   scale_x_discrete(name='',
                       breaks=c('eta', 'tau', 'sigma'),
                       limits=c('eta', 'tau', 'sigma'),
-                      labels=c('Across Scenarios', 'Across Subjects', 'Within Subjects')) +
+                      labels=c('Across Scenarios\nWithin Group', 'Across Subjects\nWithin Scenario', 'Across Trials\nWithin Subjects')) +
   scale_color_manual(values=c('mturk'=color_genpop,
                               'legal'=color_lawstudents,
                               'lsba'=color_lsba,
@@ -146,4 +146,3 @@ p <- ggplot() +
   ylim(0, 60) +
   ylab("Standard Deviation (points)")
 ggsave('within_vs_between_variance_hier.pdf', plot=p, width=8, height=5, units='in', useDingbats=FALSE)
-  
