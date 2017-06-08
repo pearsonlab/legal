@@ -8,13 +8,13 @@ args = commandArgs(trailingOnly=TRUE)
 dset <- args[1]
 iter <- 1000
 thin <- 1
-foo <- switch(dset, 
+foo <- switch(dset,
               mturk={
                 datadir <- 'data/'
-                data_file_names <- paste(datadir, c('data_mq_nothreat_deid.csv', 
-                                                    'data_cu_deid.csv', 
-                                                    'data_sq_nothreat_deid.csv', 
-                                                    'data_nb_deid.csv', 
+                data_file_names <- paste(datadir, c('data_mq_nothreat_deid.csv',
+                                                    'data_cu_deid.csv',
+                                                    'data_sq_nothreat_deid.csv',
+                                                    'data_nb_deid.csv',
                                                     'data_th_deid.csv'), sep="")
                 dlist <- list()
                 for (ind in 1:length(data_file_names)) {
@@ -23,9 +23,9 @@ foo <- switch(dset,
                 df <- do.call('bind_rows', dlist)
                 # do some cleaing of datasets prior to merge
                 group <- 'mturk'
-                dat <- df %>% dplyr::rename(uid=hashedID) %>% 
-                              select(uid, scenario, physical, history, witness, 
-                                     rating, rate_punishment) %>% 
+                dat <- df %>% dplyr::rename(uid=hashedID) %>%
+                              select(uid, scenario, physical, history, witness,
+                                     rating, rate_punishment) %>%
                               filter(!is.na(rating), !is.na(rate_punishment)) %>%
                               mutate_each('as.factor', c(uid, scenario, physical, history, witness)) %>%
                               mutate(group='mturk')
@@ -40,29 +40,29 @@ foo <- switch(dset,
                   mutate(group='legal')
               },
               lsba={
-                dat <- read.csv('data/data_prof_deid.csv') 
+                dat <- read.csv('data/data_prof_deid.csv')
                 group <- 'lsba'
                 dat$scenario <- as.factor(dat$scenario)
                 dat$physical <- factor(dat$physical, labels=c('No Physical', 'Non-DNA', 'DNA'))
                 dat$history <- factor(dat$history, labels=c('No History', 'Unrelated', 'Related'))
                 dat$witness <- factor(dat$witness, labels=c('No Witness', 'Yes Witness'))
-                dat <- dat %>% filter(group == 'LSBA2016') 
+                dat <- dat %>% filter(group == 'LSBA2016')
                 dat <- dat %>% select(uid, scenario, physical, history, witness, rating, rate_punishment)
               },
               ilsa={
-                dat <- read.csv('data/data_prof_deid.csv') 
+                dat <- read.csv('data/data_prof_deid.csv')
                 group <- 'ilsa'
                 dat$scenario <- as.factor(dat$scenario)
                 dat$physical <- factor(dat$physical, labels=c('No Physical', 'Non-DNA', 'DNA'))
                 dat$history <- factor(dat$history, labels=c('No History', 'Unrelated', 'Related'))
                 dat$witness <- factor(dat$witness, labels=c('No Witness', 'Yes Witness'))
-                dat <- dat %>% filter(group == 'ILSA2016') 
+                dat <- dat %>% filter(group == 'ILSA2016')
                 dat <- dat %>% select(uid, scenario, physical, history, witness, rating, rate_punishment)
               }
 )
 
 # final cleanup
-dat <- dat %>% na.omit() %>% mutate(uid=as.integer(droplevels(uid))) 
+dat <- dat %>% na.omit() %>% mutate(uid=as.integer(droplevels(uid)))
 Nsub <- length(unique(dat$uid))
 
 # subsample for quick prototyping
@@ -73,7 +73,7 @@ L <- min(dat$rating)
 U <- max(dat$rating)
 
 # get censoring data frame
-R <- dat %>% select(rating, rate_punishment) 
+R <- dat %>% select(rating, rate_punishment)
 cens <- (R == U) - (R == L)
 
 # get design matrix (i.e., convert categoricals to binaries)
@@ -87,7 +87,6 @@ prednames[1] <- 'baseline'
 preds <- data.frame(evidence=prednames, group=group)
 
 # break out ratings, subject mapping
-R <- dat %>% select(rating, rate_punishment)
 Nr <- dim(R)[2]
 S <- dat$uid
 C <- as.numeric(dat$scenario)
