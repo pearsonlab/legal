@@ -1,46 +1,89 @@
-# second figure from the grant application
+# second figure from the paper
 
-# note: current ggplot2 and gridExtra do not play nicely with each other
-# required: install.packages("devtools"); library(devtools); install_github("hadley/ggplot2")
-
-library(ggplot2)
-library(gridExtra)
 library(dplyr)
+library(ggplot2)
+library(grid)
+library(gridExtra)
 library(gtable)
 library(gridBase)
 
 # load fit object containing mturkers only
-load('data/fit.rdata')
-load('data/dat_rating_comb.rdata')
+#load('data/fit.rdata')
+#load('data/dat_rating_comb.rdata')
+
+color_genpop='#1b9e77'
+color_lawstudents='#d95f02'
+color_lsba ='#7570b3'
+color_ilsa ='#9e331b'
 
 color_outrage='#733238'
 color_punish='#A69A60'
 color_threat='#D9BF3D'
 color_conf='#0656A3'
 
+# get posterior means for effects
+datfiles <- c('data/stan_model_output_hier_t_mturk.rdata')
+
+renamer <- function(x) {
+  gsub("\\[\\s*(\\d+)(,\\s*(\\d+))*\\s*\\]", "_\\3\\_\\1", x, perl=TRUE)
+}
+qprobs <- c(0.025, 0.5, 0.975)
+eff_list <- list()
+for (dd in 1:length(datfiles)) {
+  load(datfiles[dd])
+  
+  # get matrix of summary statistics for each variable of interest
+  ss <- data.frame(summary(fit, pars=c('mu', 'eta', 'gamma', 'tau', 'sigma'), probs=qprobs)$summary)
+  
+  # change rownames to make them easy to parse
+  rownames(ss) <- sapply(rownames(ss), renamer)
+  
+  # make row names into a column
+  ss$var <- rownames(ss)
+  rownames(ss) <- NULL
+  
+  # make var into separate columns for variable, evidence code, and scenario
+  ss <- ss %>% separate(var, into=c("variable", "evidence_num", "scenario"))
+  
+  # make group a character vector so we can merge without worrying about factor levels
+  preds$group <- as.character(preds$group)
+  
+  # create a trivial evidence code column
+  preds$evidence_num <- rownames(preds)
+  
+  # bind variables columnwise
+  df <- left_join(ss, preds, by="evidence_num")
+  df$group <- df$group[1]  # make sure group is present in all rows and the same
+  eff_list[[length(eff_list) + 1]] <- df
+}
+effects <- bind_rows(eff_list) %>% mutate(group=factor(group)) %>%
+  mutate(scenario=factor(as.numeric(scenario)))
+
 # change name of fit object and do some basic processing
-fitobj <- fit
-source('process_fits.R')
+#fitobj <- fit
+#source('process_fits.R')
 
 ############### Panel 1: Effect sizes for confidence ##################################
 # get evidence effects
-fe <- fixed_effects %>% filter(predictor.1 %in% ev_vars, outcome == 'rating') %>%
-  mutate(predictor=factor(predictor.1, levels=c('physical2', 'physical1','witness1','history2','history1')))
+fe <- effects %>% filter(variable == 'mu', evidence != 'baseline') %>%
+      select(mean, evidence, X2.5., X97.5.) %>%
+      mutate(evidence=factor(evidence, levels=c("physicalDNA", 
+                                                "physicalNon-DNA", 
+                                                "witnessYes Witness", 
+                                                "historyRelated", 
+                                                "historyUnrelated")))
 
 plt_1 <- ggplot(data=fe) +
-  geom_pointrange(aes(x=predictor, y=post.mean, ymin=l95.CI, ymax=u95.CI, color=outcome), size=1.) + 
-  scale_x_discrete(breaks=c("history1","history2","physical1","physical2","witness1"), 
-                   labels=c("Unrelated \nprior crime", "Related \nprior crime", 
-                            "Non-DNA \nphysical \nevidence", "DNA \nphysical \nevidence", 
-                            "Witness \npresent")) +
-  scale_color_manual(values=c('rating'=color_conf,'rate_punishment'=color_punish,
-                              'rate_threat'=color_threat,'rate_outrage'=color_outrage),
-                      name='Rating',
-                      breaks=c('rating','rate_outrage','rate_punishment','rate_threat'),
-                      labels=c('Confidence','Outrage','Punishment','Threat')) +
+  geom_pointrange(aes(x=evidence, y=mean, ymin=X2.5., ymax=X97.5.), color=color_genpop, size=1.) + 
+  scale_x_discrete(breaks=c("physicalDNA", "physicalNon-DNA", "witnessYes Witness", "historyRelated", "historyUnrelated"), 
+                   labels=c("DNA \nphysical \nevidence", 
+                            "Non-DNA \nphysical \nevidence",  
+                            "Witness \npresent", 
+                            "Related \nprior crime", 
+                            "Unrelated \nprior crime")) +
   coord_cartesian(ylim=c(0,40)) +
   labs(title="A") +
-  ylab("Confidence") +
+  ylab("Strength of Case (pooints)") +
   xlab("Evidence Effects") +
   geom_vline(xintercept=1.5, colour='grey') +
   geom_vline(xintercept=2.5, colour='grey') +
@@ -55,17 +98,18 @@ plt_1 <- ggplot(data=fe) +
     axis.ticks.x = element_blank(),
     axis.text.y = element_text(hjust = 1, size=rel(2.5), color='black'),
     axis.title.y = element_text(size=rel(1.5)),
-    plot.title=element_text(size=20,vjust=2),
+    plot.title=element_text(size=20, vjust=2, hjust=0.5),
     legend.text = element_text(size=rel(1.5)),
     legend.title = element_text(size=rel(1.5)),
     legend.position='none')
+
 
 ############### Panel 2: Baseline effects ##################################
 # get scenario effects
 se <- fixed_effects %>% filter(predictor.1 %in% sc_vars, outcome == 'rating')
 
 plt_2 <- ggplot(data = se, aes(x=outcome, y=post.mean)) +
-  geom_boxplot(aes(stat="boxplot", color=factor(outcome)),lwd=1,fatten=2.5) +
+  geom_boxplot(aes(color=factor(outcome)),lwd=1,fatten=2.5) +
   geom_point(position=position_jitter(width=0.01), size=rel(4), aes(color=factor(outcome),alpha=0.5)) +
   scale_x_discrete(breaks=c("rate_outrage","rate_punishment","rate_threat", "rating"), 
                    labels=c("Outrage", "Punishment", "Threat", "Confidence")) +
