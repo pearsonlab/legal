@@ -29,7 +29,8 @@ foo <- switch(dset,
                 dat$history <- factor(dat$history, labels=c('No History', 'Unrelated', 'Related'))
                 dat$witness <- factor(dat$witness, labels=c('No Witness', 'Yes Witness'))
                 dat <- dat %>% filter(group == 'LSBA2016')
-                dat <- dat %>% select(uid, scenario, physical, history, witness, rating)
+                dat <- dat %>% select(uid, scenario, physical, history, witness, rating) %>% 
+                               mutate(group='lsba')
               },
               ilsa={
                 dat <- read.csv('data/data_prof_deid.csv')
@@ -39,7 +40,8 @@ foo <- switch(dset,
                 dat$history <- factor(dat$history, labels=c('No History', 'Unrelated', 'Related'))
                 dat$witness <- factor(dat$witness, labels=c('No Witness', 'Yes Witness'))
                 dat <- dat %>% filter(group == 'ILSA2016')
-                dat <- dat %>% select(uid, scenario, physical, history, witness, rating)
+                dat <- dat %>% select(uid, scenario, physical, history, witness, rating) %>%
+                               mutate(group='ilsa')
               }
 )
 
