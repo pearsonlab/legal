@@ -3,7 +3,8 @@ library(tidyr)
 library(dplyr)
 library(ggplot2)
 library(rstan)
-color_genpop='#1b9e77'
+
+color_genpop='#0656A3'
 color_lawstudents='#d95f02'
 color_lsba ='#7570b3'
 color_ilsa ='#9e331b'
@@ -11,43 +12,9 @@ color_ilsa ='#9e331b'
 # #023bd9
 # #b39470
 
-# get posterior means for effects
-datfiles <- c('data/stan_model_output_hier_t_mturk.rdata')
-
-renamer <- function(x) {
-  gsub("\\[\\s*(\\d+)(,\\s*(\\d+))*\\s*\\]", "_\\3\\_\\1", x, perl=TRUE)
-}
-qprobs <- c(0.025, 0.5, 0.975)
-eff_list <- list()
-for (dd in 1:length(datfiles)) {
-  load(datfiles[dd])
-  
-  # get matrix of summary statistics for each variable of interest
-  ss <- data.frame(summary(fit, pars=c('mu', 'eta', 'gamma', 'tau', 'sigma'), probs=qprobs)$summary)
-  
-  # change rownames to make them easy to parse
-  rownames(ss) <- sapply(rownames(ss), renamer)
-  
-  # make row names into a column
-  ss$var <- rownames(ss)
-  rownames(ss) <- NULL
-  
-  # make var into separate columns for variable, evidence code, and scenario
-  ss <- ss %>% separate(var, into=c("variable", "evidence_num", "scenario"))
-  
-  # make group a character vector so we can merge without worrying about factor levels
-  preds$group <- as.character(preds$group)
-  
-  # create a trivial evidence code column
-  preds$evidence_num <- rownames(preds)
-  
-  # bind variables columnwise
-  df <- left_join(ss, preds, by="evidence_num")
-  df$group <- df$group[1]  # make sure group is present in all rows and the same
-  eff_list[[length(eff_list) + 1]] <- df
-}
-effects <- bind_rows(eff_list) %>% mutate(group=factor(group)) %>%
-  mutate(scenario=factor(as.numeric(scenario)))
+load('data/stan_hier_postprocess.rdata')
+effects <- effects %>% filter(group=='mturk')
+dat <- dat %>% filter(group=='mturk')
 
 ####################
 
@@ -99,4 +66,4 @@ p <- p + geom_boxplot(aes(code, rating), outlier.size=0, outlier.stroke=0) +
        legend.title = element_text(size=rel(1.5)),
        legend.position='none')
 
-ggsave('data_vs_predictions.pdf', plot=p, width=8, height=5, units='in', useDingbats=FALSE)
+ggsave('figure_paper_1C.pdf', plot=p, width=8, height=5, units='in', useDingbats=FALSE)
