@@ -1,5 +1,5 @@
 # second figure from the paper
-
+library(tidyr)
 library(dplyr)
 library(ggplot2)
 library(grid)
@@ -7,11 +7,7 @@ library(gridExtra)
 library(gtable)
 library(gridBase)
 
-# load fit object containing mturkers only
-#load('data/fit.rdata')
-#load('data/dat_rating_comb.rdata')
-
-color_genpop='#1b9e77'
+color_genpop='#0656A3'
 color_lawstudents='#d95f02'
 color_lsba ='#7570b3'
 color_ilsa ='#9e331b'
@@ -33,7 +29,7 @@ for (dd in 1:length(datfiles)) {
   load(datfiles[dd])
   
   # get matrix of summary statistics for each variable of interest
-  ss <- data.frame(summary(fit, pars=c('mu', 'eta', 'gamma', 'tau', 'sigma'), probs=qprobs)$summary)
+  ss <- data.frame(rstan::summary(fit, pars=c('mu', 'eta', 'gamma', 'tau', 'sigma'), probs=qprobs)$summary)
   
   # change rownames to make them easy to parse
   rownames(ss) <- sapply(rownames(ss), renamer)
@@ -59,10 +55,6 @@ for (dd in 1:length(datfiles)) {
 effects <- bind_rows(eff_list) %>% mutate(group=factor(group)) %>%
   mutate(scenario=factor(as.numeric(scenario)))
 
-# change name of fit object and do some basic processing
-#fitobj <- fit
-#source('process_fits.R')
-
 ############### Panel 1: Effect sizes for confidence ##################################
 # get evidence effects
 fe <- effects %>% filter(variable == 'mu', evidence != 'baseline') %>%
@@ -74,7 +66,7 @@ fe <- effects %>% filter(variable == 'mu', evidence != 'baseline') %>%
                                                 "historyUnrelated")))
 
 plt_1 <- ggplot(data=fe) +
-  geom_pointrange(aes(x=evidence, y=mean, ymin=X2.5., ymax=X97.5.), color=color_genpop, size=1.) + 
+  geom_pointrange(aes(x=evidence, y=mean, ymin=X2.5., ymax=X97.5.), color=color_conf, size=1.) + 
   scale_x_discrete(breaks=c("physicalDNA", "physicalNon-DNA", "witnessYes Witness", "historyRelated", "historyUnrelated"), 
                    labels=c("DNA \nphysical \nevidence", 
                             "Non-DNA \nphysical \nevidence",  
@@ -90,6 +82,7 @@ plt_1 <- ggplot(data=fe) +
   geom_vline(xintercept=3.5, colour='grey') +
   geom_vline(xintercept=4.5, colour='grey') +
   theme(
+    plot.margin=unit(c(5.5, 5.5, 5.5, 5.5), "points"),
     panel.grid=element_blank(),
     panel.background = element_blank(),
     axis.line = element_line(color="black"),
@@ -106,11 +99,13 @@ plt_1 <- ggplot(data=fe) +
 
 ############### Panel 2: Baseline effects ##################################
 # get scenario effects
-se <- fixed_effects %>% filter(predictor.1 %in% sc_vars, outcome == 'rating')
+se <- effects %>% filter(variable == 'gamma', evidence == 'baseline') %>% 
+                  select(scenario, mean) %>%
+                  mutate(outcome='rating')
 
-plt_2 <- ggplot(data = se, aes(x=outcome, y=post.mean)) +
-  geom_boxplot(aes(color=factor(outcome)),lwd=1,fatten=2.5) +
-  geom_point(position=position_jitter(width=0.01), size=rel(4), aes(color=factor(outcome),alpha=0.5)) +
+plt_2 <- ggplot(data = se, aes(x=outcome, y=mean)) +
+  geom_boxplot(aes(color=factor(outcome)), lwd=1, fatten=2.5, outlier.size=0, outlier.stroke=0) +
+  geom_point(position=position_jitter(width=0.2), size=rel(4), aes(color=factor(outcome),alpha=0.5)) +
   scale_x_discrete(breaks=c("rate_outrage","rate_punishment","rate_threat", "rating"), 
                    labels=c("Outrage", "Punishment", "Threat", "Confidence")) +
   scale_color_manual(values=c('rate_outrage'=color_outrage, 'rate_punishment'=color_punish, 
@@ -122,6 +117,7 @@ plt_2 <- ggplot(data = se, aes(x=outcome, y=post.mean)) +
   labs(title="B", size=rel(3)) +
   ylab("Confidence") +
   theme(
+    plot.margin=unit(c(5.5, 20, 5.5, 20), "points"),
     panel.grid=element_blank(),
     panel.background = element_blank(),
     axis.line = element_line(color="black"),
@@ -132,76 +128,63 @@ plt_2 <- ggplot(data = se, aes(x=outcome, y=post.mean)) +
     axis.text.y = element_blank(),
     axis.title.y = element_blank(),
     axis.ticks.y = element_blank(),
-    plot.title=element_text(size=20,vjust=2),
+    plot.title=element_text(size=20,vjust=2, hjust=0.5),
     legend.position='none')
 
 ############### Panel 3: Illustration of range of confidences ##################################
-# calculate the evidence weight for each combination of variables
-vars <- c('scenario', 'physical', 'history', 'witness')
+# calculate mean rating for session and evidence combinations
+sc_means <- dat %>% group_by(scenario, physical, history, witness) %>% 
+                    summarise(rating=mean(rating)) %>%
+                    arrange(scenario, physical, witness, history) %>%
+                    ungroup()
 
-flist <- list()
-for (v in vars) {
-  this_fac <- fixed_effects %>% filter(outcome == 'rating', grepl(v, predictor.1)) %>% 
-    select(predictor.1) %>% transmute(variable=as.character(predictor.1))
-  
-  # for variables other than scenario, we need to add level 0
-  if (v != 'scenario') {
-    this_fac <- rbind(paste(v, '0', sep=''), this_fac)
-  }
-  this_fac <- this_fac %>% transmute(variable=as.factor(variable))
-  
-  # change the name back to what it should be
-  names(this_fac) <- v
-  
-  # append
-  flist <- c(flist, this_fac)
-}
-preds <- expand.grid(flist)
+# get unique variable code for each evidence combination
+ev_codes <- sc_means %>% select(physical, witness, history) %>% 
+                         distinct(physical, witness, history) %>%
+                         mutate(code=as.factor(row_number()))
 
-# convert that dataframe to a matrix
-form <- ~ -1 + (scenario + physical + history + witness)
-X <- model.matrix(form, data=preds)
+# add code column to scenario means
+sc_means <- sc_means %>% merge(ev_codes) %>% arrange(code, scenario)
 
-# get beta, setting all scenario effects to 0, so we only add evidence
-beta <- fixed_effects %>% filter(outcome == 'rating') %>%
-  mutate(pred=replace(post.mean, grepl('scenario', predictor.1), 0)) %>%
-  select(pred)
+# calculate model prediction
+# get mean values of coefficients across scenarios
+betas <- effects %>% filter(variable == 'gamma') %>% 
+         select(scenario, evidence, mean) %>%
+         group_by(evidence) %>%
+         summarise(effect=mean(mean)) %>%
+         arrange(evidence)
 
-# get predictions for each scenario and add to preds dataframe
-pred.means <- as.matrix(X) %*% as.matrix(beta)
-preds <- cbind(preds, pred.means)
+# generate model matrix for predictions         
+Xmat <- model.matrix(form, ev_codes)
+colnames(Xmat)[1] <- 'baseline'
+Xmat <- Xmat[, sort(colnames(Xmat), index.return=TRUE)$ix]
 
-# get mean prediction across all scenarios
-preds_mean <- preds %>% group_by(physical, history, witness) %>%
-  summarise(mean_pred=mean(pred))
+# remove baseline, calculate evidence
+Xmat_no_baseline <- Xmat[,2:dim(Xmat)[2]]
+betas_no_baseline <- betas %>% filter(evidence != 'baseline')
 
-# get observed mean across all scenarios
-cols_to_keep <- c('scenario', 'physical', 'history', 'witness', 'rating')
-dat_all <- dat_rating_comb %>% select(one_of(cols_to_keep))
-dat_summary <- dat_all %>% group_by(scenario, physical, history, witness) %>%
-  summarise(mean_obs=mean(rating, na.rm=TRUE)) 
-for (v in c('physical', 'history', 'witness')) {
-  dat_summary[[v]] <- factor(as.integer(dat_summary[[v]]), labels=levels(preds_mean[[v]]))
-}
+# mean evidence per scenario
+pred_evidence <- data.frame(code=ev_codes$code, 
+                            evidence=Xmat_no_baseline %*% betas_no_baseline$effect) %>%
+                 merge(sc_means) 
 
-# get observed mean for each scenario across all evidence conditions
-# scen_mean <- dat_all %>% group_by(scenario) %>% summarise(sc_mean=mean(rating, na.rm=TRUE))
-scen_mean <- se %>% mutate(scenario = as.numeric(sub('scenario','', predictor.1)),
-                           sc_mean = post.mean) %>%
-                    select(scenario, sc_mean)
+# mean rating per scenario
+mean_by_scenario <- dat %>% group_by(scenario) %>% 
+                    summarise(sc_mean=mean(rating)) %>%
+                    ungroup()
 
-# merge into a single dataframe
-preds_mean <- merge(preds_mean, dat_summary)
-preds_mean <- merge(preds_mean, scen_mean)
+# prediction dataframe
+pred_evidence <- pred_evidence %>% merge(mean_by_scenario)
 
-plt_3 <- ggplot(data=preds_mean) +
-  geom_point(aes(x=mean_pred, y=mean_obs, color=sc_mean), size=3, alpha=0.5) +
-  geom_smooth(aes(x=mean_pred, y=mean_obs), color=color_conf, method='lm', formula=y~x) +
+plt_3 <- ggplot(data=pred_evidence) +
+  geom_point(aes(x=evidence, y=rating, color=sc_mean), size=3, alpha=0.5) +
+  geom_smooth(aes(x=evidence, y=rating), color=color_conf, method='lm', formula=y~x) +
   xlab("Weight of Model \nEvidence (points)") +
-  coord_cartesian(xlim=c(-5, 60), ylim=c(0,100)) +
+  coord_cartesian(xlim=c(-5, 70), ylim=c(0,100)) +
   labs(title="C", size=rel(3)) +
-  ylab("Confidence (observed)") +
+  ylab("Strength of Case (observed)") +
   theme(
+    plot.margin=unit(c(5.5, 5.5, 5.5, 5.5), "points"),
     panel.grid=element_blank(),
     panel.background = element_blank(),
     axis.line = element_line(color="black"),
@@ -210,18 +193,22 @@ plt_3 <- ggplot(data=preds_mean) +
     axis.ticks.x = element_blank(),
     axis.text.y = element_text(hjust = 1, size=rel(2.5), color='black'),
     axis.title.y = element_text(size=rel(1.5)),
-    plot.title=element_text(size=20,vjust=2),
+    plot.title=element_text(size=20, vjust=2, hjust=0.5),
     legend.position='none')
-
 
 ############### Combine into a single figure ##################################
 # make a list of panels
 plt_list <- list(plt_1, plt_2, plt_3)
 
-# convert ggplot objects to grobs and standardize heights so axes match
-grob_list <- standardize_heights(plt_list)
-plt_all <- arrangeGrob(grob_list[[1]], grob_list[[2]], grob_list[[3]], ncol=3, widths=c(1.1, 0.5, 1.25))
+# convert to grobs
+grob_list <- lapply(plt_list, ggplotGrob)
+
+# make sure axes align
+max_heights <- do.call(unit.pmax, lapply(grob_list, function(x) {x$heights}))
+grob_list <- lapply(grob_list, function(x) {x$heights <- max_heights; x})
+
+# arrange with differing widths
+plt_all <- do.call(arrangeGrob, c(grob_list, ncol=3, widths=list(c(1.1, 0.5, 1.25))))
 
 # save to disk
-
-ggsave('figure_grant_2.pdf', plot=plt_all, width=11, height=4.5, units='in', useDingbats=FALSE)
+ggsave('figure_paper_2.pdf', plot=plt_all, width=11, height=4.5, units='in', useDingbats=FALSE)
