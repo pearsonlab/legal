@@ -117,7 +117,7 @@ plt_2 <- ggplot(data = se, aes(x=outcome, y=mean)) +
   labs(title="B", size=rel(3)) +
   ylab("Confidence") +
   theme(
-    plot.margin=unit(c(5.5, 20, 5.5, 20), "points"),
+    plot.margin=unit(c(5.5, 20, 5.5, 5.5), "points"),
     panel.grid=element_blank(),
     panel.background = element_blank(),
     axis.line = element_line(color="black"),
