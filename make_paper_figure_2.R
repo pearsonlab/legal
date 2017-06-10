@@ -7,16 +7,7 @@ library(gridExtra)
 library(gtable)
 library(gridBase)
 
-color_genpop='#0656A3'
-color_lawstudents='#d95f02'
-color_lsba ='#7570b3'
-color_ilsa ='#9e331b'
-
-color_outrage='#733238'
-color_punish='#A69A60'
-color_threat='#D9BF3D'
-color_conf='#0656A3'
-
+source('ggplot_setup.R')
 load('data/stan_hier_postprocess.rdata')
 effects <- effects %>% filter(group=='mturk')
 dat <- dat %>% filter(group=='mturk')
@@ -33,12 +24,7 @@ fe <- effects %>% filter(variable == 'mu', evidence != 'baseline') %>%
 
 plt_1 <- ggplot(data=fe) +
   geom_pointrange(aes(x=evidence, y=mean, ymin=X2.5., ymax=X97.5.), color=color_conf, size=1.) + 
-  scale_x_discrete(breaks=c("physicalDNA", "physicalNon-DNA", "witnessYes Witness", "historyRelated", "historyUnrelated"), 
-                   labels=c("DNA \nphysical \nevidence", 
-                            "Non-DNA \nphysical \nevidence",  
-                            "Witness \npresent", 
-                            "Related \nprior crime", 
-                            "Unrelated \nprior crime")) +
+  evidence_x_axis +
   coord_cartesian(ylim=c(0,40)) +
   labs(title="A") +
   ylab("Strength of Case (pooints)") +
@@ -47,55 +33,35 @@ plt_1 <- ggplot(data=fe) +
   geom_vline(xintercept=2.5, colour='grey') +
   geom_vline(xintercept=3.5, colour='grey') +
   geom_vline(xintercept=4.5, colour='grey') +
+  th +
   theme(
-    plot.margin=unit(c(5.5, 5.5, 5.5, 5.5), "points"),
-    panel.grid=element_blank(),
-    panel.background = element_blank(),
-    axis.line = element_line(color="black"),
-    axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black'),
-    axis.title.x = element_text(size=rel(1.5)),
-    axis.ticks.x = element_blank(),
-    axis.text.y = element_text(hjust = 1, size=rel(2.5), color='black'),
-    axis.title.y = element_text(size=rel(1.5)),
-    plot.title=element_text(size=20, vjust=2, hjust=0.5),
-    legend.text = element_text(size=rel(1.5)),
-    legend.title = element_text(size=rel(1.5)),
-    legend.position='none')
+    axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black'))
 
 
 ############### Panel 2: Baseline effects ##################################
 # get scenario effects
 se <- effects %>% filter(variable == 'gamma', evidence == 'baseline') %>% 
-                  select(scenario, mean) %>%
+                  select(scenario, mean, group) %>%
                   mutate(outcome='rating')
 
-plt_2 <- ggplot(data = se, aes(x=outcome, y=mean)) +
-  geom_boxplot(aes(color=factor(outcome)), lwd=1, fatten=2.5, outlier.size=0, outlier.stroke=0) +
-  geom_point(position=position_jitter(width=0.2), size=rel(4), aes(color=factor(outcome),alpha=0.5)) +
-  scale_x_discrete(breaks=c("rate_outrage","rate_punishment","rate_threat", "rating"), 
-                   labels=c("Outrage", "Punishment", "Threat", "Confidence")) +
-  scale_color_manual(values=c('rate_outrage'=color_outrage, 'rate_punishment'=color_punish, 
-                              'rate_threat'=color_threat, 'rating'=color_conf)) +
-  scale_fill_manual(values=c('rate_outrage'=color_outrage, 'rate_punishment'=color_punish, 
-                             'rate_threat'=color_threat, 'rating'=color_conf)) +
+plt_2 <- ggplot(data = se, aes(x=group, y=mean)) +
+  geom_boxplot(aes(color=group), lwd=1, fatten=2.5, outlier.size=0, outlier.stroke=0) +
+  geom_point(position=position_jitter(width=0.2), size=rel(4), aes(color=group), alpha=0.5) +
+  group_x_axis +
+  group_color_scale +
+  group_fill_scale +
   xlab("Baseline\nEffect") +
   coord_cartesian(ylim=c(0,40)) +
   labs(title="B", size=rel(3)) +
   ylab("Confidence") +
+  th +
   theme(
     plot.margin=unit(c(5.5, 20, 5.5, 5.5), "points"),
-    panel.grid=element_blank(),
-    panel.background = element_blank(),
-    axis.line = element_line(color="black"),
     axis.line.y = element_blank(),
     axis.text.x = element_blank(),
-    axis.title.x = element_text(size=rel(1.5)),
-    axis.ticks.x = element_blank(),
     axis.text.y = element_blank(),
     axis.title.y = element_blank(),
-    axis.ticks.y = element_blank(),
-    plot.title=element_text(size=20,vjust=2, hjust=0.5),
-    legend.position='none')
+    axis.ticks.y = element_blank())
 
 ############### Panel 3: Illustration of range of confidences ##################################
 # calculate mean rating for session and evidence combinations
@@ -149,18 +115,7 @@ plt_3 <- ggplot(data=pred_evidence) +
   coord_cartesian(xlim=c(-5, 70), ylim=c(0,100)) +
   labs(title="C", size=rel(3)) +
   ylab("Strength of Case (observed)") +
-  theme(
-    plot.margin=unit(c(5.5, 5.5, 5.5, 5.5), "points"),
-    panel.grid=element_blank(),
-    panel.background = element_blank(),
-    axis.line = element_line(color="black"),
-    axis.text.x = element_text(hjust = 0.5, size=rel(2), color='black'),
-    axis.title.x = element_text(size=rel(1.5)),
-    axis.ticks.x = element_blank(),
-    axis.text.y = element_text(hjust = 1, size=rel(2.5), color='black'),
-    axis.title.y = element_text(size=rel(1.5)),
-    plot.title=element_text(size=20, vjust=2, hjust=0.5),
-    legend.position='none')
+  th
 
 ############### Combine into a single figure ##################################
 # make a list of panels

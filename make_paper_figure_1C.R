@@ -4,14 +4,7 @@ library(dplyr)
 library(ggplot2)
 library(rstan)
 
-color_genpop='#0656A3'
-color_lawstudents='#d95f02'
-color_lsba ='#7570b3'
-color_ilsa ='#9e331b'
-# more colors
-# #023bd9
-# #b39470
-
+source('ggplot_setup.R')
 load('data/stan_hier_postprocess.rdata')
 effects <- effects %>% filter(group=='mturk')
 dat <- dat %>% filter(group=='mturk')
@@ -52,18 +45,9 @@ p <- p + geom_boxplot(aes(code, rating), outlier.size=0, outlier.stroke=0) +
      geom_point(data=preds, aes(x=code, y=pred), color="red", shape=5, size=5, stroke=2) +
      xlab('Evidence') + ylab('Mean strength of case (points)') +
      ylim(0, 100) +
+     th +
      theme(
-       panel.grid=element_blank(),
-       panel.background = element_blank(),
-       axis.line = element_line(color="black"),
-       axis.text.x = element_blank(),
-       axis.title.x = element_text(size=rel(1.5)),
-       axis.ticks.x = element_blank(),
-       axis.text.y = element_text(hjust = 1, size=rel(2.5), color='black'),
-       axis.title.y = element_text(size=rel(1.5)),
-       plot.title=element_text(size=20,vjust=2),
-       legend.text = element_text(size=rel(1.5)),
-       legend.title = element_text(size=rel(1.5)),
-       legend.position='none')
+       axis.text.x = element_blank()
+     )
 
 ggsave('figure_paper_1C.pdf', plot=p, width=8, height=5, units='in', useDingbats=FALSE)

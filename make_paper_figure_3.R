@@ -8,16 +8,7 @@ library(gtable)
 library(gridBase)
 library(broom)
 
-color_genpop='#0656A3'
-color_lawstudents='#d95f02'
-color_lsba ='#7570b3'
-color_ilsa ='#9e331b'
-
-color_outrage='#733238'
-color_punish='#A69A60'
-color_threat='#D9BF3D'
-color_conf='#0656A3'
-
+source('ggplot_setup.R')
 load('data/stan_hier_postprocess.rdata')
 
 ############### Panel 1: Effect sizes for confidence ##################################
@@ -34,19 +25,8 @@ plt_1 <- ggplot(data=fe) +
   geom_hline(yintercept=0, colour='grey') +
   geom_pointrange(aes(x=evidence, y=mean, ymin=X2.5., ymax=X97.5., color=group), size=1.,
                   position=position_dodge(width = 0.5)) + 
-  scale_x_discrete(breaks=c("physicalDNA", "physicalNon-DNA", "witnessYes Witness", "historyRelated", "historyUnrelated"), 
-                   labels=c("DNA \nphysical \nevidence", 
-                            "Non-DNA \nphysical \nevidence",  
-                            "Witness \npresent", 
-                            "Related \nprior crime", 
-                            "Unrelated \nprior crime")) +
-  scale_color_manual(values=c('mturk'=color_genpop,
-                              'legal'=color_lawstudents,
-                              'lsba'=color_lsba,
-                              'ilsa'=color_ilsa),
-                      name='Group',
-                      breaks=c('legal', 'lsba', 'ilsa', 'mturk'),
-                      labels=c('Law Students', 'Louisiana Bar', 'Illinois Prosecutors', 'mTurk')) +
+  evidence_x_axis +
+  group_color_scale +
   coord_cartesian(ylim=c(-10,60)) +
   labs(title="A") +
   ylab("Strength of Case (pooints)") +
@@ -55,21 +35,9 @@ plt_1 <- ggplot(data=fe) +
   geom_vline(xintercept=2.5, colour='grey') +
   geom_vline(xintercept=3.5, colour='grey') +
   geom_vline(xintercept=4.5, colour='grey') +
-  theme(
-    plot.margin=unit(c(5.5, 5.5, 5.5, 5.5), "points"),
-    panel.grid=element_blank(),
-    panel.background = element_blank(),
-    axis.line = element_line(color="black"),
-    axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black'),
-    axis.title.x = element_text(size=rel(1.5)),
-    axis.ticks.x = element_blank(),
-    axis.text.y = element_text(hjust = 1, size=rel(2.5), color='black'),
-    axis.title.y = element_text(size=rel(1.5)),
-    plot.title=element_text(size=20, vjust=2, hjust=0.5),
-    legend.text = element_text(size=rel(1.5)),
-    legend.title = element_text(size=rel(1.5)),
-    legend.position='none')
-
+  th + theme(
+    axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black')
+  )
 
 ############### Panel 2: Baseline effects ##################################
 # get scenario effects
@@ -81,40 +49,20 @@ plt_2 <- ggplot(data = se, aes(x=group, y=mean)) +
   geom_hline(yintercept=0, colour='grey') +
   geom_boxplot(aes(color=group), lwd=1, fatten=1, outlier.size=0, outlier.stroke=0) +
   # geom_point(position=position_jitter(width=0.2), size=rel(2), aes(color=group), alpha=0.5) +
-  scale_x_discrete(breaks=c('legal', 'lsba', 'ilsa', 'mturk'),
-                      labels=c('Law Students', 'Louisiana Bar', 'Illinois Prosecutors', 'mTurk')) +
-  scale_color_manual(values=c('mturk'=color_genpop,
-                              'legal'=color_lawstudents,
-                              'lsba'=color_lsba,
-                              'ilsa'=color_ilsa),
-                      name='Group',
-                      breaks=c('legal', 'lsba', 'ilsa', 'mturk'),
-                      labels=c('Law Students', 'Louisiana Bar', 'Illinois Prosecutors', 'mTurk')) +
-  scale_fill_manual(values=c('mturk'=color_genpop,
-                              'legal'=color_lawstudents,
-                              'lsba'=color_lsba,
-                              'ilsa'=color_ilsa)) +
+  group_x_axis +
+  group_color_scale +
+  group_fill_scale +
   xlab("Baseline\nEffect") +
   coord_cartesian(ylim=c(-10,60)) +
   labs(title="B", size=rel(3)) +
   ylab("Confidence") +
+  th +
   theme(
-    plot.margin=unit(c(5.5, 20, 5.5, 5.5), "points"),
-    panel.grid=element_blank(),
-    panel.background = element_blank(),
-    axis.line = element_line(color="black"),
     axis.line.y = element_blank(),
     axis.text.x = element_blank(),
-    axis.title.x = element_text(size=rel(1.5)),
-    axis.ticks.x = element_blank(),
     axis.text.y = element_blank(),
     axis.title.y = element_blank(),
     axis.ticks.y = element_blank(),
-    plot.title=element_text(size=20,vjust=2, hjust=0.5),
-    legend.text = element_text(size=rel(1.5)),
-    legend.title = element_blank(),
-    legend.background = element_blank(),
-    legend.key = element_blank(),
     legend.position=c(-0.5,1),
     legend.justification=c(0,1))
     
@@ -166,29 +114,12 @@ pred_evidence <- pred_evidence %>% merge(mean_by_code)
 plt_3 <- ggplot(data=pred_evidence) +
   geom_point(aes(x=evidence, y=code_mean, color=group), size=3, alpha=0.5) +
   geom_smooth(aes(x=evidence, y=code_mean, color=group), method='lm', formula=y~x) +
-  scale_color_manual(values=c('mturk'=color_genpop,
-                              'legal'=color_lawstudents,
-                              'lsba'=color_lsba,
-                              'ilsa'=color_ilsa),
-                      name='Group',
-                      breaks=c('legal', 'lsba', 'ilsa', 'mturk'),
-                      labels=c('Law Students', 'Louisiana Bar', 'Illinois Prosecutors', 'mTurk')) +
+  group_color_scale +
   xlab("Weight of Model \nEvidence (points)") +
   coord_cartesian(xlim=c(0, 85), ylim=c(0,100)) +
   labs(title="C", size=rel(3)) +
   ylab("Strength of Case (observed)") +
-  theme(
-    plot.margin=unit(c(5.5, 5.5, 5.5, 5.5), "points"),
-    panel.grid=element_blank(),
-    panel.background = element_blank(),
-    axis.line = element_line(color="black"),
-    axis.text.x = element_text(hjust = 0.5, size=rel(2), color='black'),
-    axis.title.x = element_text(size=rel(1.5)),
-    axis.ticks.x = element_blank(),
-    axis.text.y = element_text(hjust = 1, size=rel(2.5), color='black'),
-    axis.title.y = element_text(size=rel(1.5)),
-    plot.title=element_text(size=20, vjust=2, hjust=0.5),
-    legend.position='none')
+  th 
 
 ############### Combine into a single figure ##################################
 # make a list of panels
