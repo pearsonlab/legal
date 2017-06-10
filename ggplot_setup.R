@@ -2,13 +2,17 @@
 
 color_genpop='#0656A3'
 color_lawstudents='#d95f02'
-color_lsba ='#7570b3'
+color_lsba ='#b39470'
 color_ilsa ='#9e331b'
 
 color_outrage='#733238'
 color_punish='#A69A60'
 color_threat='#D9BF3D'
 color_conf='#0656A3'
+
+# more colors
+# #023bd9
+# #7570b3
 
 th <-  theme(
     plot.margin=unit(c(5.5, 5.5, 5.5, 5.5), "points"),
@@ -18,7 +22,7 @@ th <-  theme(
     axis.text.x = element_text(hjust = 0.5, size=rel(2), color='black'),
     axis.title.x = element_text(size=rel(1.5)),
     axis.ticks.x = element_blank(),
-    axis.text.y = element_text(hjust = 1, size=rel(2.5), color='black'),
+    axis.text.y = element_text(hjust = 1, size=rel(2), color='black'),
     axis.title.y = element_text(size=rel(1.5)),
     plot.title=element_text(size=20, vjust=2, hjust=0.5),
     legend.text = element_text(size=rel(1.5)),
@@ -61,3 +65,9 @@ evidence_x_axis <- scale_x_discrete(breaks=c("physicalDNA",
                                               "Witness \npresent", 
                                               "Related \nprior crime", 
                                               "Unrelated \nprior crime"))
+
+variance_x_axis <- scale_x_discrete(breaks=c('eta', 'tau', 'sigma'),
+                                    limits=c('eta', 'tau', 'sigma'),
+                                    labels=c('Within Group\nAcross Scenarios', 
+                                             'Within Scenario\nAcross Subjects', 
+                                             'Within Subject\nAcross Trials'))
