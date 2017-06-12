@@ -6,8 +6,9 @@ data {
   int<lower=1> Nr;  # number of outcomes/ratings
   int<lower=0> N;  # number of observations
   int<lower=0> P;  # number of regressors
-  real<lower=L, upper=U> R[N, Nr];  # ratings
-  int<lower=-1, upper=1> cens[N, Nr];  # -1 = left censor, 1 = right censor, 0 = none
+  real<lower=L, upper=U> R[N];  # ratings
+  int<lower=1, upper=Nr> Ri[N];  # rating type
+  int<lower=-1, upper=1> cens[N];  # -1 = left censor, 1 = right censor, 0 = none
   matrix[N, P] X;  # design matrix for data
   int<lower=0> S[N];  # subject corresponding to each rating
   int<lower=0> C[N];  # case corresponding to each rating
@@ -87,14 +88,12 @@ model {
   sigma ~ cauchy(0, M/10.);
 
   for (i in 1:N) {
-    for (r in 1:Nr) {
-      if (cens[i, r] == 0)
-        R[i, r] ~ normal(theta[i, r], sigma[r]);
-      else if (cens[i, r] == -1)
-        target += normal_lcdf(L | theta[i, r], sigma[r]);
-      else if (cens[i, r] == 1)
-        target += normal_lccdf(L | theta[i, r], sigma[r]);
-    }
+    if (cens[i] == 0)
+      R[i] ~ normal(theta[i, Ri[i]], sigma[Ri[i]]);
+    else if (cens[i] == -1)
+      target += normal_lcdf(L | theta[i, Ri[i]], sigma[Ri[i]]);
+    else if (cens[i] == 1)
+      target += normal_lccdf(L | theta[i, Ri[i]], sigma[Ri[i]]);
   }
 }
 
