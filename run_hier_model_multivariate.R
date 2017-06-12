@@ -104,7 +104,7 @@ rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
 # run some stan
-stan_dat <- list(L=L, U=U, Nsub=Nsub, Nc=Nc, N=N, Nr=Nr, P=P, R=R,
+stan_dat <- list(L=L, U=U, Nsub=Nsub, Nc=Nc, N=N, Nr=Nr, P=P, R=R, C=C,
                  X=X, S=S, cens=cens)
 
 fit <- stan(file = 'model_hier_scenario_multivar.stan', data = stan_dat,

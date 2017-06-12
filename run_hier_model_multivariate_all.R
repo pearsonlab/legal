@@ -39,7 +39,7 @@ dat <- dat %>% na.omit() %>% mutate(uid=as.integer(droplevels(uid)))
 Nsub <- length(unique(dat$uid))
 
 # subsample for quick prototyping
-#dat <- dat %>% sample_frac(0.1)
+# dat <- dat %>% sample_frac(0.1)
 
 # get upper and lower-bounded censored data
 L <- min(dat$rating)
@@ -79,7 +79,7 @@ options(mc.cores = parallel::detectCores())
 
 # run some stan
 stan_dat <- list(L=L, U=U, Nsub=Nsub, Nc=Nc, N=N, Nr=Nr, P=P, R=R, Ri=Ri,
-                 X=X, S=S, cens=cens)
+                 X=X, S=S, C=C, cens=cens)
 
 # need to initialize sigma to be large so that all ratings have nonzero probability
 init <- function() {
@@ -89,6 +89,6 @@ init <- function() {
 }
 fit <- stan(file = 'model_hier_scenario_multivar.stan', data = stan_dat,
             iter = iter, chains = 4, thin=thin,
-            init=init)
+            init=init, verbose=TRUE)
 
 save.image(paste('data/stan_model_output_hier_t_multi_all.rdata', sep=''))
