@@ -27,7 +27,7 @@ dat <- df %>% dplyr::rename(uid=hashedID) %>%
               select(uid, scenario, physical, history, witness,
                      rating, rate_punishment, rate_threat, rate_outrage) %>%
               gather(key=rating_type, value=rating, c(rating, rate_punishment, rate_threat, rate_outrage)) %>%
-              mutate_each('as.factor', c(uid, scenario, physical, history, witness, rating_type)) %>%
+              mutate_at(c('uid', 'scenario', 'physical', 'history', 'witness', 'rating_type'), 'as.factor') %>%
               mutate(group=group)
               
 levels(dat$witness) <- c("No Witness", "Yes Witness")
