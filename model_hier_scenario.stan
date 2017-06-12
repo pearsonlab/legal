@@ -82,6 +82,6 @@ model {
       else if (cens[i] == -1)
         target += normal_lcdf(L | theta[i], sigma);
       else if (cens[i] == 1)
-        target += normal_lccdf(L | theta[i], sigma);
+        target += normal_lccdf(U | theta[i], sigma);
   }
 }

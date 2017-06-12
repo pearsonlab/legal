@@ -80,7 +80,7 @@ model {
   nu_eps ~ normal(0, 100);
   nu_delta ~ normal(0, 100);
   for (p in 1:P)
-    L_eta[p] ~ lkj_corr_cholesky(2.0);
+    L_eta[p] ~ lkj_corr_cholesky(1.0);
   
   for (p in 1:P) {
     mu[p] ~ normal(M, M);
@@ -95,7 +95,7 @@ model {
     else if (cens[i] == -1)
       target += normal_lcdf(L | theta[i, Ri[i]], sigma[Ri[i]]);
     else if (cens[i] == 1)
-      target += normal_lccdf(L | theta[i, Ri[i]], sigma[Ri[i]]);
+      target += normal_lccdf(U | theta[i, Ri[i]], sigma[Ri[i]]);
   }
 }
 
