@@ -79,6 +79,8 @@ model {
   
   nu_eps ~ normal(0, 100);
   nu_delta ~ normal(0, 100);
+  for (p in 1:P)
+    L_eta[p] ~ lkj_corr_cholesky(2.0);
   
   for (p in 1:P) {
     mu[p] ~ normal(M, M);
