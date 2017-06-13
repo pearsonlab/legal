@@ -65,6 +65,18 @@ evidence_x_axis <- scale_x_discrete(breaks=c("physicalDNA",
                                               "Witness \npresent", 
                                               "Related \nprior crime", 
                                               "Unrelated \nprior crime"))
+evidence_plus_baseline_x_axis <- scale_x_discrete(breaks=c("baseline", 
+                                                           "physicalDNA", 
+                                                           "physicalNon-DNA", 
+                                                           "witnessYes Witness", 
+                                                           "historyRelated", 
+                                                           "historyUnrelated"), 
+                                                   labels=c("Baseline",
+                                                            "DNA \nphysical \nevidence", 
+                                                            "Non-DNA \nphysical \nevidence",  
+                                                            "Witness \npresent", 
+                                                            "Related \nprior crime", 
+                                                            "Unrelated \nprior crime"))
 
 variance_x_axis <- scale_x_discrete(breaks=c('eta', 'tau', 'sigma'),
                                     limits=c('eta', 'tau', 'sigma'),
