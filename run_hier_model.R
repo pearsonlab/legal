@@ -96,6 +96,6 @@ init <- function() {
   inits
 }
 fit <- stan(file = 'model_hier_scenario.stan', data = stan_dat,
-            iter = iter, chains = 4, thin=thin, init=init, verbose=TRUE)
+            iter = iter, chains = 4, thin=thin, init=init)
 
 save.image(paste('data/stan_model_output_hier_t_', dset, '.rdata', sep=''))

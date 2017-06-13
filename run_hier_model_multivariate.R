@@ -26,8 +26,7 @@ foo <- switch(dset,
                 dat <- df %>% dplyr::rename(uid=hashedID) %>%
                               select(uid, scenario, physical, history, witness,
                                      rating, rate_punishment) %>%
-                              filter(!is.na(rating), !is.na(rate_punishment)) %>%
-                              mutate_each('as.factor', c(uid, scenario, physical, history, witness)) %>%
+                              mutate_at(c('uid', 'scenario', 'physical', 'history', 'witness'), 'as.factor') %>%
                               mutate(group='mturk')
                 levels(dat$witness) <- c("No Witness", "Yes Witness")
                 levels(dat$physical) <- c("No Physical", "Non-DNA", "DNA")
@@ -37,7 +36,7 @@ foo <- switch(dset,
                 load('data/dat_ipls.rdata')
                 group <- 'legal'
                 dat <- dat_ipls %>% select(uid, scenario, physical, history, witness, rating, rate_punishment) %>%
-                  mutate(group='legal')
+                                    mutate(group='legal')
               },
               lsba={
                 dat <- read.csv('data/data_prof_deid.csv')
@@ -62,7 +61,10 @@ foo <- switch(dset,
 )
 
 # final cleanup
-dat <- dat %>% na.omit() %>% mutate(uid=as.integer(droplevels(uid)))
+                              
+dat <- dat %>% gather(key=rating_type, value=rating, c(rating, rate_punishment)) %>% 
+               mutate(rating_type = as.factor(rating_type)) %>%
+               na.omit() %>% mutate(uid=as.integer(droplevels(uid)))
 Nsub <- length(unique(dat$uid))
 
 # subsample for quick prototyping
@@ -73,8 +75,10 @@ L <- min(dat$rating)
 U <- max(dat$rating)
 
 # get censoring data frame
-R <- dat %>% select(rating, rate_punishment)
+R <- dat$rating
+Ri <- as.integer(as.factor(dat$rating_type))
 cens <- (R == U) - (R == L)
+
 
 # get design matrix (i.e., convert categoricals to binaries)
 #form <- as.formula("~ -1 + scenario + scenario:(physical + history + witness)")
@@ -87,7 +91,7 @@ prednames[1] <- 'baseline'
 preds <- data.frame(evidence=prednames, group=group)
 
 # break out ratings, subject mapping
-Nr <- dim(R)[2]
+Nr <- length(levels(dat$rating_type))
 S <- dat$uid
 C <- as.numeric(dat$scenario)
 
@@ -107,7 +111,11 @@ options(mc.cores = parallel::detectCores())
 stan_dat <- list(L=L, U=U, Nsub=Nsub, Nc=Nc, N=N, Nr=Nr, P=P, R=R, C=C,
                  X=X, S=S, cens=cens)
 
+init <- function() {
+  list(sigma = 25 + rnorm(Nr))
+}
 fit <- stan(file = 'model_hier_scenario_multivar.stan', data = stan_dat,
-            iter = iter, chains = 4, thin=thin)
+            iter = iter, chains = 4, thin=thin,
+            init=init)
 
 save.image(paste('data/stan_model_output_hier_t_multi_', dset, '.rdata', sep=''))

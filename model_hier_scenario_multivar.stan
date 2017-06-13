@@ -39,7 +39,6 @@ parameters {
   
 }
 transformed parameters {
-  real theta[N, Nr];
   matrix[P, Nr] gamma[Nc];  # scenario effects
   matrix[P, Nr] beta[Nsub, Nc];  # individual effects
   
@@ -59,16 +58,14 @@ transformed parameters {
     }
   }
 
-  # get linear predictor
-  for (j in 1:N)
-    for (r in 1:Nr)
-      theta[j, r] = dot_product(X[j], beta[S[j], C[j], :, r]);
 }
 
 model {
-  for (i in 1:Nsub)
-    for (p in 1:P)
+  for (i in 1:Nsub) {
+    for (p in 1:P) {
       eps[i, p] ~ student_t(nu_eps, 0., 1.);
+    }
+  }
 
   for (c in 1:Nc) {
     for (p in 1:P) {
@@ -79,8 +76,10 @@ model {
   
   nu_eps ~ normal(0, 100);
   nu_delta ~ normal(0, 100);
-  for (p in 1:P)
+  
+  for (p in 1:P) {
     L_eta[p] ~ lkj_corr_cholesky(1.0);
+  }
   
   for (p in 1:P) {
     mu[p] ~ normal(M, M);
@@ -90,12 +89,17 @@ model {
   sigma ~ cauchy(0, M/10.);
 
   for (i in 1:N) {
-    if (cens[i] == 0)
-      R[i] ~ normal(theta[i, Ri[i]], sigma[Ri[i]]);
+    real theta;
+    
+    # calculate linear predictor
+    theta = dot_product(X[i], beta[S[i], C[i], :, Ri[i]]);
+      
+    if (cens[i] == 0) 
+      R[i] ~ normal(theta, sigma[Ri[i]]);
     else if (cens[i] == -1)
-      target += normal_lcdf(L | theta[i, Ri[i]], sigma[Ri[i]]);
+      target += normal_lcdf(L | theta, sigma[Ri[i]]);
     else if (cens[i] == 1)
-      target += normal_lccdf(U | theta[i, Ri[i]], sigma[Ri[i]]);
+      target += normal_lccdf(U | theta, sigma[Ri[i]]);
   }
 }
 
