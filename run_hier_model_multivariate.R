@@ -4,10 +4,13 @@ library(dplyr)
 library(tidyr)
 
 set.seed(11157)
-args = commandArgs(trailingOnly=TRUE)
-dset <- args[1]
+stan_seed <- 11158 
+nchains <- 4
 iter <- 1000
 thin <- 1
+
+args = commandArgs(trailingOnly=TRUE)
+dset <- args[1]
 foo <- switch(dset,
               mturk={
                 datadir <- 'data/'
@@ -61,10 +64,13 @@ foo <- switch(dset,
 )
 
 # final cleanup
-                              
 dat <- dat %>% gather(key=rating_type, value=rating, c(rating, rate_punishment)) %>% 
-               mutate(rating_type = as.factor(rating_type)) %>%
-               na.omit() %>% mutate(uid=as.integer(droplevels(uid)))
+               mutate(rating_type = as.factor(rating_type))
+outcomes <- levels(as.factor(dat$rating_type))
+
+# clear out missing
+dat <- dat %>% na.omit() %>% mutate(uid=as.integer(droplevels(uid)))
+
 Nsub <- length(unique(dat$uid))
 
 # subsample for quick prototyping
@@ -108,14 +114,15 @@ rstan_options(auto_write = TRUE)
 options(mc.cores = parallel::detectCores())
 
 # run some stan
-stan_dat <- list(L=L, U=U, Nsub=Nsub, Nc=Nc, N=N, Nr=Nr, P=P, R=R, C=C,
-                 X=X, S=S, cens=cens)
+stan_dat <- list(L=L, U=U, Nsub=Nsub, Nc=Nc, N=N, Nr=Nr, P=P, R=R, Ri=Ri,
+                 C=C, X=X, S=S, cens=cens)
 
 init <- function() {
   list(sigma = 25 + rnorm(Nr))
 }
 fit <- stan(file = 'model_hier_scenario_multivar.stan', data = stan_dat,
-            iter = iter, chains = 4, thin=thin,
+            iter = iter, chains = nchains, thin=thin, seed=stan_seed,
+            pars=c('mu', 'eta', 'gamma', 'tau', 'sigma', 'L_eta'),
             init=init)
 
 save.image(paste('data/stan_model_output_hier_t_multi_', dset, '.rdata', sep=''))

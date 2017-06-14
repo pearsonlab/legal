@@ -2,10 +2,11 @@
 # for this analysis, compare across all response types (outrage, punishment, etc.)
 # uses only mTurk data
 
-library(dplyr)
-library(tidyr)
+library(tidyverse)
 
 set.seed(11157)
+stan_seed <- 11158 
+nchains <- 4
 iter <- 1000
 thin <- 1
 
@@ -35,7 +36,13 @@ levels(dat$physical) <- c("No Physical", "Non-DNA", "DNA")
 levels(dat$history) <- c("No History", "Unrelated", "Related")
 
 # final cleanup
+dat <- dat %>% gather(key=rating_type, value=rating, c(rating, rate_punishment)) %>% 
+               mutate(rating_type = as.factor(rating_type))
+outcomes <- levels(as.factor(dat$rating_type))
+
+# clear out missing
 dat <- dat %>% na.omit() %>% mutate(uid=as.integer(droplevels(uid)))
+
 Nsub <- length(unique(dat$uid))
 
 # subsample for quick prototyping
@@ -83,12 +90,11 @@ stan_dat <- list(L=L, U=U, Nsub=Nsub, Nc=Nc, N=N, Nr=Nr, P=P, R=R, Ri=Ri,
 
 # need to initialize sigma to be large so that all ratings have nonzero probability
 init <- function() {
-  inits <- list()
-  inits[['sigma']] <- 25 + rnorm(Nr)
-  inits
+  list(sigma = 25 + rnorm(Nr))
 }
 fit <- stan(file = 'model_hier_scenario_multivar.stan', data = stan_dat,
-            iter = iter, chains = 4, thin=thin,
+            iter = iter, chains = nchains, thin=thin, seed=stan_seed,
+            pars=c('mu', 'eta', 'gamma', 'tau', 'sigma', 'L_eta'),
             init=init, verbose=TRUE)
 
 save.image(paste('data/stan_model_output_hier_t_multi_all.rdata', sep=''))

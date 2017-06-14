@@ -4,10 +4,13 @@ library(dplyr)
 library(tidyr)
 
 set.seed(11157)
-args = commandArgs(trailingOnly=TRUE)
-dset <- args[1]
+stan_seed <- 11158 
+nchains <- 4
 iter <- 1000
 thin <- 1
+
+args = commandArgs(trailingOnly=TRUE)
+dset <- args[1]
 foo <- switch(dset,
               mturk={
                 load('data/dat_rating_comb.rdata')
@@ -96,6 +99,7 @@ init <- function() {
   inits
 }
 fit <- stan(file = 'model_hier_scenario.stan', data = stan_dat,
-            iter = iter, chains = 4, thin=thin, init=init)
+            pars=c('mu', 'eta', 'gamma', 'tau', 'sigma', 'L_eta'),
+            iter = iter, chains = nchains, thin=thin, init=init, seed=stan_seed)
 
 save.image(paste('data/stan_model_output_hier_t_', dset, '.rdata', sep=''))
