@@ -16,7 +16,11 @@ fe <- effects %>% filter(variable == 'mu', evidence != 'baseline') %>%
                                                 "physicalNon-DNA", 
                                                 "witnessYes Witness", 
                                                 "historyRelated", 
-                                                "historyUnrelated")))
+                                                "historyUnrelated"))) %>%
+      mutate(outcome=factor(outcome, levels=c("rating", 
+                                              "rate_punishment", 
+                                              "rate_outrage", 
+                                              "rate_threat")))
 
 plt_1 <- ggplot(data=fe) +
   geom_hline(yintercept=0, colour='grey') +
@@ -41,12 +45,15 @@ plt_1 <- ggplot(data=fe) +
 ############### Panel 2: Baseline effects ##################################
 # get scenario effects
 se <- effects %>% filter(variable == 'gamma', evidence == 'baseline') %>% 
-                  select(scenario, mean, group, outcome)
+                  select(scenario, mean, group, outcome) %>%
+      mutate(outcome=factor(outcome, levels=c("rating", 
+                                              "rate_punishment", 
+                                              "rate_outrage", 
+                                              "rate_threat")))
 
 plt_2 <- ggplot(data = se, aes(x=outcome, y=mean)) +
   geom_hline(yintercept=0, colour='grey') +
   geom_boxplot(aes(color=outcome), lwd=1, fatten=1, outlier.size=0, outlier.stroke=0) +
-  # geom_point(position=position_jitter(width=0.2), size=rel(2), aes(color=group), alpha=0.5) +
   outcome_x_axis +
   outcome_color_scale +
   outcome_fill_scale +
@@ -61,19 +68,17 @@ plt_2 <- ggplot(data = se, aes(x=outcome, y=mean)) +
     axis.text.y = element_blank(),
     axis.title.y = element_blank(),
     axis.ticks.y = element_blank(),
-    legend.position=c(-0.5,1),
+    legend.position=c(1.1,1),
     legend.justification=c(0,1))
     
-
-load('data/stan_hier_postprocess_multi.rdata')
-
-############### Panel 3: Punishment and case strength effect correlations ##################################
-plt_3 <- ggplot(data=(effects %>% filter(variable=='rho')))
-plt_3 <- plt_3 + geom_pointrange(aes(x=evidence, y=X50., ymin=X2.5., ymax=X97.5., color=group), 
+############### Panel 3a: Punishment and case strength effect correlations ##################################
+plt_3a <- ggplot(data=(effects %>% filter(variable=='rho'))) +
+  geom_pointrange(aes(x=evidence, y=X50., ymin=X2.5., ymax=X97.5.), 
                          position=position_dodge(width = 0.5)) + 
-  xlab('Evidence') + ylab('Correlation') +
-  group_color_scale +
+  xlab('Evidence') + ylab('Strength of Case -\nPunishmnet Correlation') +
+  outcome_color_scale +
   evidence_plus_baseline_x_axis +
+  labs(title="C", size=rel(3)) +
   geom_vline(xintercept=1.5, colour='grey') +
   geom_vline(xintercept=2.5, colour='grey') +
   geom_vline(xintercept=3.5, colour='grey') +
@@ -81,7 +86,29 @@ plt_3 <- plt_3 + geom_pointrange(aes(x=evidence, y=X50., ymin=X2.5., ymax=X97.5.
   geom_vline(xintercept=5.5, colour='grey') +
   th + 
   theme(
-    axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black')
+    axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black'),
+    legend.position=c(1.25, 1)
+  )
+
+load('data/stan_hier_postprocess_multi.rdata')
+
+############### Panel 3: Punishment and case strength effect correlations ##################################
+plt_3 <- ggplot(data=(effects %>% filter(variable=='rho'))) +
+  geom_pointrange(aes(x=evidence, y=X50., ymin=X2.5., ymax=X97.5., color=group), 
+                         position=position_dodge(width = 0.5)) + 
+  xlab('Evidence') + ylab('Strength of Case -\nPunishmnet Correlation') +
+  group_color_scale +
+  evidence_plus_baseline_x_axis +
+  labs(title="C", size=rel(3)) +
+  geom_vline(xintercept=1.5, colour='grey') +
+  geom_vline(xintercept=2.5, colour='grey') +
+  geom_vline(xintercept=3.5, colour='grey') +
+  geom_vline(xintercept=4.5, colour='grey') +
+  geom_vline(xintercept=5.5, colour='grey') +
+  th + 
+  theme(
+    axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black'),
+    legend.position=c(1.25, 1)
   )
 
 ############### Combine into a single figure ##################################
