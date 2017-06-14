@@ -47,8 +47,9 @@ for (dd in 1:length(datfiles)) {
   eff_list[[length(eff_list) + 1]] <- df
 }
 effects <- bind_rows(eff_list) %>% mutate(group=factor(group)) %>%
-  mutate(scenario=factor(as.numeric(scenario)))
+  mutate(scenario=factor(as.numeric(scenario))) %>%
+  mutate(outcome = factor(outcome, levels=1:Nr, labels=outcomes))
 
-save(dat, effects, form, file='data/stan_hier_postprocess.rdata')
+save(dat, effects, form, file='data/stan_hier_postprocess_multi_all.rdata')
 
 detach("package:rstan", unload = TRUE)
