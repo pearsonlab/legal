@@ -103,3 +103,11 @@ model {
   }
 }
 
+generated quantities {
+  corr_matrix[Nr] Omega[P];
+  
+  for (p in 1:P) {
+    Omega[p] = multiply_lower_tri_self_transpose(L_eta[p]);
+  }
+}
+

@@ -16,7 +16,7 @@ for (dd in 1:length(datfiles)) {
   load(datfiles[dd])
   
   # get matrix of summary statistics for each variable of interest
-  ss <- data.frame(summary(fit, pars=c('mu', 'eta', 'gamma', 'tau', 'sigma', 'L_eta'), probs=qprobs)$summary)
+  ss <- data.frame(summary(fit, pars=c('mu', 'eta', 'gamma', 'tau', 'sigma', 'Omega'), probs=qprobs)$summary)
   
   # change rownames to make them easy to parse
   rownames(ss) <- sapply(rownames(ss), renamer)
@@ -27,8 +27,8 @@ for (dd in 1:length(datfiles)) {
   
   # clean up an edge case: L.eta[p, 1, 2] is a correlation coefficient
   non_corrs <- ss %>% filter(!grepl("L.eta", var))
-  corrs <- ss %>% filter(grepl("L.eta", var)) %>% filter(grepl("_1_2_\\d+", var)) %>%
-                  mutate(var=sapply(var, function(x){gsub("L.eta_1_2_(\\d+)", "rho__\\1_", x)}))
+  corrs <- ss %>% filter(grepl("Omega", var)) %>% filter(sd > 0) %>%
+                  mutate(var=sapply(var, function(x){gsub("Omega_(\\d+)_(\\d+)_(\\d+)", "rho\\1\\.\\2__\\3_", x)}))
   ss <- rbind(non_corrs, corrs)
   
   # make var into separate columns for variable, evidence code, and scenario

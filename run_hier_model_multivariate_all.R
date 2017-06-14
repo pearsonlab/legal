@@ -94,7 +94,7 @@ init <- function() {
 }
 fit <- stan(file = 'model_hier_scenario_multivar.stan', data = stan_dat,
             iter = iter, chains = nchains, thin=thin, seed=stan_seed,
-            pars=c('mu', 'eta', 'gamma', 'tau', 'sigma', 'L_eta'),
+            pars=c('mu', 'eta', 'gamma', 'tau', 'sigma', 'Omega'),
             init=init, verbose=TRUE)
 
 save.image(paste('data/stan_model_output_hier_t_multi_all.rdata', sep=''))
