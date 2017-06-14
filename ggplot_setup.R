@@ -39,7 +39,8 @@ group_color_scale <- scale_color_manual(values=c('mturk'=color_genpop,
                                   breaks=c('legal', 'lsba', 'ilsa', 'mturk'),
                                   labels=c('Law Students', 'Louisiana Bar', 'Illinois Prosecutors', 'mTurk'))
 outcome_color_scale <- scale_color_manual(values=c('rate_outrage'=color_outrage, 'rate_punishment'=color_punish, 
-                              'rate_threat'=color_threat, 'rating'=color_conf))
+                              'rate_threat'=color_threat, 'rating'=color_conf),
+                              labels=c("Outrage", "Punishment", "Threat", "Confidence"))
 
 group_fill_scale <- scale_fill_manual(values=c('mturk'=color_genpop,
                                                'legal'=color_lawstudents,
@@ -47,7 +48,8 @@ group_fill_scale <- scale_fill_manual(values=c('mturk'=color_genpop,
                                                'ilsa'=color_ilsa))
 
 outcome_fill_scale <- scale_fill_manual(values=c('rate_outrage'=color_outrage, 'rate_punishment'=color_punish, 
-                             'rate_threat'=color_threat, 'rating'=color_conf)) 
+                             'rate_threat'=color_threat, 'rating'=color_conf),
+                             labels=c("Outrage", "Punishment", "Threat", "Confidence")) 
 
 group_x_axis <- scale_x_discrete(breaks=c('legal', 'lsba', 'ilsa', 'mturk'),
                       labels=c('Law Students', 'Louisiana Bar', 'Illinois Prosecutors', 'mTurk'))
