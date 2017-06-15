@@ -1,6 +1,6 @@
 # take stan model output and perform expensive postprocessing
-library(tidyr)
-library(dplyr)
+library(tidyverse)
+library(stringr)
 library(rstan)
 
 # get posterior means for effects
@@ -25,10 +25,14 @@ for (dd in 1:length(datfiles)) {
   ss$var <- rownames(ss)
   rownames(ss) <- NULL
   
-  # clean up an edge case: L.eta[p, 1, 2] is a correlation coefficient
-  non_corrs <- ss %>% filter(!grepl("L.eta", var))
-  corrs <- ss %>% filter(grepl("Omega", var)) %>% filter(sd > 0) %>%
-                  mutate(var=sapply(var, function(x){gsub("Omega_(\\d+)_(\\d+)_(\\d+)", "rho\\1\\.\\2__\\3_", x)}))
+  # clean up an edge case: Omega[p, 1, 2] is a correlation coefficient
+  lowertri <- function(vname) {
+    matches <- str_match(vname, "Omega_(\\d+)_(\\d+)_(\\d+)")
+    as.numeric(matches[,2]) > as.numeric(matches[,3])  # return true only for lower triangle of Omega
+  }
+  non_corrs <- ss %>% filter(!grepl("Omega", var))
+  corrs <- ss %>% filter(grepl("Omega", var)) %>% filter(lowertri(var)) %>%
+                  mutate(var=sapply(var, function(x){gsub("Omega_(\\d+)_(\\d+)_(\\d+)", "rho\\.\\1\\.\\2__\\3_", x)}))
   ss <- rbind(non_corrs, corrs)
   
   # make var into separate columns for variable, evidence code, and scenario

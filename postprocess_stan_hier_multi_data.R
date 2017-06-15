@@ -1,6 +1,5 @@
 # take stan model output and perform expensive postprocessing
-library(tidyr)
-library(dplyr)
+library(tidyverse)
 library(rstan)
 
 # get posterior means for effects
