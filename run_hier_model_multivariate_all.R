@@ -36,8 +36,6 @@ levels(dat$physical) <- c("No Physical", "Non-DNA", "DNA")
 levels(dat$history) <- c("No History", "Unrelated", "Related")
 
 # final cleanup
-dat <- dat %>% gather(key=rating_type, value=rating, c(rating, rate_punishment)) %>% 
-               mutate(rating_type = as.factor(rating_type))
 outcomes <- levels(as.factor(dat$rating_type))
 
 # clear out missing
@@ -95,6 +93,6 @@ init <- function() {
 fit <- stan(file = 'model_hier_scenario_multivar.stan', data = stan_dat,
             iter = iter, chains = nchains, thin=thin, seed=stan_seed,
             pars=c('mu', 'eta', 'gamma', 'tau', 'sigma', 'Omega'),
-            init=init, verbose=TRUE)
+            init=init)
 
 save.image(paste('data/stan_model_output_hier_t_multi_all.rdata', sep=''))
