@@ -71,7 +71,7 @@ plt_2 <- ggplot(data = se, aes(x=outcome, y=mean)) +
     legend.position=c(-0.5,1),
     legend.justification=c(0,1))
     
-############### Panel 3a: Punishment and case strength effect correlations ##################################
+############### Panel 3: Punishment and case strength effect correlations ##################################
 outcomes <- levels(effects$outcome)
 Nr <- length(outcomes)
 releveler <- function(x) {
@@ -116,6 +116,7 @@ plt_3 <- ggplot(data = corrs) +
 load('data/stan_hier_postprocess_multi.rdata')
 
 plt_4 <- ggplot(data=(effects %>% filter(variable=='rho'))) +
+  geom_hline(yintercept=0, colour='grey') +
   geom_pointrange(aes(x=evidence, y=X50., ymin=X2.5., ymax=X97.5., color=group), 
                          position=position_dodge(width = 0.5)) + 
   xlab('Evidence') + ylab('Strength of Case -\nPunishmnet Correlation') +
