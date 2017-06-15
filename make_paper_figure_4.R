@@ -68,38 +68,60 @@ plt_2 <- ggplot(data = se, aes(x=outcome, y=mean)) +
     axis.text.y = element_blank(),
     axis.title.y = element_blank(),
     axis.ticks.y = element_blank(),
-    legend.position=c(1.1,1),
+    legend.position=c(-0.5,1),
     legend.justification=c(0,1))
     
 ############### Panel 3a: Punishment and case strength effect correlations ##################################
-plt_3a <- ggplot(data=(effects %>% filter(variable=='rho'))) +
-  geom_pointrange(aes(x=evidence, y=X50., ymin=X2.5., ymax=X97.5.), 
-                         position=position_dodge(width = 0.5)) + 
-  xlab('Evidence') + ylab('Strength of Case -\nPunishmnet Correlation') +
-  outcome_color_scale +
-  evidence_plus_baseline_x_axis +
-  labs(title="C", size=rel(3)) +
-  geom_vline(xintercept=1.5, colour='grey') +
-  geom_vline(xintercept=2.5, colour='grey') +
-  geom_vline(xintercept=3.5, colour='grey') +
-  geom_vline(xintercept=4.5, colour='grey') +
-  geom_vline(xintercept=5.5, colour='grey') +
-  th + 
-  theme(
-    axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black'),
-    legend.position=c(1.25, 1)
-  )
+outcomes <- levels(effects$outcome)
+Nr <- length(outcomes)
+releveler <- function(x) {
+  # replace outcome numbers with names
+  xfac <- factor(x, levels=1:length(outcomes), labels=outcomes)
+  
+  # now reorder levels so plot looks right
+  factor(as.character(xfac), levels=c("rating", "rate_punishment", "rate_outrage", "rate_threat"))
+}
+corrs <- effects %>% filter(grepl('rho', variable)) %>% 
+                     separate(variable, into=c("variable", "outcome1", "outcome2")) %>%
+                     mutate_at(c("outcome1", "outcome2"), releveler) %>%
+                     filter(evidence=='baseline') %>% 
+                     unite(col=contrast, outcome1, outcome2, sep='-') %>%
+                     mutate(contrast=factor(contrast, levels=c('rating-rate_punishment', 
+                                                               'rating-rate_outrage', 
+                                                               'rating-rate_threat',
+                                                               'rate_punishment-rate_outrage',
+                                                               'rate_threat-rate_punishment',
+                                                               'rate_threat-rate_outrage'),
+                                                      labels=c('Strength\nof Case\nPunishment',
+                                                               'Strength\nof Case\nOutrage',
+                                                               'Strength\nof Case\nThreat',
+                                                               'Punishment\nOutrage',
+                                                               'Punishment\nThreat',
+                                                               'Outrage\nThreat')))
 
+plt_3 <- ggplot(data = corrs) +
+  geom_hline(yintercept=0, colour='grey') +
+  geom_pointrange(aes(x=contrast, y=X50., ymin=X2.5., ymax=X97.5.)) + 
+  ylab('Baseline Correlation') +
+  labs(title="C", size=rel(3)) +
+  coord_cartesian(ylim=c(-1,1)) +
+  th +
+  theme(
+    axis.text.x = element_text(hjust = 0.5, size=rel(0.8), color='black'),
+    axis.title.x = element_blank()
+  )
+  
+
+############### Panel 4: Punishment and case strength effect correlations ##################################
 load('data/stan_hier_postprocess_multi.rdata')
 
-############### Panel 3: Punishment and case strength effect correlations ##################################
-plt_3 <- ggplot(data=(effects %>% filter(variable=='rho'))) +
+plt_4 <- ggplot(data=(effects %>% filter(variable=='rho'))) +
   geom_pointrange(aes(x=evidence, y=X50., ymin=X2.5., ymax=X97.5., color=group), 
                          position=position_dodge(width = 0.5)) + 
   xlab('Evidence') + ylab('Strength of Case -\nPunishmnet Correlation') +
   group_color_scale +
   evidence_plus_baseline_x_axis +
-  labs(title="C", size=rel(3)) +
+  labs(title="D", size=rel(3)) +
   geom_vline(xintercept=1.5, colour='grey') +
   geom_vline(xintercept=2.5, colour='grey') +
   geom_vline(xintercept=3.5, colour='grey') +
@@ -108,12 +130,12 @@ plt_3 <- ggplot(data=(effects %>% filter(variable=='rho'))) +
   th + 
   theme(
     axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black'),
-    legend.position=c(1.25, 1)
+    legend.position=c(0.12, 0.19)
   )
 
 ############### Combine into a single figure ##################################
 # make a list of panels
-plt_list <- list(plt_1, plt_2, plt_3)
+plt_list <- list(plt_1, plt_2, plt_3, plt_4)
 
 # convert to grobs
 grob_list <- lapply(plt_list, ggplotGrob)
@@ -123,8 +145,8 @@ max_heights <- do.call(unit.pmax, lapply(grob_list, function(x) {x$heights}))
 grob_list <- lapply(grob_list, function(x) {x$heights <- max_heights; x})
 
 # arrange with differing widths
-lay <- rbind(c(1,2),
-             c(3, 3))
+lay <- rbind(c(1, 2, 3),
+             c(4, 4, 4))
 plt_all <- do.call(arrangeGrob, c(grob_list, ncol=3, layout_matrix=list(lay),
                                   widths=list(c(1.1, 0.5, 1.25))))
 
