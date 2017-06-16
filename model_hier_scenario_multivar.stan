@@ -46,7 +46,7 @@ transformed parameters {
   # assume population mean effects may be correlated across different rating types
   for (c in 1:Nc) {
     for (p in 1:P) {
-      gamma[c, p] = mu[p] + (diag_pre_multiply(eta[p], L_eta[p]) * delta[c, p]')';
+      gamma[c, p] = mu[p] + (diag_pre_multiply(eta[p], L_eta[p]) * delta[c, p]')';  # case effects
     }
   }
 
@@ -54,7 +54,7 @@ transformed parameters {
   # no correlation among subject-specific residuals (eta) given gammas
   for (c in 1:Nc) {
     for (i in 1:Nsub) {
-      beta[i, c] = gamma[c] + tau[c] .* eps[i];
+      beta[i, c] = gamma[c] + tau[c] .* eps[i];  # individual effects
     }
   }
 
@@ -63,14 +63,14 @@ transformed parameters {
 model {
   for (i in 1:Nsub) {
     for (p in 1:P) {
-      eps[i, p] ~ student_t(nu_eps, 0., 1.);
+      eps[i, p] ~ student_t(nu_eps, 0., 1.);  # subject residuals
     }
   }
 
   for (c in 1:Nc) {
     for (p in 1:P) {
-      delta[c, p] ~ student_t(nu_delta, 0., 1.);
-      tau[c, p] ~ cauchy(0, M);
+      delta[c, p] ~ student_t(nu_delta, 0., 1.);  # case residuals
+      tau[c, p] ~ cauchy(0, M);  # case variances across subjects
     }
   }
   
