@@ -6,8 +6,8 @@ library(tidyr)
 set.seed(11157)
 stan_seed <- 11158 
 nchains <- 4
-iter <- 1000
-thin <- 1
+iter <- 2000
+thin <- 2
 
 args = commandArgs(trailingOnly=TRUE)
 dset <- args[1]
