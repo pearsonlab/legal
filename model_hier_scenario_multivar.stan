@@ -26,7 +26,7 @@ parameters {
   cholesky_factor_corr[Nr] L_eta[P];
   
   # mean and variance across subjects within scenario 
-  matrix<lower=0>[P, Nr] tau[Nc];
+  matrix<lower=0>[P, Nr] tau;
   
   # residuals
   matrix[P, Nr] delta[Nc];  # scenario-specific
@@ -54,7 +54,7 @@ transformed parameters {
   # no correlation among subject-specific residuals (eta) given gammas
   for (c in 1:Nc) {
     for (i in 1:Nsub) {
-      beta[i, c] = gamma[c] + tau[c] .* eps[i];  # individual effects
+      beta[i, c] = gamma[c] + tau .* eps[i];  # individual effects
     }
   }
 
@@ -70,7 +70,7 @@ model {
   for (c in 1:Nc) {
     for (p in 1:P) {
       delta[c, p] ~ student_t(nu_delta, 0., 1.);  # case residuals
-      tau[c, p] ~ cauchy(0, M);  # case variances across subjects
+      tau[p] ~ cauchy(0, M);  # case variances across subjects
     }
   }
   
