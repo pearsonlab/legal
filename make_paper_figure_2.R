@@ -27,7 +27,7 @@ plt_1 <- ggplot(data=fe) +
   evidence_x_axis +
   coord_cartesian(ylim=c(0,40)) +
   labs(title="A") +
-  ylab("Strength of Case (pooints)") +
+  ylab("Case Strength (points)") +
   xlab("Evidence Effects") +
   geom_vline(xintercept=1.5, colour='grey') +
   geom_vline(xintercept=2.5, colour='grey') +
@@ -114,7 +114,7 @@ plt_3 <- ggplot(data=pred_evidence) +
   xlab("Weight of Model \nEvidence (points)") +
   coord_cartesian(xlim=c(-5, 70), ylim=c(0,100)) +
   labs(title="C", size=rel(3)) +
-  ylab("Strength of Case (observed)") +
+  ylab("Case Strength (observed)") +
   th
 
 ############### Combine into a single figure ##################################

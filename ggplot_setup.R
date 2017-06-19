@@ -52,16 +52,16 @@ outcome_color_scale <- scale_color_manual(values=c('rating'=color_conf,
                                                    'rate_punishment'=color_punish, 
                                                    'rate_outrage'=color_outrage, 
                                                    'rate_threat'=color_threat),
-                                          labels=c("Strength of Case", "Punishment", "Outrage", "Threat"))
+                                          labels=c("Case Strength", "Punishment", "Outrage", "Threat"))
 
 outcome_fill_scale <- scale_fill_manual(values=c('rating'=color_conf, 
                                                  'rate_punishment'=color_punish, 
                                                  'rate_outrage'=color_outrage, 
                                                  'rate_threat'=color_threat),
-                                        labels=c("Strength of Case", "Punishment", "Outrage", "Threat"))
+                                        labels=c("Case Strength", "Punishment", "Outrage", "Threat"))
 
 outcome_x_axis <- scale_x_discrete(breaks=c("rating","rate_punishment", "rate_outrage", "rate_threat"), 
-                   labels=c("Strength of Case", "Punishment", "Outrage", "Threat"))
+                   labels=c("Case Strength", "Punishment", "Outrage", "Threat"))
 
 
 evidence_x_axis <- scale_x_discrete(breaks=c("physicalDNA", 

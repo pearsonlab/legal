@@ -43,7 +43,7 @@ p <- ggplot(sc_means)
 p <- p + geom_boxplot(aes(code, rating), outlier.size=0, outlier.stroke=0) +
      geom_jitter(aes(code, rating), width=0.2, alpha=0.5, color=color_genpop) +
      geom_point(data=preds, aes(x=code, y=pred), color="red", shape=5, size=5, stroke=2) +
-     xlab('Evidence') + ylab('Mean strength of case (points)') +
+     xlab('Evidence Combinations') + ylab('Mean case strength (points)') +
      ylim(0, 100) +
      th +
      theme(

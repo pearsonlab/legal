@@ -30,7 +30,7 @@ plt_1 <- ggplot(data=fe) +
   outcome_color_scale +
   coord_cartesian(ylim=c(0,100)) +
   labs(title="A") +
-  ylab("Strength of Case (points)") +
+  ylab("Case Strength (points)") +
   xlab("Evidence Effects") +
   geom_vline(xintercept=1.5, colour='grey') +
   geom_vline(xintercept=2.5, colour='grey') +
@@ -92,12 +92,12 @@ corrs <- effects %>% filter(grepl('rho', variable)) %>%
                                                                'rate_punishment-rate_outrage',
                                                                'rate_threat-rate_punishment',
                                                                'rate_threat-rate_outrage'),
-                                                      labels=c('Strength\nof Case\nPunishment',
-                                                               'Strength\nof Case\nOutrage',
-                                                               'Strength\nof Case\nThreat',
-                                                               'Punishment\nOutrage',
-                                                               'Punishment\nThreat',
-                                                               'Outrage\nThreat')))
+                                                      labels=c('Case\nStrength/\nPunishment',
+                                                               'Case\nStrength/\nOutrage',
+                                                               'Case\nStrength/\nThreat',
+                                                               'Punishment/\nOutrage',
+                                                               'Punishment/\nThreat',
+                                                               'Outrage/\nThreat')))
 
 plt_3 <- ggplot(data = corrs) +
   geom_hline(yintercept=0, colour='grey') +
@@ -119,7 +119,7 @@ plt_4 <- ggplot(data=(effects %>% filter(variable=='rho'))) +
   geom_hline(yintercept=0, colour='grey') +
   geom_pointrange(aes(x=evidence, y=X50., ymin=X2.5., ymax=X97.5., color=group), 
                          position=position_dodge(width = 0.5)) + 
-  xlab('Evidence') + ylab('Strength of Case -\nPunishmnet Correlation') +
+  xlab('Evidence') + ylab('Case Strength /\nPunishmnet Correlation') +
   group_color_scale +
   evidence_plus_baseline_x_axis +
   labs(title="D", size=rel(3)) +
