@@ -1,0 +1,79 @@
+---
+title: "Supplementary Information for TITLE HERE"
+author: "XXXX et al."
+date: "6/20/2017"
+header-includes:
+  - \usepackage{amsmath, amssymb}
+bibliography: supp.bib
+output: pdf_document
+---
+
+# Modeling: Case Strength
+For the case of a single rating outcome (case strength), we separately model each group of participants as follows: Given a set of
+ratings $R$ indexed by $i=1\ldots N$, and an $N \times P$ design matrix $X$, we assume for a given observation $i$ corresponding to 
+subject $s$ and case $c$:
+
+\begin{align}
+  R_i &\sim \left[\mathcal{N}(\theta_i, \sigma^2)\right]^{100}_0 \label{rating}\\
+  \theta_i &= X_{i \,\cdot} \cdot \beta_{s(i) c(i) \,\cdot} \label{theta}\\
+  \beta_{s c p} &\sim \mathcal{T}_{\nu}(\gamma_{c p}, \tau^2_{c p}) \label{beta}\\
+  \gamma_{c p} &\sim \mathcal{T}_{\nu'}(\mu_p, \eta^2_p) \label{gamma}\\
+  \mu_p &\sim \mathcal{N}(50, 50) \label{mu} \\
+  \eta_p &\sim \mathrm{Ca}^+(0, 50) \\
+  \tau_{c p} &\sim \mathrm{Ca}^+(0, 50) \\
+  \sigma &\sim \mathrm{Ca}^+(0, 5) \\
+  \nu, \nu' &\sim \mathcal{N}^+(0, 100)
+\end{align}
+
+That is:
+
+- ratings are generated from a normal distribution censored to lie in the range $[0, 100]$ (\ref{rating})
+- linear predictors of ratings are weighted sums of subject-, case-, and regressor-specific effects (\ref{theta})
+- $\beta$ effects for each subject are drawn from a case-specific distribution (\ref{beta})
+- $\gamma$ effects for each case are themselves drawn from a distribution of effects (\ref{gamma})
+- effects at the case and single-subject level are modeled as robuts/fat-tailed, with Student-t distributions (\ref{beta},\ref{gamma})
+- variances ($\eta^2$, $\tau^2$, $\sigma^2$) are modeled using weakly informative half-Cauchy priors [@gelman2006prior], 
+  while degrees of freedom ($\nu$, $\nu'$) are modeled using weak half-Normal priors
+
+This approach allows for flexible fitting (including estimates of variance) at the regressor, case, and individual levels, while
+at the same time leveraging partial pooling to share statistical strength across these levels [@gelman2006data].
+
+# Modeling: Multiple Ratings
+For the case in which subjects provide multiple ratings (punishment, case strength, etc.) for a given scenario, we model the resulting
+vector of ratings, $R_r$, $r=1\ldots N_r$, similarly
+
+\begin{align}
+  R_i &\sim \left[\mathcal{N}(\theta_i, \sigma^2_{r(i)})\right]^{100}_0 \label{rating_m}\\
+  \theta_i &= X_{i \,\cdot} \cdot \beta_{s(i) c(i) \,\cdot \,r(i)} \label{theta_m}\\
+  \beta_{s c p r} &\sim \mathcal{T}_{\nu}(\gamma_{c p r}, \tau^2_{p r}) \label{beta_m}\\
+  \gamma_{c p} &\sim \mathcal{T}_{\nu'}(\mu_p, \Sigma_p) \label{gamma_m}\\
+  \Sigma_p &= L_p \cdot \mathrm{diag}(\eta_p)\cdot L_p^\top \\
+  \Omega_p = L_p L_p^\top &\sim \mathrm{LKJ}(1) \label{L_m}\\
+  \mu_{p r} &\sim \mathcal{N}(50, 50) \label{mu_m} \\
+  \eta_{p r} &\sim \mathrm{Ca}^+(0, 50) \\
+  \tau_{p r} &\sim \mathrm{Ca}^+(0, 50) \\
+  \sigma_r &\sim \mathrm{Ca}^+(0, 5) \\
+  \nu, \nu' &\sim \mathcal{N}^+(0, 100)
+\end{align}
+
+Here, we have used a "long" or "melted" representation of $R$ in which each index $i$ corresponds to a single observation of a
+single rating scale $r(i)$. This allows us to more easily handle missing data in the model fitting procedure (see below). 
+The model is almost equivalent to concatenating $N_r$ versions of the first model, one for each rating, 
+aside from two key differences: First (\ref{gamma_m}) and (\ref{L_m}) involve a multivariate t-distribution on the population 
+effects $\gamma$ specific to 
+each case. That is, we allow for covariance among the ratings for each effect at the population level, where the magnitudes of the 
+variances are again controlled by $\eta$ and the correlations $\Omega = LL^\top$ are modeled according to the LKJ distribution [@Lewandowski2009-tm]
+through their Cholesky factorization (\ref{L_m}).\footnote{Implemented as \texttt{L \textasciitilde{} lkj\_corr\_chol(1)} in Stan.}
+Second, in order to more accurately estimate variances in the presence of missing data, we have restricted this model to a single
+value of $\tau$ across all cases (for each outcome and regressor) (\ref{beta_m}).
+
+# Model Fitting
+We calculated posterior distributions and credible intervals for each variable of interest using Markov Chain Monte Carlo methods
+as implemented in the Stan probabilistic programming language [@carpenter2016stan]. Full code for all analyses is available at 
+[https://github.com/pearsonlab/legal](https://github.com/pearsonlab/legal). Models were fit by running 4 chains of either 1000 samples (case strength only model) with a thinning fraction of 1 or 2000
+samples (multiple outcome models) with a thinning fraction of 2, of which the first half were discarded as burn-in. This resulted 
+in 2000 total samples for each variable, for which we report means as well as 95% equal-tailed credible intervals (bounded 
+by the 2.5% and 97.5% samples from the distribution). We assessed convergence via effective sample size and the
+Gelman-Rubin statistic, for which all runs exhibited $\hat{R} < 1.1$ [@gelman2014bayesian].
+
+# References
