@@ -103,35 +103,31 @@ plt_3 <- ggplot(data = corrs) +
   geom_hline(yintercept=0, colour='grey') +
   geom_pointrange(aes(x=contrast, y=X50., ymin=X2.5., ymax=X97.5.)) + 
   ylab('Baseline Correlation') +
+  xlab('Outcome Pair') +
   labs(title="C", size=rel(3)) +
   coord_cartesian(ylim=c(-1,1)) +
   th +
   theme(
-    axis.text.x = element_text(hjust = 0.5, size=rel(0.8), color='black'),
-    axis.title.x = element_blank()
+    axis.text.x = element_text(hjust = 0.5, size=rel(0.8), color='black')
+    # axis.title.x = element_blank()
   )
   
 
 ############### Panel 4: Punishment and case strength effect correlations ##################################
 load('data/stan_hier_postprocess_multi.rdata')
 
-plt_4 <- ggplot(data=(effects %>% filter(variable=='rho'))) +
+plt_4 <- ggplot(data=(effects %>% filter(variable=='rho', evidence=='baseline'))) +
   geom_hline(yintercept=0, colour='grey') +
   geom_pointrange(aes(x=evidence, y=X50., ymin=X2.5., ymax=X97.5., color=group), 
                          position=position_dodge(width = 0.5)) + 
-  xlab('Evidence') + ylab('Case Strength /\nPunishmnet Correlation') +
+  xlab('Evidence') + ylab('\nCase Strength /\nPunishmnet Correlation') +
   group_color_scale +
   evidence_plus_baseline_x_axis +
   labs(title="D", size=rel(3)) +
-  geom_vline(xintercept=1.5, colour='grey') +
-  geom_vline(xintercept=2.5, colour='grey') +
-  geom_vline(xintercept=3.5, colour='grey') +
-  geom_vline(xintercept=4.5, colour='grey') +
-  geom_vline(xintercept=5.5, colour='grey') +
   th + 
   theme(
     axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black'),
-    legend.position=c(0.12, 0.19)
+    legend.position=c(1.2, 0.8)
   )
 
 ############### Combine into a single figure ##################################
@@ -146,10 +142,10 @@ max_heights <- do.call(unit.pmax, lapply(grob_list, function(x) {x$heights}))
 grob_list <- lapply(grob_list, function(x) {x$heights <- max_heights; x})
 
 # arrange with differing widths
-lay <- rbind(c(1, 2, 3),
-             c(4, 4, 4))
+lay <- rbind(c(1, 1, 2),
+             c(3, 4, NA))
 plt_all <- do.call(arrangeGrob, c(grob_list, ncol=3, layout_matrix=list(lay),
-                                  widths=list(c(1.1, 0.5, 1.25))))
+                                  widths=list(c(0.55, 0.55, 0.3))))
 
 # save to disk
 ggsave('figure_paper_4.pdf', plot=plt_all, width=11, height=8.5, units='in', useDingbats=FALSE)

@@ -25,7 +25,7 @@ th <-  theme(
     axis.text.y = element_text(hjust = 1, size=rel(2), color='black'),
     axis.title.y = element_text(size=rel(1.5)),
     plot.title=element_text(size=20, vjust=2, hjust=0.5),
-    legend.text = element_text(size=rel(1.5)),
+    legend.text = element_text(size=rel(1)),
     legend.title = element_blank(),
     legend.key = element_blank(),
     legend.background = element_blank(),
