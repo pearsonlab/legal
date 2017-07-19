@@ -2,6 +2,8 @@
 library(tidyr)
 library(dplyr)
 library(ggplot2)
+library(grid)
+library(gridExtra)
 library(rstan)
 
 source('ggplot_setup.R')
@@ -51,3 +53,49 @@ p <- p + geom_boxplot(aes(code, rating), outlier.size=0, outlier.stroke=0) +
      )
 
 ggsave('figure_paper_1C.pdf', plot=p, width=8, height=5, units='in', useDingbats=FALSE)
+
+####################
+
+# plot punishment ratings for each scenario
+load('data/stan_hier_postprocess_multi.rdata')
+
+# dataframe linking scenarios to seriousness as rank ordered by PS
+seriousness <- data.frame(seriousness=as.factor(c(1:33)), 
+                          scenario=as.factor(c(27, 9, 30, 6, 12, 29, 13, 14, 1, 24, 2, 22, 25,
+                                        3, 8, 4, 18, 33, 15, 7, 19, 28, 32, 5, 11, 26, 17,
+                                        20, 31, 21, 10, 16, 23)))
+
+df <- merge(dat, seriousness) %>% filter(rating_type=='rate_punishment')
+
+# boxplot punishment rating by seriousness
+plt_2 <- ggplot(df) +
+  geom_boxplot(aes(seriousness, rating)) + 
+  scale_x_discrete(name='Case (ordered by seriousness)',
+                   breaks=c(1:33),
+                   labels=seriousness$scenario)
+
+plt_3 <- ggplot(df %>% group_by(scenario, seriousness) %>% summarise(punish=median(rating))) +
+  geom_point(aes(seriousness, punish)) + 
+  geom_smooth(aes(as.numeric(seriousness), punish)) +
+  scale_x_discrete(name='Case (ordered by seriousness)',
+                   breaks=c(1:33),
+                   labels=seriousness$scenario) + 
+  ylab("Median Punishment Rating")
+
+# make a list of panels
+plt_list <- list(plt_2, plt_3)
+
+# convert to grobs
+# grob_list <- lapply(plt_list, ggplotGrob)
+
+# make sure axes align
+max_heights <- do.call(unit.pmax, lapply(plt_list, function(x) {x$heights}))
+grob_list <- lapply(plt_list, function(x) {x$heights <- max_heights; x})
+
+# arrange with differing widths
+# lay <- rbind(c(1, 2))
+# plt_all <- do.call(arrangeGrob, c(grob_list, ncol=2, layout_matrix=list(lay),
+#                                   widths=list(c(1.5, 1.5))))
+plt_all <- arrangeGrob(plt_2, plt_3)
+
+ggsave('figure_paper_1D.pdf', plot=plt_all, width=6, height=8, units='in', useDingbats=FALSE)
