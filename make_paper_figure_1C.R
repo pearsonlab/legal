@@ -41,8 +41,8 @@ colnames(Xmat)[1] <- 'baseline'
 Xmat <- Xmat[, sort(colnames(Xmat), index.return=TRUE)$ix]
 preds <- data.frame(code=ev_codes$code, pred=Xmat %*% betas$effect)
 
-p <- ggplot(sc_means)
-p <- p + geom_boxplot(aes(code, rating), outlier.size=0, outlier.stroke=0) +
+plt_1 <- ggplot(sc_means) +
+     geom_boxplot(aes(code, rating), outlier.size=0, outlier.stroke=0) +
      geom_jitter(aes(code, rating), width=0.2, alpha=0.5, color=color_genpop) +
      geom_point(data=preds, aes(x=code, y=pred), color="red", shape=5, size=5, stroke=2) +
      xlab('Evidence Combinations') + ylab('Mean case strength (points)') +
@@ -52,7 +52,7 @@ p <- p + geom_boxplot(aes(code, rating), outlier.size=0, outlier.stroke=0) +
        axis.text.x = element_blank()
      )
 
-ggsave('figure_paper_1C.pdf', plot=p, width=8, height=5, units='in', useDingbats=FALSE)
+ggsave('figure_paper_1C.pdf', plot=plt_1, width=8, height=5, units='in', useDingbats=FALSE)
 
 ####################
 
@@ -63,27 +63,31 @@ load('data/stan_hier_postprocess_multi.rdata')
 seriousness <- data.frame(seriousness=as.factor(c(1:33)), 
                           scenario=as.factor(c(27, 9, 30, 6, 12, 29, 13, 14, 1, 24, 2, 22, 25,
                                         3, 8, 4, 18, 33, 15, 7, 19, 28, 32, 5, 11, 26, 17,
-                                        20, 31, 21, 10, 16, 23)))
+                                        20, 31, 21, 10, 16, 23)),
+                          crime_type=as.factor(c(rep('federal', 3), rep('state', 30))))
 
-df <- merge(dat, seriousness) %>% filter(rating_type=='rate_punishment')
+df <- merge(dat, seriousness) %>% filter(rating_type=='rate_punishment') %>% 
+  group_by(scenario, seriousness, crime_type) %>% 
+  summarise(punish=median(rating), lower=quantile(rating, 0.25), 
+            upper=quantile(rating, 0.75))
+  
 
 # boxplot punishment rating by seriousness
 plt_2 <- ggplot(df) +
-  geom_boxplot(aes(seriousness, rating)) + 
-  scale_x_discrete(name='Case (ordered by seriousness)',
-                   breaks=c(1:33),
-                   labels=seriousness$scenario)
-
-plt_3 <- ggplot(df %>% group_by(scenario, seriousness) %>% summarise(punish=median(rating))) +
-  geom_point(aes(seriousness, punish)) + 
-  geom_smooth(aes(as.numeric(seriousness), punish)) +
-  scale_x_discrete(name='Case (ordered by seriousness)',
+  geom_pointrange(aes(seriousness, punish, ymin=lower, ymax=upper), color=color_conf) + 
+  geom_smooth(aes(as.numeric(seriousness), punish), color=color_conf, span=0.85) +
+  scale_x_discrete(name='Scenario (rank-ordered by severity)',
                    breaks=c(1:33),
                    labels=seriousness$scenario) + 
-  ylab("Median Punishment Rating")
+  scale_y_continuous(name="Median Punishment Rating", breaks=c(0, 25, 50, 75, 100)) +
+  geom_vline(xintercept=3.5, colour='grey') +
+  th +
+  theme(
+    axis.text.x = element_text(size=rel(0.75))
+    )
 
-# make a list of panels
-plt_list <- list(plt_2, plt_3)
+#Scenario make a list of panels
+plt_list <- list(plt_1, plt_2)
 
 # convert to grobs
 # grob_list <- lapply(plt_list, ggplotGrob)
@@ -96,6 +100,6 @@ grob_list <- lapply(plt_list, function(x) {x$heights <- max_heights; x})
 # lay <- rbind(c(1, 2))
 # plt_all <- do.call(arrangeGrob, c(grob_list, ncol=2, layout_matrix=list(lay),
 #                                   widths=list(c(1.5, 1.5))))
-plt_all <- arrangeGrob(plt_2, plt_3)
+plt_all <- arrangeGrob(plt_1, plt_2)
 
 ggsave('figure_paper_1D.pdf', plot=plt_all, width=6, height=8, units='in', useDingbats=FALSE)
