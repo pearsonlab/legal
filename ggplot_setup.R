@@ -15,7 +15,7 @@ color_conf='#0656A3'
 # #7570b3
 
 th <-  theme(
-    plot.margin=unit(c(5.5, 5.5, 5.5, 5.5), "points"),
+    plot.margin=unit(c(25.5, 25.5, 25.5, 25.5), "points"),
     panel.grid=element_blank(),
     panel.background = element_blank(),
     axis.line = element_line(color="black"),

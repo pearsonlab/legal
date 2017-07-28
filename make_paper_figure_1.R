@@ -5,11 +5,17 @@ library(ggplot2)
 library(grid)
 library(gridExtra)
 library(rstan)
+library(magick)
 
 source('ggplot_setup.R')
 load('data/stan_hier_postprocess.rdata')
 effects <- effects %>% filter(group=='mturk')
 dat <- dat %>% filter(group=='mturk')
+
+####################
+# task mockup from svg
+task_mock <- image_read('task_mockup.svg')
+plt_1 <- rasterGrob(task_mock)
 
 ####################
 
@@ -41,7 +47,7 @@ colnames(Xmat)[1] <- 'baseline'
 Xmat <- Xmat[, sort(colnames(Xmat), index.return=TRUE)$ix]
 preds <- data.frame(code=ev_codes$code, pred=Xmat %*% betas$effect)
 
-plt_1 <- ggplot(sc_means) +
+plt_2 <- ggplot(sc_means) +
      geom_boxplot(aes(code, rating), outlier.size=0, outlier.stroke=0) +
      geom_jitter(aes(code, rating), width=0.2, alpha=0.5, color=color_genpop) +
      geom_point(data=preds, aes(x=code, y=pred), color="red", shape=5, size=5, stroke=2) +
@@ -73,13 +79,15 @@ df <- merge(dat, seriousness) %>% filter(rating_type=='rate_punishment') %>%
   
 
 # boxplot punishment rating by seriousness
-plt_2 <- ggplot(df) +
+plt_3 <- ggplot(df) +
   geom_pointrange(aes(seriousness, punish, ymin=lower, ymax=upper), color=color_conf) + 
-  geom_smooth(aes(as.numeric(seriousness), punish), color=color_conf, span=0.85) +
+  geom_smooth(aes(as.numeric(seriousness), punish), color=color_conf, span=0.85, fullrange=TRUE) +
   scale_x_discrete(name='Scenario (rank-ordered by severity)',
                    breaks=c(1:33),
                    labels=seriousness$scenario) + 
-  scale_y_continuous(name="Median Punishment Rating", breaks=c(0, 25, 50, 75, 100)) +
+  # scale_y_continuous(name="Median Punishment Rating", breaks=c(0, 25, 50, 75, 100)) +
+  coord_cartesian(ylim=c(0, 100)) +
+  ylab("Median Punishment Rating") +
   geom_vline(xintercept=3.5, colour='grey') +
   th +
   theme(
@@ -87,7 +95,7 @@ plt_2 <- ggplot(df) +
     )
 
 #Scenario make a list of panels
-plt_list <- list(plt_1, plt_2)
+plt_list <- list(plt_1, plt_2, plt_3)
 
 # convert to grobs
 # grob_list <- lapply(plt_list, ggplotGrob)
@@ -97,9 +105,9 @@ max_heights <- do.call(unit.pmax, lapply(plt_list, function(x) {x$heights}))
 grob_list <- lapply(plt_list, function(x) {x$heights <- max_heights; x})
 
 # arrange with differing widths
-# lay <- rbind(c(1, 2))
-# plt_all <- do.call(arrangeGrob, c(grob_list, ncol=2, layout_matrix=list(lay),
-#                                   widths=list(c(1.5, 1.5))))
-plt_all <- arrangeGrob(plt_1, plt_2)
+lay <- rbind(c(1, 2, 3))
+plt_all <- do.call(arrangeGrob, c(plt_list, ncol=3, layout_matrix=list(lay),
+                                  widths=list(c(1, 1, 1))))
+# plt_all <- arrangeGrob(plt_1, plt_2, plt_3)
 
-ggsave('figure_paper_1D.pdf', plot=plt_all, width=6, height=8, units='in', useDingbats=FALSE)
+ggsave('figure_paper_1.pdf', plot=plt_all, width=18, height=4, units='in', useDingbats=FALSE)
