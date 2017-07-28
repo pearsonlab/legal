@@ -15,7 +15,9 @@ dat <- dat %>% filter(group=='mturk')
 ####################
 # task mockup from svg
 task_mock <- image_read('task_mockup.svg')
-plt_1 <- rasterGrob(task_mock)
+plt_1 <- ggplot() + th + 
+  labs(title="A", size=rel(3)) +
+  annotation_custom(rasterGrob(task_mock))
 
 ####################
 
@@ -53,6 +55,7 @@ plt_2 <- ggplot(sc_means) +
      geom_point(data=preds, aes(x=code, y=pred), color="red", shape=5, size=5, stroke=2) +
      xlab('Evidence Combinations') + ylab('Mean case strength (points)') +
      ylim(0, 100) +
+     labs(title="B", size=rel(3)) +
      th +
      theme(
        axis.text.x = element_blank()
@@ -89,6 +92,7 @@ plt_3 <- ggplot(df) +
   coord_cartesian(ylim=c(0, 100)) +
   ylab("Median Punishment Rating") +
   geom_vline(xintercept=3.5, colour='grey') +
+  labs(title="C", size=rel(3)) +
   th +
   theme(
     axis.text.x = element_text(size=rel(0.75))
@@ -110,4 +114,4 @@ plt_all <- do.call(arrangeGrob, c(plt_list, ncol=3, layout_matrix=list(lay),
                                   widths=list(c(1, 1, 1))))
 # plt_all <- arrangeGrob(plt_1, plt_2, plt_3)
 
-ggsave('figure_paper_1.pdf', plot=plt_all, width=18, height=4, units='in', useDingbats=FALSE)
+ggsave('figure_paper_1.pdf', plot=plt_all, width=18, height=5, units='in', useDingbats=FALSE)
