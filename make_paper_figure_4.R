@@ -20,7 +20,8 @@ fe <- effects %>% filter(variable == 'mu', evidence != 'baseline') %>%
       mutate(outcome=factor(outcome, levels=c("rating", 
                                               "rate_punishment", 
                                               "rate_outrage", 
-                                              "rate_threat")))
+                                              "rate_threat",
+                                              "rate_threat_2")))
 
 plt_1 <- ggplot(data=fe) +
   geom_hline(yintercept=0, colour='grey') +
@@ -49,7 +50,8 @@ se <- effects %>% filter(variable == 'gamma', evidence == 'baseline') %>%
       mutate(outcome=factor(outcome, levels=c("rating", 
                                               "rate_punishment", 
                                               "rate_outrage", 
-                                              "rate_threat")))
+                                              "rate_threat",
+                                              "rate_threat_2")))
 
 plt_2 <- ggplot(data = se, aes(x=outcome, y=mean)) +
   geom_hline(yintercept=0, colour='grey') +
@@ -79,7 +81,7 @@ releveler <- function(x) {
   xfac <- factor(x, levels=1:length(outcomes), labels=outcomes)
   
   # now reorder levels so plot looks right
-  factor(as.character(xfac), levels=c("rating", "rate_punishment", "rate_outrage", "rate_threat"))
+  factor(as.character(xfac), levels=c("rating", "rate_punishment", "rate_outrage", "rate_threat", "rate_threat_2"))
 }
 corrs <- effects %>% filter(grepl('rho', variable)) %>% 
                      separate(variable, into=c("variable", "outcome1", "outcome2")) %>%
@@ -89,15 +91,23 @@ corrs <- effects %>% filter(grepl('rho', variable)) %>%
                      mutate(contrast=factor(contrast, levels=c('rating-rate_punishment', 
                                                                'rating-rate_outrage', 
                                                                'rating-rate_threat',
-                                                               'rate_punishment-rate_outrage',
+                                                               'rating-rate_threat_2',
+                                                               'rate_threat_2-rate_threat',
                                                                'rate_threat-rate_punishment',
-                                                               'rate_threat-rate_outrage'),
+                                                               'rate_threat-rate_outrage',
+                                                               'rate_punishment-rate_outrage',
+                                                               'rate_threat_2-rate_punishment',
+                                                               'rate_threat_2-rate_outrage'),
                                                       labels=c('Case\nStrength/\nPunishment',
                                                                'Case\nStrength/\nOutrage',
                                                                'Case\nStrength/\nThreat',
-                                                               'Punishment/\nOutrage',
+                                                               'Case\nStrength/\nThreat2',
+                                                               'Threat/\nThreat2',
                                                                'Punishment/\nThreat',
-                                                               'Outrage/\nThreat')))
+                                                               'Outrage/\nThreat',
+                                                               'Punishment/\nOutrage',
+                                                               'Punishment/\nThreat2',
+                                                               'Outrage/\nThreat2')))
 
 plt_3 <- ggplot(data = corrs) +
   geom_hline(yintercept=0, colour='grey') +
@@ -127,7 +137,7 @@ plt_4 <- ggplot(data=(effects %>% filter(variable=='rho', evidence=='baseline'))
   th + 
   theme(
     axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black'),
-    legend.position=c(1.2, 0.8)
+    legend.position=c(0.8, 0.8)
   )
 
 ############### Combine into a single figure ##################################
@@ -142,10 +152,10 @@ max_heights <- do.call(unit.pmax, lapply(grob_list, function(x) {x$heights}))
 grob_list <- lapply(grob_list, function(x) {x$heights <- max_heights; x})
 
 # arrange with differing widths
-lay <- rbind(c(1, 1, 2),
-             c(3, 4, NA))
-plt_all <- do.call(arrangeGrob, c(grob_list, ncol=3, layout_matrix=list(lay),
-                                  widths=list(c(0.55, 0.55, 0.3))))
+lay <- rbind(c(1, 1, 2, NA),
+             c(3, 3, 4, 4))
+plt_all <- do.call(arrangeGrob, c(grob_list, ncol=4, layout_matrix=list(lay),
+                                  widths=list(c(0.55, 0.55, 0.4, 0.4))))
 
 # save to disk
 ggsave('figure_paper_4.pdf', plot=plt_all, width=13, height=10.5, units='in', useDingbats=FALSE)

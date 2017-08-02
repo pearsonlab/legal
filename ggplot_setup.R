@@ -8,6 +8,7 @@ color_ilsa ='#9e331b'
 color_outrage='#733238'
 color_punish='#A69A60'
 color_threat='#D9BF3D'
+color_threat_2='#7570b3'
 color_conf='#0656A3'
 
 # more colors
@@ -51,8 +52,13 @@ group_x_axis <- scale_x_discrete(breaks=c('legal', 'lsba', 'ilsa', 'mturk'),
 outcome_color_scale <- scale_color_manual(values=c('rating'=color_conf, 
                                                    'rate_punishment'=color_punish, 
                                                    'rate_outrage'=color_outrage, 
-                                                   'rate_threat'=color_threat),
-                                          labels=c("Case Strength", "Punishment", "Outrage", "Threat"))
+                                                   'rate_threat'=color_threat,
+                                                   'rate_threat_2'=color_threat_2),
+                                          labels=c("Case Strength", 
+                                                   "Punishment", 
+                                                   "Outrage", 
+                                                   "Threat", 
+                                                   "Threat2"))
 
 outcome_fill_scale <- scale_fill_manual(values=c('rating'=color_conf, 
                                                  'rate_punishment'=color_punish, 
