@@ -20,14 +20,19 @@ data_file_names <- paste(datadir, c('data_mq_nothreat_deid.csv',
 dlist <- list()
 for (ind in 1:length(data_file_names)) {
   dlist[[ind]] <- read.csv(data_file_names[[ind]])
+  
+  # recode threat question in threat dataset as distinct
+  if (ind == length(data_file_names)) {
+    dlist[[ind]] <- dlist[[ind]] %>% mutate(rate_threat_2=rate_threat) %>% select(-rate_threat)
+  }
 }
 df <- do.call('bind_rows', dlist)
 
 # do some cleaing of datasets prior to merge
 dat <- df %>% dplyr::rename(uid=hashedID) %>%
               select(uid, scenario, physical, history, witness,
-                     rating, rate_punishment, rate_threat, rate_outrage) %>%
-              gather(key=rating_type, value=rating, c(rating, rate_punishment, rate_threat, rate_outrage)) %>%
+                     rating, rate_punishment, rate_threat, rate_threat_2, rate_outrage) %>%
+              gather(key=rating_type, value=rating, c(rating, rate_punishment, rate_threat, rate_threat_2, rate_outrage)) %>%
               mutate_at(c('uid', 'scenario', 'physical', 'history', 'witness', 'rating_type'), 'as.factor') %>%
               mutate(group=group)
               
@@ -95,4 +100,4 @@ fit <- stan(file = 'model_hier_scenario_multivar.stan', data = stan_dat,
             pars=c('mu', 'eta', 'gamma', 'tau', 'sigma', 'Omega'),
             init=init)
 
-save.image(paste('data/stan_model_output_hier_t_multi_all.rdata', sep=''))
+save.image(paste('data/stan_model_output_hier_t_multi_all_2.rdata', sep=''))
