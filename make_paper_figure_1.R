@@ -69,11 +69,16 @@ ggsave('figure_paper_1C.pdf', plot=plt_1, width=8, height=5, units='in', useDing
 load('data/stan_hier_postprocess_multi.rdata')
 
 # dataframe linking scenarios to seriousness as rank ordered by PS
+sc_ranked <- as.factor(c(27, 6, 12, 29, 13, 14, 1, 24, 2, 22, 25,
+                                        3, 8, 9, 4, 18, 33, 15, 7, 19, 28, 32, 5, 11, 26, 17,
+                                        20, 30, 31, 21, 10, 16, 23))
+crime_type <- rep('state', 33)
+crime_type[c(1, 14, 28)] <- 'federal'
+crime_type <- as.factor(crime_type)
+
 seriousness <- data.frame(seriousness=as.factor(c(1:33)), 
-                          scenario=as.factor(c(27, 9, 30, 6, 12, 29, 13, 14, 1, 24, 2, 22, 25,
-                                        3, 8, 4, 18, 33, 15, 7, 19, 28, 32, 5, 11, 26, 17,
-                                        20, 31, 21, 10, 16, 23)),
-                          crime_type=as.factor(c(rep('federal', 3), rep('state', 30))))
+                          scenario=sc_ranked,
+                          crime_type=crime_type)
 
 df <- merge(dat, seriousness) %>% filter(rating_type=='rate_punishment') %>% 
   group_by(scenario, seriousness, crime_type) %>% 
@@ -88,10 +93,8 @@ plt_3 <- ggplot(df) +
   scale_x_discrete(name='Scenario (rank-ordered by severity)',
                    breaks=c(1:33),
                    labels=seriousness$scenario) + 
-  # scale_y_continuous(name="Median Punishment Rating", breaks=c(0, 25, 50, 75, 100)) +
   coord_cartesian(ylim=c(0, 100)) +
-  ylab("Median Punishment Rating") +
-  geom_vline(xintercept=3.5, colour='grey') +
+  ylab("Punishment Rating (points)") +
   labs(title="C", size=rel(3)) +
   th +
   theme(

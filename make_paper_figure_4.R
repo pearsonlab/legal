@@ -21,7 +21,8 @@ fe <- effects %>% filter(variable == 'mu', evidence != 'baseline') %>%
                                               "rate_punishment", 
                                               "rate_outrage", 
                                               "rate_threat",
-                                              "rate_threat_2")))
+                                              "rate_threat_2"))) %>%
+     filter(outcome != "rate_threat")
 
 plt_1 <- ggplot(data=fe) +
   geom_hline(yintercept=0, colour='grey') +
@@ -51,14 +52,14 @@ se <- effects %>% filter(variable == 'gamma', evidence == 'baseline') %>%
                                               "rate_punishment", 
                                               "rate_outrage", 
                                               "rate_threat",
-                                              "rate_threat_2")))
+                                              "rate_threat_2"))) %>%
+     filter(outcome != "rate_threat")
 
 plt_2 <- ggplot(data = se, aes(x=outcome, y=mean)) +
   geom_hline(yintercept=0, colour='grey') +
   geom_boxplot(aes(color=outcome), lwd=1, fatten=1, outlier.size=0, outlier.stroke=0) +
   outcome_x_axis +
   outcome_color_scale +
-  outcome_fill_scale +
   xlab("Baseline\nEffect") +
   coord_cartesian(ylim=c(0,100)) +
   labs(title="B", size=rel(3)) +
@@ -87,6 +88,7 @@ corrs <- effects %>% filter(grepl('rho', variable)) %>%
                      separate(variable, into=c("variable", "outcome1", "outcome2")) %>%
                      mutate_at(c("outcome1", "outcome2"), releveler) %>%
                      filter(evidence=='baseline') %>% 
+                     filter(outcome1 != "rate_threat", outcome2 != "rate_threat") %>%
                      unite(col=contrast, outcome1, outcome2, sep='-') %>%
                      mutate(contrast=factor(contrast, levels=c('rating-rate_punishment', 
                                                                'rating-rate_outrage', 
@@ -100,14 +102,14 @@ corrs <- effects %>% filter(grepl('rho', variable)) %>%
                                                                'rate_threat_2-rate_outrage'),
                                                       labels=c('Case\nStrength/\nPunishment',
                                                                'Case\nStrength/\nOutrage',
+                                                               'Case\nStrength/\nLikelihood',
                                                                'Case\nStrength/\nThreat',
-                                                               'Case\nStrength/\nThreat2',
-                                                               'Threat/\nThreat2',
-                                                               'Punishment/\nThreat',
-                                                               'Outrage/\nThreat',
+                                                               'Threat/\nLikelihood',
+                                                               'Punishment/\nLikelihood',
+                                                               'Outrage/\nLikelihood',
                                                                'Punishment/\nOutrage',
-                                                               'Punishment/\nThreat2',
-                                                               'Outrage/\nThreat2')))
+                                                               'Punishment/\nThreat',
+                                                               'Outrage/\nThreat')))
 
 plt_3 <- ggplot(data = corrs) +
   geom_hline(yintercept=0, colour='grey') +
@@ -137,7 +139,8 @@ plt_4 <- ggplot(data=(effects %>% filter(variable=='rho', evidence=='baseline'))
   th + 
   theme(
     axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black'),
-    legend.position=c(0.8, 0.8)
+    plot.margin=unit(c(25.5, 100.5, 25.5, 0), "points"),
+    legend.position=c(1.1, 0.8)
   )
 
 ############### Combine into a single figure ##################################

@@ -5,7 +5,9 @@ date: "6/20/2017"
 header-includes:
   - \usepackage{amsmath, amssymb}
 bibliography: supp.bib
-output: pdf_document
+output: 
+  pdf_document:
+    fig_caption: true 
 ---
 
 # Modeling: Case Strength
@@ -76,4 +78,136 @@ in 2000 total samples for each variable, for which we report means as well as 95
 by the 2.5% and 97.5% samples from the distribution). We assessed convergence via effective sample size and the
 Gelman-Rubin statistic, for which all runs exhibited $\hat{R} < 1.1$ [@gelman2014bayesian].
 
+# Supplementary Figures
+
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=6, fig.cap="Deserved punishment ratings as a function of crime severity. Plotted separately for State (A) and Federal (B) crimes. \\label{seriousness_by_crime_type}"}
+library(tidyverse)
+library(grid)
+library(gridExtra)
+source("../ggplot_setup.R")
+
+load('../data/stan_hier_postprocess_multi.rdata')
+
+# dataframe linking scenarios to seriousness as rank ordered by PS
+sc_ranked <- as.factor(c(27, 6, 12, 29, 13, 14, 1, 24, 2, 22, 25,
+                                        3, 8, 9, 4, 18, 33, 15, 7, 19, 28, 32, 5, 11, 26, 17,
+                                        20, 30, 31, 21, 10, 16, 23))
+crime_type <- rep('state', 33)
+crime_type[c(1, 14, 28)] <- 'federal'
+crime_type <- as.factor(crime_type)
+
+seriousness <- data.frame(seriousness=as.factor(c(1:33)), 
+                          scenario=sc_ranked,
+                          crime_type=crime_type)
+
+df <- merge(dat, seriousness) %>% filter(rating_type=='rate_punishment') %>% 
+  group_by(scenario, seriousness, crime_type) %>% 
+  summarise(punish=median(rating), lower=quantile(rating, 0.25), 
+            upper=quantile(rating, 0.75))
+  
+
+# boxplot punishment rating by seriousness
+plt_1 <- ggplot(df %>% filter(crime_type=='state')) +
+  geom_pointrange(aes(seriousness, punish, ymin=lower, ymax=upper), color=color_conf) + 
+  # geom_smooth(aes(as.numeric(seriousness), punish), color=color_conf, span=0.85, fullrange=TRUE) +
+  scale_x_discrete(name='Scenario (rank-ordered by severity)',
+                   breaks=c(1:33),
+                   labels=seriousness$scenario) + 
+  coord_cartesian(ylim=c(0, 100)) +
+  labs(title="A. State Crimes", size=rel(3)) +
+  ylab("Punishment Rating (points)") +
+  th +
+  theme(
+    axis.text.x = element_text(size=rel(0.75))
+    )
+
+plt_2 <- ggplot(df %>% filter(crime_type=='federal')) +
+  geom_pointrange(aes(seriousness, punish, ymin=lower, ymax=upper), color=color_conf) + 
+  # geom_smooth(aes(as.numeric(seriousness), punish), color=color_conf, span=0.85, fullrange=TRUE) +
+  scale_x_discrete(name='Scenario (rank-ordered by severity)',
+                   breaks=c(1:33),
+                   labels=seriousness$scenario) + 
+  coord_cartesian(ylim=c(0, 100)) +
+  labs(title="B. Federal Crimes", size=rel(3)) +
+  ylab("Punishment Rating (points)") +
+  th +
+  theme(
+    axis.text.x = element_text(size=rel(0.75))
+    )
+plot(arrangeGrob(plt_1, plt_2))
+```
+
+
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.width=8, fig.cap="Pairwise correlations for baseline effects across all outcome types. Includes both versions of the threat assessment question (cp. Figure 4C). \\label{baseline_correlations}"}
+load('../data/stan_hier_postprocess_multi_all.rdata')
+
+outcomes <- levels(effects$outcome)
+Nr <- length(outcomes)
+releveler <- function(x) {
+  # replace outcome numbers with names
+  xfac <- factor(x, levels=1:length(outcomes), labels=outcomes)
+  
+  # now reorder levels so plot looks right
+  factor(as.character(xfac), levels=c("rating", "rate_punishment", "rate_outrage", "rate_threat", "rate_threat_2"))
+}
+corrs <- effects %>% filter(grepl('rho', variable)) %>% 
+                     separate(variable, into=c("variable", "outcome1", "outcome2")) %>%
+                     mutate_at(c("outcome1", "outcome2"), releveler) %>%
+                     filter(evidence=='baseline') %>% 
+                     unite(col=contrast, outcome1, outcome2, sep='-') %>%
+                     mutate(contrast=factor(contrast, levels=c('rating-rate_punishment', 
+                                                               'rating-rate_outrage', 
+                                                               'rating-rate_threat',
+                                                               'rating-rate_threat_2',
+                                                               'rate_threat_2-rate_threat',
+                                                               'rate_threat-rate_punishment',
+                                                               'rate_threat-rate_outrage',
+                                                               'rate_punishment-rate_outrage',
+                                                               'rate_threat_2-rate_punishment',
+                                                               'rate_threat_2-rate_outrage'),
+                                                      labels=c('Case\nStrength/\nPunishment',
+                                                               'Case\nStrength/\nOutrage',
+                                                               'Case\nStrength/\nLikelihood',
+                                                               'Case\nStrength/\nThreat',
+                                                               'Threat/\nLikelihood',
+                                                               'Punishment/\nLikelihood',
+                                                               'Outrage/\nLikelihood',
+                                                               'Punishment/\nOutrage',
+                                                               'Punishment/\nThreat',
+                                                               'Outrage/\nThreat')))
+
+plt_3 <- ggplot(data = corrs) +
+  geom_hline(yintercept=0, colour='grey') +
+  geom_pointrange(aes(x=contrast, y=X50., ymin=X2.5., ymax=X97.5.)) + 
+  ylab('Baseline Correlation') +
+  xlab('Outcome Pair') +
+  coord_cartesian(ylim=c(-1,1)) +
+  th +
+  theme(
+    axis.text.x = element_text(hjust = 0.5, size=rel(0.8), color='black')
+  )
+plt_3  
+```
+
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.width=8, fig.cap="Correlations between case strength and deserved punishment for all model effects across groups (cp. Figure 4D). \\label{all_group_correlations}"}
+
+load('../data/stan_hier_postprocess_multi.rdata')
+
+plt_4 <- ggplot(data=(effects %>% filter(variable=='rho'))) +
+  geom_hline(yintercept=0, colour='grey') +
+  geom_pointrange(aes(x=evidence, y=X50., ymin=X2.5., ymax=X97.5., color=group), 
+                         position=position_dodge(width = 0.5)) + 
+  xlab('Evidence') + ylab('\nCase Strength /\nPunishmnet Correlation') +
+  group_color_scale +
+  evidence_plus_baseline_x_axis +
+  th + 
+  theme(
+    axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black'),
+    legend.position=c(0.15, 0.2),
+    legend.box.background = element_rect(fill=alpha("white", 0.75), color=NULL, linetype=NULL)
+  )
+plt_4
+```
+
+\newpage
 # References

@@ -48,26 +48,23 @@ group_fill_scale <- scale_fill_manual(values=c('mturk'=color_genpop,
 group_x_axis <- scale_x_discrete(breaks=c('legal', 'lsba', 'ilsa', 'mturk'),
                       labels=c('Law Students', 'Louisiana Bar', 'Illinois Prosecutors', 'mTurk'))
 
+outcome_colors <- c('rating'=color_conf, 
+                    'rate_punishment'=color_punish, 
+                    'rate_outrage'=color_outrage, 
+                    'rate_threat_2'=color_threat_2, 
+                    'rate_threat'=color_threat)
+outcome_labels <- c("rating"="Case Strength", 
+                    "rate_punishment"="Punishment", 
+                    "rate_outrage"="Outrage", 
+                    "rate_threat_2"="Threat", 
+                    "rate_threat"="Likelihood")
 
-outcome_color_scale <- scale_color_manual(values=c('rating'=color_conf, 
-                                                   'rate_punishment'=color_punish, 
-                                                   'rate_outrage'=color_outrage, 
-                                                   'rate_threat'=color_threat,
-                                                   'rate_threat_2'=color_threat_2),
-                                          labels=c("Case Strength", 
-                                                   "Punishment", 
-                                                   "Outrage", 
-                                                   "Threat", 
-                                                   "Threat2"))
+outcome_color_scale <- scale_color_manual(values=outcome_colors, labels=outcome_labels)
 
-outcome_fill_scale <- scale_fill_manual(values=c('rating'=color_conf, 
-                                                 'rate_punishment'=color_punish, 
-                                                 'rate_outrage'=color_outrage, 
-                                                 'rate_threat'=color_threat),
-                                        labels=c("Case Strength", "Punishment", "Outrage", "Threat"))
+outcome_fill_scale <- scale_fill_manual(values=outcome_colors, labels=outcome_labels)
 
-outcome_x_axis <- scale_x_discrete(breaks=c("rating","rate_punishment", "rate_outrage", "rate_threat"), 
-                   labels=c("Case Strength", "Punishment", "Outrage", "Threat"))
+outcome_x_axis <- scale_x_discrete(breaks=c("rating","rate_punishment", "rate_outrage", "rate_threat", "rate_threat_2"), 
+                                   labels=outcome_labels)
 
 
 evidence_x_axis <- scale_x_discrete(breaks=c("physicalDNA", 
