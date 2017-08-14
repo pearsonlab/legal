@@ -38,7 +38,7 @@ plt_1 <- ggplot(data=fe) +
     axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black'))
 
 
-############### Panel 2: Baseline effects ##################################
+############### Panel 2: Crime effects ##################################
 # get scenario effects
 se <- effects %>% filter(variable == 'gamma', evidence == 'baseline') %>% 
                   select(scenario, mean, group) %>%
@@ -50,7 +50,7 @@ plt_2 <- ggplot(data = se, aes(x=group, y=mean)) +
   group_x_axis +
   group_color_scale +
   group_fill_scale +
-  xlab("Baseline\nEffect") +
+  xlab("Crime Effect") +
   coord_cartesian(ylim=c(0,40)) +
   labs(title="B", size=rel(3)) +
   ylab("Confidence") +

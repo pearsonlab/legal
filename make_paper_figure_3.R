@@ -53,7 +53,7 @@ plt_2 <- ggplot(data = se, aes(x=group, y=mean)) +
   group_x_axis +
   group_color_scale +
   group_fill_scale +
-  xlab("Baseline\nEffect") +
+  xlab("Crime Effect") +
   coord_cartesian(ylim=c(-10,60)) +
   labs(title="B", size=rel(3)) +
   ylab("Confidence") +
@@ -140,33 +140,9 @@ plt_4 <- ggplot(data=eff_slope_and_baseline) +
   geom_smooth(aes(x=baseline, y=slope), method=lm, color="black", fill="black") +
   geom_point(aes(x=baseline, y=slope, color=group), size=4) + 
   group_color_scale +
-  xlab('Baseline') + ylab('Evidence') +
+  xlab('Crime') + ylab('Evidence') +
   labs(title="D", size=rel(3)) +
   th
-
-############### Panel 5: Variance Comparison #################################
-variance_comparison <- effects %>%
-  filter(variable %in% c('eta', 'tau', 'sigma'), (evidence=='baseline') | (variable == 'sigma')) %>%
-  select(X2.5., X50., X97.5., variable, scenario, group) %>%
-  mutate(variable = factor(variable, levels=c('eta', 'tau', 'sigma')))
-
-plt_5 <- ggplot() +
-  geom_pointrange(data=variance_comparison %>% filter(variable %in% c('eta', 'sigma')),
-                  aes(x=variable, y=X50., ymin=X2.5., ymax=X97.5., color=group),
-                  position=position_dodge(width=0.5), size=1) +
-  geom_boxplot(data=variance_comparison %>% filter(variable=='tau'),
-               aes(x=variable, y=X50., color=group), lwd=1, fatten=1, 
-               position=position_dodge(width=0.85)) +
-  variance_x_axis +
-  group_color_scale +
-  ylim(0, 50) +
-  ylab("Standard Deviation (points)") + 
-  xlab("Variance") +
-  labs(title="E", size=rel(3)) +
-  th +
-  theme(
-    axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black')
-  )
 
 ############### Combine into a single figure ##################################
 # make a list of panels

@@ -60,7 +60,7 @@ plt_2 <- ggplot(data = se, aes(x=outcome, y=mean)) +
   geom_boxplot(aes(color=outcome), lwd=1, fatten=1, outlier.size=0, outlier.stroke=0) +
   outcome_x_axis +
   outcome_color_scale +
-  xlab("Baseline\nEffect") +
+  xlab("Crime Effect") +
   coord_cartesian(ylim=c(0,100)) +
   labs(title="B", size=rel(3)) +
   ylab("Confidence") +
@@ -90,31 +90,13 @@ corrs <- effects %>% filter(grepl('rho', variable)) %>%
                      filter(evidence=='baseline') %>% 
                      filter(outcome1 != "rate_threat", outcome2 != "rate_threat") %>%
                      unite(col=contrast, outcome1, outcome2, sep='-') %>%
-                     mutate(contrast=factor(contrast, levels=c('rating-rate_punishment', 
-                                                               'rating-rate_outrage', 
-                                                               'rating-rate_threat',
-                                                               'rating-rate_threat_2',
-                                                               'rate_threat_2-rate_threat',
-                                                               'rate_threat-rate_punishment',
-                                                               'rate_threat-rate_outrage',
-                                                               'rate_punishment-rate_outrage',
-                                                               'rate_threat_2-rate_punishment',
-                                                               'rate_threat_2-rate_outrage'),
-                                                      labels=c('Case\nStrength/\nPunishment',
-                                                               'Case\nStrength/\nOutrage',
-                                                               'Case\nStrength/\nLikelihood',
-                                                               'Case\nStrength/\nThreat',
-                                                               'Threat/\nLikelihood',
-                                                               'Punishment/\nLikelihood',
-                                                               'Outrage/\nLikelihood',
-                                                               'Punishment/\nOutrage',
-                                                               'Punishment/\nThreat',
-                                                               'Outrage/\nThreat')))
+                     mutate(contrast=factor(contrast, levels=outcome_corr_levels,
+                                                      labels=outcome_corr_labels))
 
 plt_3 <- ggplot(data = corrs) +
   geom_hline(yintercept=0, colour='grey') +
   geom_pointrange(aes(x=contrast, y=X50., ymin=X2.5., ymax=X97.5.)) + 
-  ylab('Baseline Correlation') +
+  ylab('Crime Effect Correlation') +
   xlab('Outcome Pair') +
   labs(title="C", size=rel(3)) +
   coord_cartesian(ylim=c(-1,1)) +
@@ -138,7 +120,8 @@ plt_4 <- ggplot(data=(effects %>% filter(variable=='rho', evidence=='baseline'))
   labs(title="D", size=rel(3)) +
   th + 
   theme(
-    axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black'),
+    axis.text.x = element_blank(),
+    axis.title.x = element_blank(),
     plot.margin=unit(c(25.5, 100.5, 25.5, 0), "points"),
     legend.position=c(1.1, 0.8)
   )

@@ -57,7 +57,27 @@ outcome_labels <- c("rating"="Case Strength",
                     "rate_punishment"="Punishment", 
                     "rate_outrage"="Outrage", 
                     "rate_threat_2"="Threat", 
-                    "rate_threat"="Likelihood")
+                    "rate_threat"="Proximity")
+outcome_corr_levels <- c('rating-rate_punishment', 
+                         'rating-rate_outrage', 
+                         'rating-rate_threat',
+                         'rating-rate_threat_2',
+                         'rate_threat_2-rate_threat',
+                         'rate_threat-rate_punishment',
+                         'rate_threat-rate_outrage',
+                         'rate_punishment-rate_outrage',
+                         'rate_threat_2-rate_punishment',
+                         'rate_threat_2-rate_outrage')
+outcome_corr_labels <- c('Case\nStrength/\nPunishment',
+                         'Case\nStrength/\nOutrage',
+                         'Case\nStrength/\nProximity',
+                         'Case\nStrength/\nThreat',
+                         'Threat/\nProximity',
+                         'Punishment/\nProximity',
+                         'Outrage/\nProximity',
+                         'Punishment/\nOutrage',
+                         'Punishment/\nThreat',
+                         'Outrage/\nThreat')
 
 outcome_color_scale <- scale_color_manual(values=outcome_colors, labels=outcome_labels)
 
@@ -84,7 +104,7 @@ evidence_plus_baseline_x_axis <- scale_x_discrete(breaks=c("baseline",
                                                            "witnessYes Witness", 
                                                            "historyRelated", 
                                                            "historyUnrelated"), 
-                                                   labels=c("Baseline",
+                                                   labels=c("Crime",
                                                             "DNA \nphysical \nevidence", 
                                                             "Non-DNA \nphysical \nevidence",  
                                                             "Witness \npresent", 

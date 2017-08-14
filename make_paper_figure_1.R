@@ -61,8 +61,6 @@ plt_2 <- ggplot(sc_means) +
        axis.text.x = element_blank()
      )
 
-ggsave('figure_paper_1C.pdf', plot=plt_1, width=8, height=5, units='in', useDingbats=FALSE)
-
 ####################
 
 # plot punishment ratings for each scenario
@@ -101,8 +99,32 @@ plt_3 <- ggplot(df) +
     axis.text.x = element_text(size=rel(0.75))
     )
 
+################
+# plot relationship between case strength and guilt
+
+datadir <- 'data'
+dsets <- c('data_mq_nothreat_deid.csv', 'data_sq_nothreat_deid.csv', 'data_nb_deid.csv')
+
+df_list <- list()
+for (ii in 1:length(dsets)) {
+  df_list[[ii]] <- read.csv(paste(datadir, "/", dsets[ii], sep=""))
+}
+
+dat <- bind_rows(df_list) %>% filter(!is.na(guilty), !is.na(rating))
+
+fit <- glm(guilty ~ rating, family = binomial(), data=dat)
+preds <- predict.glm(fit, newdata=data.frame(rating=1:100), type="response")
+
+pred_dat <- data.frame(prob=preds, rating=1:100)
+plt_4 <- ggplot(pred_dat) + geom_line(aes(x=rating, y=prob)) + 
+  stat_summary_bin(data=dat, aes(x=rating, y=guilty), fun.data = "mean_cl_boot") +
+  xlab("Case Strength (points)") +
+  ylab("Probability of Voting Guilty") +
+  labs(title="D", size=rel(3)) +
+  th
+
 #Scenario make a list of panels
-plt_list <- list(plt_1, plt_2, plt_3)
+plt_list <- list(plt_1, plt_2, plt_3, plt_4)
 
 # convert to grobs
 # grob_list <- lapply(plt_list, ggplotGrob)
@@ -112,9 +134,9 @@ max_heights <- do.call(unit.pmax, lapply(plt_list, function(x) {x$heights}))
 grob_list <- lapply(plt_list, function(x) {x$heights <- max_heights; x})
 
 # arrange with differing widths
-lay <- rbind(c(1, 2, 3))
-plt_all <- do.call(arrangeGrob, c(plt_list, ncol=3, layout_matrix=list(lay),
-                                  widths=list(c(1, 1, 1))))
+lay <- rbind(c(1, 2), c(3, 4))
+plt_all <- do.call(arrangeGrob, c(plt_list, ncol=2, layout_matrix=list(lay),
+                                  widths=list(c(1, 1))))
 # plt_all <- arrangeGrob(plt_1, plt_2, plt_3)
 
-ggsave('figure_paper_1.pdf', plot=plt_all, width=18, height=5, units='in', useDingbats=FALSE)
+ggsave('figure_paper_1.pdf', plot=plt_all, width=12, height=10, units='in', useDingbats=FALSE)
