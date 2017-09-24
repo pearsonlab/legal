@@ -179,7 +179,7 @@ plt_4 <- ggplot(data=(effects %>% filter(variable=='rho'))) +
   geom_hline(yintercept=0, colour='grey') +
   geom_pointrange(aes(x=evidence, y=X50., ymin=X2.5., ymax=X97.5., color=group), 
                          position=position_dodge(width = 0.5)) + 
-  xlab('Evidence') + ylab('\nCase Strength /\nPunishmnet Correlation') +
+  xlab('Evidence') + ylab('\nCase Strength /\nPunishment Correlation') +
   group_color_scale +
   evidence_plus_baseline_x_axis +
   th + 

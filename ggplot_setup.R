@@ -32,21 +32,27 @@ th <-  theme(
     legend.background = element_blank(),
     legend.position='none')
 
-group_color_scale <- scale_color_manual(values=c('mturk'=color_genpop,
-                                                 'legal'=color_lawstudents,
-                                                 'lsba'=color_lsba,
-                                                 'ilsa'=color_ilsa),
+group_colors <- c('mturk'=color_genpop, 
+                  'legal'=color_lawstudents, 
+                  'lsba'=color_lsba, 
+                  'ilsa'=color_ilsa)
+group_labels <- c('legal'='Law Students',
+                  'lsba'='Louisiana Bar',
+                  'ilsa'='Illinois Prosecutors',
+                  'mturk'='mTurk')
+
+group_color_scale <- scale_color_manual(values=group_colors,
                                   name='Group',
-                                  breaks=c('legal', 'lsba', 'ilsa', 'mturk'),
-                                  labels=c('Law Students', 'Louisiana Bar', 'Illinois Prosecutors', 'mTurk'))
+                                  labels=group_labels)
 
-group_fill_scale <- scale_fill_manual(values=c('mturk'=color_genpop,
-                                               'legal'=color_lawstudents,
-                                               'lsba'=color_lsba,
-                                               'ilsa'=color_ilsa))
+group_fill_scale <- scale_fill_manual(values=group_colors,
+                                      labels=group_labels)
 
-group_x_axis <- scale_x_discrete(breaks=c('legal', 'lsba', 'ilsa', 'mturk'),
-                      labels=c('Law Students', 'Louisiana Bar', 'Illinois Prosecutors', 'mTurk'))
+group_x_axis <- scale_x_discrete(breaks=c('legal', 'lsba', 'ilsa', 'mturk'), 
+                                 labels=group_labels)
+
+# group_x_axis <- scale_x_discrete(breaks=c('legal', 'lsba', 'ilsa', 'mturk'),
+#                       labels=c('Law Students', 'Louisiana Bar', 'Illinois Prosecutors', 'mTurk'))
 
 outcome_colors <- c('rating'=color_conf, 
                     'rate_punishment'=color_punish, 
