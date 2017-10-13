@@ -32,7 +32,7 @@ plt_1 <- ggplot(data=fe) +
   outcome_color_scale +
   coord_cartesian(ylim=c(0,100)) +
   labs(title="A") +
-  ylab("Case Strength (points)") +
+  ylab("Effect Size (points)") +
   xlab("Evidence Effects") +
   geom_vline(xintercept=1.5, colour='grey') +
   geom_vline(xintercept=2.5, colour='grey') +
@@ -114,7 +114,7 @@ plt_4 <- ggplot(data=(effects %>% filter(variable=='rho', evidence=='baseline'))
   geom_hline(yintercept=0, colour='grey') +
   geom_pointrange(aes(x=evidence, y=X50., ymin=X2.5., ymax=X97.5., color=group), 
                          position=position_dodge(width = 0.5)) + 
-  xlab('Evidence') + ylab('\nCase Strength /\nPunishmnet Correlation') +
+  xlab('Evidence') + ylab('\nConfidence in Guilt /\nPunishmnet Correlation') +
   group_color_scale +
   evidence_plus_baseline_x_axis +
   labs(title="D", size=rel(3)) +

@@ -29,7 +29,7 @@ plt_1 <- ggplot(data=fe) +
   group_color_scale +
   coord_cartesian(ylim=c(-10,60)) +
   labs(title="A") +
-  ylab("Case Strength (points)") +
+  ylab("Confidence in Guilt (points)") +
   xlab("Evidence Effects") +
   geom_vline(xintercept=1.5, colour='grey') +
   geom_vline(xintercept=2.5, colour='grey') +
@@ -119,7 +119,7 @@ plt_3 <- ggplot(data=pred_evidence) +
   xlab("Weight of Model \nEvidence (points)") +
   coord_cartesian(xlim=c(0, 85), ylim=c(0,100)) +
   labs(title="C", size=rel(3)) +
-  ylab("Case Strength (observed)") +
+  ylab("Confidence in Guilt (observed)") +
   th 
 
 ############### Panel 4: Evidence vs Baseline #################################
