@@ -1,6 +1,6 @@
 ---
-title: "Supplementary Information for TITLE HERE"
-author: "XXXX et al."
+title: "Supplementary Information S5: Statistical Modeling"
+author: "Pearson et al."
 date: "6/20/2017"
 header-includes:
   - \usepackage{amsmath, amssymb}
