@@ -1,7 +1,7 @@
 ---
-title: "Supplementary Information S5: Statistical Modeling"
+title: "Supplementary Information S5: Participant Characteristics, Statistical Modeling, and Figures"
 author: "Pearson et al."
-date: "6/20/2017"
+date: "4/27/2018"
 header-includes:
   - \usepackage{amsmath, amssymb}
 bibliography: supp.bib
@@ -9,6 +9,76 @@ output:
   pdf_document:
     fig_caption: true 
 ---
+# Participant Demographics
+
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=6, fig.cap="Deserved punishment ratings as a function of crime severity. Plotted separately for State (A) and Federal (B) crimes. \\label{demo_table}"}
+library(tidyverse)
+library(kableExtra)
+
+mturk_sets <- c('../data/data_mq_nothreat_deid.csv',
+                '../data/data_sq_nothreat_deid.csv',
+                '../data/data_nb_deid.csv',
+                '../data/data_cu_deid.csv',
+                '../data/data_tq_deid.csv',
+                '../data/data_th_deid.csv')
+
+dlist <- list()
+for (dname in mturk_sets) {
+  dat <- read.csv(dname)
+
+  dlist[[length(dlist) + 1]] <- dat %>% distinct(hashedID, .keep_all=TRUE)
+}
+
+mturk_demos <- bind_rows(dlist)
+
+# renaming, etc.
+cutpts = c(17, 21, 25, 30, 40, 50, 60, 90) # cutpoints for age ranges
+mturk_demos$age = cut(mturk_demos$age,cutpts)
+mturk_demos$gender = factor(mturk_demos$gender, labels=c("Male", "Female", "Other"))
+mturk_demos$race = factor(mturk_demos$race, labels=c("American Indian or Alaska Native", 
+                                                     "Asian", 
+                                                     "Black or African American",
+                                                     "Native Hawaiian or other Pacific Islander",
+                                                     "White",
+                                                     "More than one race",
+                                                     "Unknown or do not want to disclose"))
+mturk_demos$ethnicity = factor(mturk_demos$ethnicity, labels=c("Hispanic or Latino", 
+                                                               "Not Hispanic or Latino", 
+                                                               "Unknown or do not want to disclose"))
+mturk_demos$education = factor(mturk_demos$education, 
+                               labels=c("Less than high school", 
+                                        "High school diploma or GED", 
+                                        "Associate's Degree", 
+                                        "Bachelor's Degree", 
+                                        "Master's Degree", 
+                                        "Ph.D.", 
+                                        "Currently enrolled in law school", 
+                                        "Formal legal training (J.D., LL.M., J.S.D.) or licensed to practice law in country of citizenship", 
+                                        "Doctor of Medicine (M.D.)", 
+                                        "Other advanced degree"))
+mturk_demos$political_party = factor(mturk_demos$political_party, 
+                                     labels=c("Independent or no party Affiliation", 
+                                              "Republican", 
+                                              "Democrat", 
+                                              "Other", 
+                                              "I am not a registered voter"))
+
+get_count_tbl <- function(varname){
+  id <- "hashedID"
+  Ntot <- dim(mturk_demos)[1]
+  tbl <- mturk_demos %>% select_(id, varname) %>% group_by_(varname) %>% 
+    summarize(count=n(), percent=round(100 * n()/Ntot, 1))
+  names(tbl) <- tools::toTitleCase(names(tbl))
+  return(tbl)
+}
+
+kable(get_count_tbl("gender"))
+kable(get_count_tbl("age"))
+kable(get_count_tbl("race"))
+kable(get_count_tbl("ethnicity"))
+kable(get_count_tbl("education"))
+kable(get_count_tbl("political_party"))
+```
 
 # Modeling: Case Strength
 For the case of a single rating outcome (case strength), we separately model each group of participants as follows: Given a set of
@@ -79,6 +149,35 @@ by the 2.5% and 97.5% samples from the distribution). We assessed convergence vi
 Gelman-Rubin statistic, for which all runs exhibited $\hat{R} < 1.1$ [@gelman2014bayesian].
 
 # Supplementary Figures
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.cap="Task learning effect. Comparison of distributions of first and last five ratings given by each participant. \\label{task_learning_effect}"}
+source("../ggplot_setup.R")
+dlist <- list()
+for (dname in mturk_sets) {
+  dat <- read.csv(dname)
+
+  dlist[[length(dlist) + 1]] <- dat
+}
+
+mturk_ratings <- bind_rows(dlist)
+maxq <- max(unique(mturk_ratings$question))
+
+# filter to first five and last five questions 
+first_last <- mturk_ratings %>% filter(question < 5 | maxq - question < 5) %>% 
+  mutate(early = factor(question < 5, levels=c(TRUE, FALSE), labels=c("Early", "Late")))
+
+# Density plot early vs late ratings
+plt <- ggplot(first_last) +
+  geom_density(aes(x=rating, fill=early), alpha=0.5) +
+  xlab("Confidence in Guilt") +
+  ylab("Density") +
+  scale_fill_discrete(name = "Scenario occurrence") +
+  th +
+  theme(axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        legend.title=element_text(),
+        legend.position=c(0.15, 0.9))
+plot(plt)
+```
 
 ```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=6, fig.cap="Deserved punishment ratings as a function of crime severity. Plotted separately for State (A) and Federal (B) crimes. \\label{seriousness_by_crime_type}"}
 library(tidyverse)
