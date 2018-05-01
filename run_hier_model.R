@@ -13,10 +13,27 @@ args = commandArgs(trailingOnly=TRUE)
 dset <- args[1]
 foo <- switch(dset,
               mturk={
-                load('data/dat_rating_comb.rdata')
+                datadir <- 'data/'
+                data_file_names <- paste(datadir, c('data_mq_nothreat_deid.csv',
+                                                    'data_cu_deid.csv',
+                                                    'data_sq_nothreat_deid.csv',
+                                                    'data_nb_deid.csv',
+                                                    'data_th_deid.csv'), sep="")
+                dlist <- list()
+                for (ind in 1:length(data_file_names)) {
+                  dlist[[ind]] <- read.csv(data_file_names[[ind]])
+                }
+                df <- do.call('bind_rows', dlist)
                 # do some cleaing of datasets prior to merge
                 group <- 'mturk'
-                dat <- dat_rating_comb %>% rename(uid=hashedID) %>% mutate(group='mturk')
+                dat <- df %>% dplyr::rename(uid=hashedID) %>%
+                              select(uid, scenario, physical, history, witness,
+                                     rating) %>%
+                              mutate_at(c('uid', 'scenario', 'physical', 'history', 'witness'), 'as.factor') %>%
+                              mutate(group='mturk')
+                levels(dat$witness) <- c("No Witness", "Yes Witness")
+                levels(dat$physical) <- c("No Physical", "Non-DNA", "DNA")
+                levels(dat$history) <- c("No History", "Unrelated", "Related")
               },
               ipls={
                 load('data/dat_ipls.rdata')
