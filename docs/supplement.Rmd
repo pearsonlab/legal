@@ -9,7 +9,10 @@ output:
   pdf_document:
     fig_caption: true 
 ---
-# Participant Demographics
+
+# Supplementary Tables
+
+## Participant Demographics
 
 ```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=6, fig.cap="Deserved punishment ratings as a function of crime severity. Plotted separately for State (A) and Federal (B) crimes. \\label{demo_table}"}
 library(tidyverse)
@@ -78,6 +81,34 @@ kable(get_count_tbl("race"))
 kable(get_count_tbl("ethnicity"))
 kable(get_count_tbl("education"))
 kable(get_count_tbl("political_party"))
+```
+
+## Significance tests
+The values displayed in Tables \ref{group_effects_table} and \ref{outcome_effects_table} are not, strictly speaking, Bayesian hypothesis tests. Here, we simply summarize the posterior probability that the evidence and crime effect means appearing in Figures 3A and 4A are different. We do so by (1) calculating the posteriors for their differences and (2) summarizing our confidence that these posteriors exclude 0 (no difference). More specifically, for two effects with a positive (mean) difference, we calculate the posterior probability that this difference is less than 0. (We do the reverse if the mean difference in effects is negative.) For comparison with a two-tailed test, we subsequently multiply by two. So, for example, a value of 0.02 in the table means that we are 99% confident that the difference in two effect sizes is greater than 0. Nevertheless, these numbers should not be interpreted as false positive rates, only as convenient summaries of posterior distributions.
+
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.pos="H"}
+
+load('../data/stan_hier_postprocess_pvals.rdata')
+pv_table <- group_pv_df %>% mutate_all(funs(cell_spec(., "latex", bold=ifelse(. < 0.05, T, F))))
+row.names(pv_table) <- row.names(group_pv_df)
+
+kable(pv_table, format="latex", booktabs=T, escape=F,
+      caption="Bayesian ``p-values'' (posterior probability mass exceeding 0) for contrasts 
+      between population mean effects. Cf. Figure 3A in main text.\\label{group_effects_table}") %>% 
+  kable_styling(full_width=F, latex_options = c("HOLD_position")) %>%
+  column_spec(1, width = "16em") %>%
+  column_spec(2:7, width = "4.5em")
+
+
+pv_table <- ratings_pv_df %>% mutate_all(funs(cell_spec(., "latex", bold=ifelse(. < 0.05, T, F))))
+row.names(pv_table) <- row.names(ratings_pv_df)
+
+kable(pv_table, format="latex", booktabs=T, escape=F,
+      caption="Bayesian ``p-values'' (posterior probability mass exceeding 0) for contrasts 
+      between rating type mean effects. Cf. Figure 4A in main text.\\label{outcome_effects_table}") %>% 
+  kable_styling(full_width=F, latex_options = c("HOLD_position")) %>%
+  column_spec(1, width = "16em") %>%
+  column_spec(2:7, width = "4.5em")
 ```
 
 # Modeling: Case Strength
@@ -149,6 +180,8 @@ by the 2.5% and 97.5% samples from the distribution). We assessed convergence vi
 Gelman-Rubin statistic, for which all runs exhibited $\hat{R} < 1.1$ [@gelman2014bayesian].
 
 # Supplementary Figures
+
+
 ```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.cap="Task learning effect. Comparison of distributions of first and last five ratings given by each participant. \\label{task_learning_effect}"}
 source("../ggplot_setup.R")
 dlist <- list()
@@ -319,6 +352,6 @@ plt_5 <- ggplot() +
 plt_5
 ```
 
-
 \newpage
+
 # References
