@@ -269,6 +269,89 @@ plt_2 <- ggplot(df %>% filter(crime_type=='federal')) +
 plot(arrangeGrob(plt_1, plt_2))
 ```
 
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.width=8, fig.cap="Comparison of evidence and demographic effects for the mTurk sample (cf. Figure 2A). Analyses were performed on a reduced sample of $N=368$ participants with complete demographic information for the variables displayed.  Demographic variables were modeled as additional $\\beta$ effects as in (\\ref{theta}) and (\\ref{beta}). \\label{demo_effects}"}
+
+# based on postprocess_stan_hier_data.R and make_paper_figure_2.R
+library(tidyverse)
+library(ggplot2)
+
+datfiles <- c('data/stan_model_output_hier_t_mturk.rdata',
+              'data/stan_model_output_hier_t_ipls.rdata',
+              'data/stan_model_output_hier_t_lsba.rdata',
+              'data/stan_model_output_hier_t_ilsa.rdata')
+
+renamer <- function(x) {
+  gsub("\\[\\s*(\\d+)(,\\s*(\\d+))*\\s*\\]", "_\\3\\_\\1", x, perl=TRUE)
+}
+qprobs <- c(0.025, 0.5, 0.975)
+
+load('../data/stan_model_output_hier_t_mturkwith_demos.rdata')
+
+# get matrix of summary statistics for each variable of interest
+ss <- data.frame(rstan::summary(fit, pars=c('mu', 'eta', 'gamma', 'tau', 'sigma'), probs=qprobs)$summary)
+
+# change rownames to make them easy to parse
+rownames(ss) <- sapply(rownames(ss), renamer)
+
+# make row names into a column
+ss$var <- rownames(ss)
+rownames(ss) <- NULL
+
+# make var into separate columns for variable, evidence code, and scenario
+ss <- ss %>% separate(var, into=c("variable", "evidence_num", "scenario"))
+
+# make group a character vector so we can merge without worrying about factor levels
+preds$group <- as.character(preds$group)
+
+# create a trivial evidence code column
+preds$evidence_num <- rownames(preds)
+
+# bind variables columnwise
+df <- left_join(ss, preds, by="evidence_num")
+
+fe <- df %>% filter(variable == 'mu', evidence != 'baseline') %>%
+      select(mean, evidence, X2.5., X97.5.) %>%
+      mutate(evidence=factor(evidence, levels=c("physicalDNA", 
+                                                "physicalNon-DNA", 
+                                                "witnessYes Witness", 
+                                                "historyRelated", 
+                                                "historyUnrelated",
+                                                "femaleTRUE",
+                                                "nonwhiteTRUE",
+                                                "hispanicTRUE")))
+
+effects_x_axis <- scale_x_discrete(breaks=c("physicalDNA", 
+                                             "physicalNon-DNA", 
+                                             "witnessYes Witness", 
+                                             "historyRelated", 
+                                             "historyUnrelated",
+                                             "femaleTRUE",
+                                             "nonwhiteTRUE",
+                                             "hispanicTRUE"), 
+                                     labels=c("DNA \nphysical \nevidence", 
+                                              "Non-DNA \nphysical \nevidence",  
+                                              "Witness \npresent", 
+                                              "Related \nprior crime", 
+                                              "Unrelated \nprior crime",
+                                              "Female -\nMale",
+                                              "Non-white -\nWhite",
+                                              "Hispanic -\nNon-hispanic"))
+plt_1 <- ggplot(data=fe) +
+  geom_pointrange(aes(x=evidence, y=mean, ymin=X2.5., ymax=X97.5.), color=color_conf, size=1.) + 
+  effects_x_axis +
+  coord_cartesian(ylim=c(-10,40)) +
+  ylab("Confidence in Guilt (points)") +
+  xlab("Effects") +
+  geom_vline(xintercept=1.5, colour='grey') +
+  geom_vline(xintercept=2.5, colour='grey') +
+  geom_vline(xintercept=3.5, colour='grey') +
+  geom_vline(xintercept=4.5, colour='grey') +
+  geom_hline(yintercept=0.0, colour='grey') + 
+  th +
+  theme(
+    axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black'))
+plt_1
+```
 
 ```{r message=FALSE, echo=FALSE, warning=FALSE, fig.width=8, fig.cap="Pairwise correlations for baseline effects across all outcome types. Includes both versions of the threat assessment question (cp. Figure 4C). \\label{baseline_correlations}"}
 load('../data/stan_hier_postprocess_multi_all.rdata')
@@ -352,6 +435,6 @@ plt_5 <- ggplot() +
 plt_5
 ```
 
-\newpage
+\clearpage
 
 # References
