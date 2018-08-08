@@ -1,7 +1,6 @@
 # this file loads and prepares data for fitting in Stan
 # uses IL prosecutors
-library(dplyr)
-library(tidyr)
+library(tidyverse)
 
 set.seed(11157)
 stan_seed <- 11158 
@@ -10,63 +9,16 @@ iter <- 2000
 thin <- 2
 
 args = commandArgs(trailingOnly=TRUE)
-dset <- args[1]
-foo <- switch(dset,
-              mturk={
-                datadir <- 'data/'
-                data_file_names <- paste(datadir, c('data_mq_nothreat_deid.csv',
-                                                    'data_cu_deid.csv',
-                                                    'data_sq_nothreat_deid.csv',
-                                                    'data_nb_deid.csv',
-                                                    'data_th_deid.csv'), sep="")
-                dlist <- list()
-                for (ind in 1:length(data_file_names)) {
-                  dlist[[ind]] <- read.csv(data_file_names[[ind]])
-                }
-                df <- do.call('bind_rows', dlist)
-                # do some cleaing of datasets prior to merge
-                group <- 'mturk'
-                dat <- df %>% dplyr::rename(uid=hashedID) %>%
-                              select(uid, scenario, physical, history, witness,
-                                     rating, rate_punishment) %>%
-                              mutate_at(c('uid', 'scenario', 'physical', 'history', 'witness'), 'as.factor') %>%
-                              mutate(group='mturk')
-                levels(dat$witness) <- c("No Witness", "Yes Witness")
-                levels(dat$physical) <- c("No Physical", "Non-DNA", "DNA")
-                levels(dat$history) <- c("No History", "Unrelated", "Related")
-              },
-              ipls={
-                load('data/dat_ipls.rdata')
-                group <- 'legal'
-                dat <- dat_ipls %>% select(uid, scenario, physical, history, witness, rating, rate_punishment) %>%
-                                    mutate(group='legal')
-              },
-              lsba={
-                dat <- read.csv('data/data_prof_deid.csv')
-                group <- 'lsba'
-                dat$scenario <- as.factor(dat$scenario)
-                dat$physical <- factor(dat$physical, labels=c('No Physical', 'Non-DNA', 'DNA'))
-                dat$history <- factor(dat$history, labels=c('No History', 'Unrelated', 'Related'))
-                dat$witness <- factor(dat$witness, labels=c('No Witness', 'Yes Witness'))
-                dat <- dat %>% filter(group == 'LSBA2016')
-                dat <- dat %>% select(uid, scenario, physical, history, witness, rating, rate_punishment)
-              },
-              ilsa={
-                dat <- read.csv('data/data_prof_deid.csv')
-                group <- 'ilsa'
-                dat$scenario <- as.factor(dat$scenario)
-                dat$physical <- factor(dat$physical, labels=c('No Physical', 'Non-DNA', 'DNA'))
-                dat$history <- factor(dat$history, labels=c('No History', 'Unrelated', 'Related'))
-                dat$witness <- factor(dat$witness, labels=c('No Witness', 'Yes Witness'))
-                dat <- dat %>% filter(group == 'ILSA2016')
-                dat <- dat %>% select(uid, scenario, physical, history, witness, rating, rate_punishment)
-              }
-)
+group <- args[1]
 
-# final cleanup
-dat <- dat %>% gather(key=rating_type, value=rating, c(rating, rate_punishment)) %>% 
-               mutate(rating_type = as.factor(rating_type))
-outcomes <- levels(as.factor(dat$rating_type))
+# load data and subset
+dat <- read.csv('data/combined_data.csv')
+dat <- dat %>% filter(group==!!group, rating_type=='rating' | rating_type=='rate_punishment') %>% 
+  select(uid, scenario, physical, history, witness, rating, rating_type) %>%
+  mutate_at(c('uid', 'scenario', 'physical', 'history', 'witness', 'rating_type', 'group'), 'as.factor')
+levels(dat$witness) <- c("No Witness", "Yes Witness")
+levels(dat$physical) <- c("No Physical", "Non-DNA", "DNA")
+levels(dat$history) <- c("No History", "Unrelated", "Related")
 
 # clear out missing
 dat <- dat %>% na.omit() %>% mutate(uid=as.integer(droplevels(uid)))
