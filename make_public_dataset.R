@@ -75,7 +75,7 @@ df$witness <- factor(df$witness, labels=c('No Witness', 'Yes Witness'))
 df <- df %>% filter(group == 'ILSA2016')
 df <- df %>% select(uid, scenario, physical, history, witness, rating, rate_punishment) %>%
   gather(key=rating_type, value=rating, c(rating, rate_punishment)) %>%
-  mutate(group='ilsa')
+  mutate(group=group)
 
 dat <- bind_rows(dat, df)
 
