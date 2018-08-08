@@ -7,68 +7,17 @@ nchains <- 4
 iter <- 1000
 thin <- 1
 
-args = commandArgs(trailingOnly=TRUE)
-dset <- args[1]
-foo <- switch(dset,
-              mturk={
-                datadir <- 'data/'
-                data_file_names <- paste(datadir, c('data_mq_nothreat_deid.csv',
-                                                    'data_cu_deid.csv',
-                                                    'data_sq_nothreat_deid.csv',
-                                                    'data_nb_deid.csv',
-                                                    'data_th_deid.csv'), sep="")
-                dlist <- list()
-                for (ind in 1:length(data_file_names)) {
-                  dlist[[ind]] <- read.csv(data_file_names[[ind]])
-                }
-                df <- do.call('bind_rows', dlist)
-                
-                # do some cleaing of datasets prior to merge
-                group <- 'mturk'
-                df <- df %>% mutate(nonwhite=race != 5, 
-                                    hispanic=ethnicity == 1, 
-                                    female=gender == 2) %>%
-                             mutate_at(c('nonwhite', 'hispanic', 'female'), 'as.factor') 
-                
-                dat <- df %>% dplyr::rename(uid=hashedID) %>%
-                              select(uid, scenario, physical, history, witness,
-                                     rating, nonwhite, hispanic, female) %>%
-                              mutate_at(c('uid', 'scenario', 'physical', 'history', 'witness'), 'as.factor') %>%
-                              mutate(group='mturk')
-                levels(dat$witness) <- c("No Witness", "Yes Witness")
-                levels(dat$physical) <- c("No Physical", "Non-DNA", "DNA")
-                levels(dat$history) <- c("No History", "Unrelated", "Related")
-              }
-              # ipls={
-              #   load('data/dat_ipls.rdata')
-              #   group <- 'legal'
-              #   dat <- dat_ipls %>% select(uid, scenario, physical, history, witness, rating) %>%
-              #     mutate(group='legal')
-              # },
-              # lsba={
-              #   dat <- read.csv('data/data_prof_deid.csv')
-              #   group <- 'lsba'
-              #   dat$scenario <- as.factor(dat$scenario)
-              #   dat$physical <- factor(dat$physical, labels=c('No Physical', 'Non-DNA', 'DNA'))
-              #   dat$history <- factor(dat$history, labels=c('No History', 'Unrelated', 'Related'))
-              #   dat$witness <- factor(dat$witness, labels=c('No Witness', 'Yes Witness'))
-              #   dat <- dat %>% filter(group == 'LSBA2016')
-              #   dat <- dat %>% select(uid, scenario, physical, history, witness, rating) %>% 
-              #                  mutate(group='lsba')
-              # },
-              # ilsa={
-              #   dat <- read.csv('data/data_prof_deid.csv')
-              #   group <- 'ilsa'
-              #   dat$scenario <- as.factor(dat$scenario)
-              #   dat$physical <- factor(dat$physical, labels=c('No Physical', 'Non-DNA', 'DNA'))
-              #   dat$history <- factor(dat$history, labels=c('No History', 'Unrelated', 'Related'))
-              #   dat$witness <- factor(dat$witness, labels=c('No Witness', 'Yes Witness'))
-              #   dat <- dat %>% filter(group == 'ILSA2016')
-              #   dat <- dat %>% select(uid, scenario, physical, history, witness, rating) %>%
-              #                  mutate(group='ilsa')
-              # }
-)
-
+group <- 'mturk'
+# load data and subset
+dat <- read.csv('data/combined_data.csv')
+dat <- dat %>% filter(group==!!group, rating_type=='rating') %>% 
+  select(uid, scenario, physical, history, witness, rating, 
+         nonwhite, hispanic, female) %>%
+  mutate_at(c('uid', 'scenario', 'physical', 'history', 'witness', 
+              'group', 'nonwhite', 'hispanic', 'female'), 'as.factor')
+levels(dat$witness) <- c("No Witness", "Yes Witness")
+levels(dat$physical) <- c("No Physical", "Non-DNA", "DNA")
+levels(dat$history) <- c("No History", "Unrelated", "Related")
 # final cleanup
 dat <- dat %>% na.omit() %>% mutate(uid=as.integer(droplevels(uid)))
 Nsub <- length(unique(dat$uid))
