@@ -68,7 +68,7 @@ init <- function() {
   inits[['sigma']] <- 25 + rnorm(1)
   inits
 }
-fit <- stan(file = 'model_hier_scenario.stan', data = stan_dat,
+fit <- stan(file = 'models/model_hier_scenario.stan', data = stan_dat,
             pars=c('mu', 'eta', 'gamma', 'tau', 'sigma'),
             iter = iter, chains = nchains, thin=thin, init=init, seed=stan_seed)
 

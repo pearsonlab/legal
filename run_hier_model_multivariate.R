@@ -75,7 +75,7 @@ stan_dat <- list(L=L, U=U, Nsub=Nsub, Nc=Nc, N=N, Nr=Nr, P=P, R=R, Ri=Ri,
 init <- function() {
   list(sigma = 25 + rnorm(Nr))
 }
-fit <- stan(file = 'model_hier_scenario_multivar.stan', data = stan_dat,
+fit <- stan(file = 'models/model_hier_scenario_multivar.stan', data = stan_dat,
             iter = iter, chains = nchains, thin=thin, seed=stan_seed,
             pars=c('mu', 'eta', 'gamma', 'tau', 'sigma', 'Omega'),
             init=init)
