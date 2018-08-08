@@ -144,4 +144,4 @@ plt_all <- do.call(arrangeGrob, c(grob_list, ncol=4, layout_matrix=list(lay),
                                   widths=list(c(0.55, 0.55, 0.4, 0.4))))
 
 # save to disk
-ggsave('figure_paper_4.pdf', plot=plt_all, width=13, height=10.5, units='in', useDingbats=FALSE)
+ggsave('figs/figure_paper_4.pdf', plot=plt_all, width=13, height=10.5, units='in', useDingbats=FALSE)

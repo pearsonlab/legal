@@ -1,7 +1,5 @@
 # make figure showing predicted versus actual ratings for mTurk group
-library(tidyr)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 library(grid)
 library(gridExtra)
 library(rstan)
@@ -14,7 +12,7 @@ dat <- dat %>% filter(group=='mturk')
 
 ####################
 # task mockup from svg
-task_mock <- image_read('task_mockup.svg')
+task_mock <- image_read('figs/task_mockup.svg')
 plt_1 <- ggplot() + th + 
   labs(title="A", size=rel(3)) +
   annotation_custom(rasterGrob(task_mock))
@@ -161,4 +159,4 @@ plt_all <- do.call(arrangeGrob, c(plt_list, ncol=2, layout_matrix=list(lay),
                                   widths=list(c(1, 1))))
 # plt_all <- arrangeGrob(plt_1, plt_2, plt_3)
 
-ggsave('figure_paper_1.pdf', plot=plt_all, width=12, height=10, units='in', useDingbats=FALSE)
+ggsave('figs/figure_paper_1.pdf', plot=plt_all, width=12, height=10, units='in', useDingbats=FALSE)

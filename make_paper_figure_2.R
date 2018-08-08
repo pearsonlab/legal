@@ -1,7 +1,5 @@
 # second figure from the paper
-library(tidyr)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 library(grid)
 library(gridExtra)
 library(gtable)
@@ -132,4 +130,4 @@ grob_list <- lapply(grob_list, function(x) {x$heights <- max_heights; x})
 plt_all <- do.call(arrangeGrob, c(grob_list, ncol=3, widths=list(c(1.1, 0.5, 1.25))))
 
 # save to disk
-ggsave('figure_paper_2.pdf', plot=plt_all, width=13, height=4.5, units='in', useDingbats=FALSE)
+ggsave('figs/figure_paper_2.pdf', plot=plt_all, width=13, height=4.5, units='in', useDingbats=FALSE)
