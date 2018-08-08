@@ -80,4 +80,4 @@ fit <- stan(file = 'models/model_hier_scenario_multivar.stan', data = stan_dat,
             pars=c('mu', 'eta', 'gamma', 'tau', 'sigma', 'Omega'),
             init=init)
 
-save.image(paste('data/stan_model_output_hier_t_multi_', dset, '.rdata', sep=''))
+save.image(paste('data/stan_model_output_hier_t_multi_', group, '.rdata', sep=''))
