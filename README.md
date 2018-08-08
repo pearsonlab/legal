@@ -1,5 +1,11 @@
-# legal
-Analysis models for Duke Legal Decision Making Survey
+Models, analysis, and reproducible results for the paper ["Modeling the effects of crime type and evidence on judgments about guilt"](https://link.tbd).
+
+# What you need (dependencies):
+We used R via [RStudio](https://www.rstudio.com/). We also make heavy use of the [Stan](http://mc-stan.org/) probabilistic programming language and the [tidyverse](https://tidyverse.tidyverse.org/index.html).
+
+# About the data
+
+# <makefile stuff>...
 
 # Quick notes
 
