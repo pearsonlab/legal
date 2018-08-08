@@ -20,6 +20,9 @@ levels(dat$witness) <- c("No Witness", "Yes Witness")
 levels(dat$physical) <- c("No Physical", "Non-DNA", "DNA")
 levels(dat$history) <- c("No History", "Unrelated", "Related")
 
+# useful for postprocessing:
+outcomes <- levels(as.factor(dat$rating_type))
+
 # clear out missing
 dat <- dat %>% na.omit() %>% mutate(uid=as.integer(droplevels(uid)))
 
