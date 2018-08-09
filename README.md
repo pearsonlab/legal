@@ -13,6 +13,13 @@ The data are recorded in a single file, `combined_data.csv` in the `data` folder
 - `nonwhite`: Did the participant identify as non-white? (`FALSE`, `TRUE`)
 - `hispanic`: Did the participant identify as hispanic? (`FALSE`, `TRUE`)
 - `female`: Did the participant identify as female? (`FALSE`, `TRUE`)
+- `question`: In what order did the participant encounter this case to be rated? (0 - 32)
+- `age`: Participant's reported age.
+- `gender`: Participant's reported gender. Recoded as `female` for modeling.
+- `race`: Participant's reported race. Binarized as `nonwhite` for modeling.
+- `ethnicity`: Participant's reported ethnicity. Binarized as `hispanic` for modeling.
+- `education`: Participant's highest level of education.
+- `political_party`: Participant's party affiliation.
 - `rating_type`: Which type of rating does the datum represent:
   - `rating`: Most common. "How strong is the case that the accused committed this crime?"
   - `rate_punishment`: Next most common when participants gave two or more ratings. "How severe should the punishment be for someone who commits a crime like this one?"
@@ -26,7 +33,7 @@ The data are recorded in a single file, `combined_data.csv` in the `data` folder
   - `ilsa`: Illinois Prosecutors
   - `lsba`: Louisiana Bar
 
-All together, the data comprise more than 135,000 ratings from 836 unique individuals.
+All together, the data comprise more than 144,000 ratings from 878 unique individuals. Demographic information were collected from all participants but only included in the combined data for the mTurk sample.
 
 # Building the project
 The main directory contains a Makefile. Mac and Linux users should have `make` installed. Windows users will need to get `make` ([Rtools](https://cran.r-project.org/bin/windows/Rtools/) has it). See also this [StackOverflow Answer](https://stackoverflow.com/questions/33608345/how-to-execute-a-makefile-from-r).
