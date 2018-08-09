@@ -281,7 +281,7 @@ library(tidyverse)
 library(ggplot2)
 
 datfiles <- c('data/stan_model_output_hier_t_mturk.rdata',
-              'data/stan_model_output_hier_t_ipls.rdata',
+              'data/stan_model_output_hier_t_legal.rdata',
               'data/stan_model_output_hier_t_lsba.rdata',
               'data/stan_model_output_hier_t_ilsa.rdata')
 
@@ -290,7 +290,7 @@ renamer <- function(x) {
 }
 qprobs <- c(0.025, 0.5, 0.975)
 
-load('../data/stan_model_output_hier_t_mturkwith_demos.rdata')
+load('../data/stan_model_output_hier_t_mturk_with_demos.rdata')
 
 # get matrix of summary statistics for each variable of interest
 ss <- data.frame(rstan::summary(fit, pars=c('mu', 'eta', 'gamma', 'tau', 'sigma'), probs=qprobs)$summary)

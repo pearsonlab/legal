@@ -72,4 +72,4 @@ fit <- stan(file = 'models/model_hier_scenario.stan', data = stan_dat,
             pars=c('mu', 'eta', 'gamma', 'tau', 'sigma'),
             iter = iter, chains = nchains, thin=thin, init=init, seed=stan_seed)
 
-save.image(paste('data/stan_model_output_hier_t_', group, 'with_demos.rdata', sep=''))
+save.image(paste('data/stan_model_output_hier_t_', group, '_with_demos.rdata', sep=''))
