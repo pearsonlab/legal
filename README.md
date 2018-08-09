@@ -33,22 +33,22 @@ The main directory contains a Makefile. Mac and Linux users should have `make` i
 
 Once you have `make` installed, you can open a terminal, navigate to the project directory, and then type
 ```shell
-make models
+$ make models
 ```
 to run all the models and postprocess their outputs,
 ```shell
-make figs
+$ make figs
 ```
 to make all the figures,
 or
 ```shell
-make supplement
+$ make supplement
 ```
 to generate the supplement (from an RMarkdown file). The latter two require that the postprocessed model outputs exist. So the models will be run in any case.
 
 Finally, if you want to make everything, just do
 ```shell
-make
+$ make
 ```
 
-**Warning:** The Stan models can be time-consuming to run. On a four-core machine with a decent processor, the MTurk participants model can take up to several hours and produces an output file of several **GB**. If you're on a laptop that's put to sleep, Stan should resume when the laptop wakes up, but the whole process is best done on a desktop that can be left alone for the better part of a day.
+**Warning:** The Stan models can be time-consuming to run. On a four-core machine with a decent processor, the MTurk participants model can take up to *several hours* and produces an output file of several **GB**. If you're on a laptop that's put to sleep, Stan should resume when the laptop wakes up, but the whole process is best done on a desktop that can be left alone for the better part of a day.
