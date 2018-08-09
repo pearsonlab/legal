@@ -1,51 +1,47 @@
 FIGDIR = figs
 DATADIR = data
 GROUPS = mturk legal lsba ilsa
+FIGFILES = $(foreach fig, 1 2 3 4, $(FIGDIR)/figure_paper_$(fig).pdf)
 OUT_STEM = $(DATADIR)/stan_model_output_hier_t_
 POST_STEM = $(DATADIR)/stan_hier_postprocess
 HIER_OUTS = $(foreach grp, $(GROUPS), $(OUT_STEM)$(grp).rdata)
 HIER_MV_OUTS = $(foreach grp, $(GROUPS), $(OUT_STEM)multi_$(grp).rdata)
 
-all: figs supplement
+all: $(FIGFILES) docs/supplement.pdf
 
-figs: models
+figs: $(FIGFILES)
 
-supplement: models
+supplement: docs/supplement.pdf
 
-models: hier_models hier_models_mv hier_models_mv_all hier_models_with_demos
+$(FIGDIR)/figure_paper_%.pdf: models
+	Rscript make_paper_figure_$*.R
+
+docs/supplement.pdf:
+	Rscript -e "library(rmarkdown); render('docs/supplement.Rmd', 'pdf_document')"
 
 # Model classes
-hier_models: $(POST_STEM).rdata
-	Rscript postprocess_stan_hier_data.R
-
-hier_models_mv: $(POST_STEM)_multi.rdata
-	Rscript postprocess_stan_hier_multi_data.R
-
-hier_models_mv_all: $(POST_STEM)_multi_all.rdata
-	Rscript postprocess_stan_hier_multi_all_data.R
-
-hier_models_with_demos: $(OUT_STEM)mturk_with_demos.rdata
+models: $(POST_STEM).rdata $(POST_STEM)_multi.rdata $(POST_STEM)_multi_all.rdata \
+	$(OUT_STEM)mturk_with_demos.rdata
 
 # Postprocessed model outputs
 $(POST_STEM).rdata: $(HIER_OUTS)
+	Rscript postprocess_stan_hier_data.R
 
 $(POST_STEM)_multi.rdata: $(HIER_MV_OUTS)
+	Rscript postprocess_stan_hier_multi_data.R
 
 $(POST_STEM)_multi_all.rdata: $(OUT_STEM)multi_all.rdata
+	Rscript postprocess_stan_hier_multi_all_data.R
 
 # Model outputs (in order of most to least specific)
 $(OUT_STEM)mturk_with_demos.rdata:
-	Rscript run_hier_model_with_demos.R
+	time Rscript run_hier_model_with_demos.R
 
 $(OUT_STEM)multi_all.rdata: 
-	Rscript run_hier_model_multivariate_all.R
+	time Rscript run_hier_model_multivariate_all.R
 
 $(OUT_STEM)multi_%.rdata:
-	Rscript run_hier_model_multivariate.R $*
+	time Rscript run_hier_model_multivariate.R $*
 	
 $(OUT_STEM)%.rdata:
-	Rscript run_hier_model.R $*
-
-	
-foo:
-	$(info $(HIER_OUTS))
+	time Rscript run_hier_model.R $*
