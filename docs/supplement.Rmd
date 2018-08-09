@@ -22,57 +22,42 @@ output:
 library(tidyverse)
 library(kableExtra)
 
-mturk_sets <- c('../data/data_mq_nothreat_deid.csv',
-                '../data/data_sq_nothreat_deid.csv',
-                '../data/data_nb_deid.csv',
-                '../data/data_cu_deid.csv',
-                '../data/data_tq_deid.csv',
-                '../data/data_th_deid.csv')
-
-dlist <- list()
-for (dname in mturk_sets) {
-  dat <- read.csv(dname)
-
-  dlist[[length(dlist) + 1]] <- dat %>% distinct(hashedID, .keep_all=TRUE)
-}
-
-mturk_demos <- bind_rows(dlist)
+mturk_demos <- read.csv('../data/combined_data.csv') %>% filter(group=='mturk') %>%
+  distinct(uid, .keep_all=TRUE)
 
 # renaming, etc.
 cutpts = c(17, 21, 25, 30, 40, 50, 60, 90) # cutpoints for age ranges
 mturk_demos$age = cut(mturk_demos$age,cutpts)
-mturk_demos$gender = factor(mturk_demos$gender, labels=c("Male", "Female", "Other"))
-mturk_demos$race = factor(mturk_demos$race, labels=c("American Indian or Alaska Native", 
-                                                     "Asian", 
-                                                     "Black or African American",
-                                                     "Native Hawaiian or other Pacific Islander",
-                                                     "White",
-                                                     "More than one race",
-                                                     "Unknown or do not want to disclose"))
-mturk_demos$ethnicity = factor(mturk_demos$ethnicity, labels=c("Hispanic or Latino", 
-                                                               "Not Hispanic or Latino", 
-                                                               "Unknown or do not want to disclose"))
-mturk_demos$education = factor(mturk_demos$education,
-                               levels=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
-                               labels=c("Less than high school", 
-                                        "Completed high school",
-                                        "GED", 
-                                        "Some college",
-                                        "Associate's Degree", 
-                                        "Bachelor's Degree", 
-                                        "Master's Degree", 
-                                        "Ph.D.", 
-                                        "Law degree",
-                                        "Other professional degree"))
-mturk_demos$political_party = factor(mturk_demos$political_party, 
-                                     labels=c("Independent or no party Affiliation", 
-                                              "Republican", 
-                                              "Democrat", 
-                                              "Other", 
-                                              "I am not a registered voter"))
+
+levels(mturk_demos$gender) <- c("Male", "Female", "Other")
+levels(mturk_demos$race) <- c("American Indian or Alaska Native", 
+                              "Asian", 
+                              "Black or African American",
+                              "Native Hawaiian or other Pacific Islander",
+                              "White",
+                              "More than one race",
+                              "Unknown or do not want to disclose")
+levels(mturk_demos$ethnicity) <- c("Hispanic or Latino", 
+                                   "Not Hispanic or Latino", 
+                                   "Unknown or do not want to disclose")
+levels(mturk_demos$education) <- c("Less than high school", 
+                                   "Completed high school",
+                                   "GED", 
+                                   "Some college",
+                                   "Associate's Degree", 
+                                   "Bachelor's Degree", 
+                                   "Master's Degree", 
+                                   "Ph.D.", 
+                                   "Law degree",
+                                   "Other professional degree")
+levels(mturk_demos$political_party) <- c("Independent or no party Affiliation", 
+                                         "Republican", 
+                                         "Democrat", 
+                                         "Other", 
+                                         "I am not a registered voter")
 
 get_count_tbl <- function(varname){
-  id <- "hashedID"
+  id <- "uid"
   Ntot <- dim(mturk_demos)[1]
   tbl <- mturk_demos %>% select_(id, varname) %>% group_by_(varname) %>% 
     summarize(count=n(), percent=round(100 * n()/Ntot, 1))
@@ -189,14 +174,8 @@ Gelman-Rubin statistic, for which all runs exhibited $\hat{R} < 1.1$ [@gelman201
 
 ```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.cap="Task learning effect. Comparison of distributions of first and last five ratings given by each participant. \\label{task_learning_effect}"}
 source("../ggplot_setup.R")
-dlist <- list()
-for (dname in mturk_sets) {
-  dat <- read.csv(dname)
 
-  dlist[[length(dlist) + 1]] <- dat
-}
-
-mturk_ratings <- bind_rows(dlist)
+mturk_ratings <- read.csv('../data/combined_data.csv') %>% filter(group=='mturk')
 maxq <- max(unique(mturk_ratings$question))
 
 # filter to first five and last five questions 
