@@ -1,5 +1,6 @@
 FIGDIR = figs
 DATADIR = data
+DATAFILE = $(DATADIR)/combined_data.csv
 GROUPS = mturk legal lsba ilsa
 FIGFILES = $(foreach fig, 1 2 3 4, $(FIGDIR)/figure_paper_$(fig).pdf)
 OUT_STEM = $(DATADIR)/stan_model_output_hier_t_
@@ -16,7 +17,7 @@ supplement: docs/supplement.pdf
 $(FIGDIR)/figure_paper_%.pdf: models
 	Rscript make_paper_figure_$*.R
 
-docs/supplement.pdf:
+docs/supplement.pdf: $(DATAFILE)
 	Rscript -e "library(rmarkdown); render('docs/supplement.Rmd', 'pdf_document')"
 
 # Model classes
@@ -34,14 +35,14 @@ $(POST_STEM)_multi_all.rdata: $(OUT_STEM)multi_all.rdata
 	Rscript postprocess_stan_hier_multi_all_data.R
 
 # Model outputs (in order of most to least specific)
-$(OUT_STEM)mturk_with_demos.rdata:
-	time Rscript run_hier_model_with_demos.R
+$(OUT_STEM)mturk_with_demos.rdata: $(DATAFILE)
+	Rscript run_models.R demos
 
-$(OUT_STEM)multi_all.rdata: 
-	time Rscript run_hier_model_multivariate_all.R
+$(OUT_STEM)multi_all.rdata: $(DATAFILE)
+	Rscript run_models.R mv 
 
-$(OUT_STEM)multi_%.rdata:
-	time Rscript run_hier_model_multivariate.R $*
+$(OUT_STEM)multi_%.rdata: $(DATAFILE)
+	Rscript run_models.R mv $*
 	
-$(OUT_STEM)%.rdata:
-	time Rscript run_hier_model.R $*
+$(OUT_STEM)%.rdata: $(DATAFILE)
+	Rscript run_models.R hier $*
