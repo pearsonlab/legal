@@ -28,21 +28,27 @@ The data are recorded in a single file, `combined_data.csv` in the `data` folder
 
 All together, the data comprise more than 135,000 ratings from 836 unique individuals.
 
-# <makefile stuff>...
+# Building the project
+The main directory contains a Makefile. Mac and Linux users should have `make` installed. Windows users will need to get `make` ([Rtools](https://cran.r-project.org/bin/windows/Rtools/) has it). See also this [StackOverflow Answer](https://stackoverflow.com/questions/33608345/how-to-execute-a-makefile-from-r).
 
-# Quick notes
+Once you have `make` installed, you can open a terminal, navigate to the project directory, and then type
+```shell
+make models
+```
+to run all the models and postprocess their outputs,
+```shell
+make figs
+```
+to make all the figures,
+or
+```shell
+make supplement
+```
+to generate the supplement (from an RMarkdown file). The latter two require that the postprocessed model outputs exist. So the models will be run in any case.
 
-Currently, Bayesian pipeline is:
+Finally, if you want to make everything, just do
+```shell
+make
+```
 
-- `runall.sh`: Run model on case strength outcome for each group.
-  - calls `run_hier_model.R`
-  - uses `model_hier_scenario.stan`
-  - postprocesses with `postprocess_stan_hier_data.R`
-- `runall_mv.sh`: Run model incorporating both case strength and punishment outcome for each group.
-  - calls `run_hier_model_multivariate.R`
-  - uses `model_hier_scenario_multivar.stan`
-  - postprocesses with `postprocess_stan_hier_multi_data.R`
-- `runall_mv_all.sh`: Run model incorporating all four outcomes (mTurk only)
-  - calls `run_hier_model_multivariate_all.R`
-  - uses `model_hier_scenario_multivar.stan`
-  - postprocesses with `postprocess_stan_hier_multi_all_data.R`
+**Warning:** The Stan models can be time-consuming to run. On a four-core machine with a decent processor, the MTurk participants model can take up to several hours and produces an output file of several **GB**. If you're on a laptop that's put to sleep, Stan should resume when the laptop wakes up, but the whole process is best done on a desktop that can be left alone for the better part of a day.
