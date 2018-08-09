@@ -259,11 +259,6 @@ plot(arrangeGrob(plt_1, plt_2))
 library(tidyverse)
 library(ggplot2)
 
-datfiles <- c('data/stan_model_output_hier_t_mturk.rdata',
-              'data/stan_model_output_hier_t_legal.rdata',
-              'data/stan_model_output_hier_t_lsba.rdata',
-              'data/stan_model_output_hier_t_ilsa.rdata')
-
 renamer <- function(x) {
   gsub("\\[\\s*(\\d+)(,\\s*(\\d+))*\\s*\\]", "_\\3\\_\\1", x, perl=TRUE)
 }
