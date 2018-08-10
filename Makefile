@@ -21,8 +21,15 @@ docs/supplement.pdf: $(DATAFILE)
 	Rscript -e "library(rmarkdown); render('docs/supplement.Rmd', 'pdf_document')"
 
 # Model classes
-models: $(POST_STEM).rdata $(POST_STEM)_multi.rdata $(POST_STEM)_multi_all.rdata \
-	$(POST_STEM)_with_demos.rdata
+models: hier_models mv_models mv_all_models demos_models
+
+hier_models: $(POST_STEM).rdata 
+
+mv_models: $(POST_STEM)_multi.rdata 
+
+mv_all_models: $(POST_STEM)_multi_all.rdata 
+
+demos_models: $(POST_STEM)_with_demos.rdata
 
 # Postprocessed model outputs
 $(POST_STEM).rdata: $(HIER_OUTS)
