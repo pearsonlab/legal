@@ -65,12 +65,12 @@ get_count_tbl <- function(varname){
   return(tbl)
 }
 
-kable(get_count_tbl("gender"), caption="Gender")
-kable(get_count_tbl("age"), caption="Age")
-kable(get_count_tbl("race"), caption="Race")
-kable(get_count_tbl("ethnicity"), caption="Ethnicity")
-kable(get_count_tbl("education"), caption="Education")
-kable(get_count_tbl("political_party"), caption="Political Party")
+kable(get_count_tbl("gender"), caption="Participant Demographics - Gender")
+kable(get_count_tbl("age"), caption="Participant Demographics - Age")
+kable(get_count_tbl("race"), caption="Participant Demographics - Race")
+kable(get_count_tbl("ethnicity"), caption="Participant Demographics - Ethnicity")
+kable(get_count_tbl("education"), caption="Participant Demographics - Education")
+kable(get_count_tbl("political_party"), caption="Participant Demographics - Political Party")
 ```
 
 ## Testing differences in evidence effects
