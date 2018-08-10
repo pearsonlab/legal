@@ -22,24 +22,27 @@ docs/supplement.pdf: $(DATAFILE)
 
 # Model classes
 models: $(POST_STEM).rdata $(POST_STEM)_multi.rdata $(POST_STEM)_multi_all.rdata \
-	$(OUT_STEM)mturk_with_demos.rdata
+	$(POST_STEM)_with_demos.rdata
 
 # Postprocessed model outputs
 $(POST_STEM).rdata: $(HIER_OUTS)
-	Rscript postprocess_stan_hier_data.R
+	Rscript postprocess_model_data.R hier
 
 $(POST_STEM)_multi.rdata: $(HIER_MV_OUTS)
-	Rscript postprocess_stan_hier_multi_data.R
+	Rscript postprocess_model_data.R mv
 
 $(POST_STEM)_multi_all.rdata: $(OUT_STEM)multi_all.rdata
-	Rscript postprocess_stan_hier_multi_all_data.R
+	Rscript postprocess_model_data.R mv_all
 
+$(POST_STEM)_with_demos.rdata: $(OUT_STEM)multi_with_demos.rdata
+	Rscript postprocess_model_data.R demos
+	
 # Model outputs (in order of most to least specific)
 $(OUT_STEM)mturk_with_demos.rdata: $(DATAFILE)
 	Rscript run_models.R demos
 
 $(OUT_STEM)multi_all.rdata: $(DATAFILE)
-	Rscript run_models.R mv 
+	Rscript run_models.R mv_all 
 
 $(OUT_STEM)multi_%.rdata: $(DATAFILE)
 	Rscript run_models.R mv $*
