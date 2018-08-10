@@ -3,6 +3,12 @@ Models, analysis, and reproducible results for the paper ["Modeling the effects 
 # What you need (dependencies):
 We used R via [RStudio](https://www.rstudio.com/). RStudio is not strictly necessary, but it may make building some aspects of the project (e.g., the supplement) easier. We also make heavy use of the [Stan](http://mc-stan.org/) probabilistic programming language and the [tidyverse](https://tidyverse.tidyverse.org/index.html). A few other dependencies are used for particular plots or tables.
 
+In particular, we use:
+- `rmarkdown` (plus dependencies)
+- `rstan` (plus dependencies)
+- `tidyverse`
+- `kableExtra`
+
 # About the data
 The data are recorded in a single file, `combined_data.csv` in the `data` folder. The file is a single table, one line per rating given, with the following columns:
 - `uid`: Unique id for each participant.
