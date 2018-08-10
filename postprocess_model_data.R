@@ -1,6 +1,6 @@
 # take stan model output and perform expensive postprocessing
 # usage:
-# $ Rscript postprocess_model_data.R <model> <group>
+# $ Rscript postprocess_model_data.R <model> 
 # <model> is the model to run: 
 #    'hier':   hierarchical (confidence rating)
 #    'mv':     multivariate outcomes (confidence, punishment)
