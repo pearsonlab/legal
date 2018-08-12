@@ -3,10 +3,10 @@ DATADIR = data
 DATAFILE = $(DATADIR)/combined_data.csv
 GROUPS = mturk legal lsba ilsa
 FIGFILES = $(foreach fig, 1 2 3 4, $(FIGDIR)/figure_paper_$(fig).pdf)
-OUT_STEM = $(DATADIR)/stan_model_output_hier_t_
-POST_STEM = $(DATADIR)/stan_hier_postprocess
-HIER_OUTS = $(foreach grp, $(GROUPS), $(OUT_STEM)$(grp).rdata)
-HIER_MV_OUTS = $(foreach grp, $(GROUPS), $(OUT_STEM)multi_$(grp).rdata)
+OUT_STEM = $(DATADIR)/stan_model_output
+POST_STEM = $(DATADIR)/stan_postprocess
+SV_OUTS = $(foreach grp, $(GROUPS), $(OUT_STEM)_sv_$(grp)_t.rdata)
+2V_OUTS = $(foreach grp, $(GROUPS), $(OUT_STEM)_2v_$(grp)_t.rdata)
 
 all: $(FIGFILES) docs/supplement.pdf
 
@@ -21,38 +21,29 @@ docs/supplement.pdf: $(DATAFILE)
 	Rscript -e "library(rmarkdown); render('docs/supplement.Rmd', 'pdf_document')"
 
 # Model classes
-models: hier_models mv_models mv_all_models demos_models
+models: sv_models 2v_models mv_models demos_models
 
-hier_models: $(POST_STEM).rdata 
+sv_models: $(POST_STEM)_sv_t.rdata 
 
-mv_models: $(POST_STEM)_multi.rdata 
+2v_models: $(POST_STEM)_2v_t.rdata 
 
-mv_all_models: $(POST_STEM)_multi_all.rdata 
+mv_models: $(POST_STEM)_mv_t.rdata 
 
-demos_models: $(POST_STEM)_with_demos.rdata
+demos_models: $(POST_STEM)_demos_t.rdata
 
 # Postprocessed model outputs
-$(POST_STEM).rdata: $(HIER_OUTS)
-	Rscript postprocess_model_data.R hier
+$(POST_STEM)_sv_t.rdata: $(SV_OUTS)
+	Rscript postprocess_model_data.R $^
 
-$(POST_STEM)_multi.rdata: $(HIER_MV_OUTS)
-	Rscript postprocess_model_data.R mv
+$(POST_STEM)_2v_t.rdata: $(2V_OUTS)
+	Rscript postprocess_model_data.R $^
 
-$(POST_STEM)_multi_all.rdata: $(OUT_STEM)multi_all.rdata
-	Rscript postprocess_model_data.R mv_all
+$(POST_STEM)_mv_t.rdata: $(OUT_STEM)_mv_mturk_t.rdata
+	Rscript postprocess_model_data.R $^
 
-$(POST_STEM)_with_demos.rdata: $(OUT_STEM)multi_with_demos.rdata
-	Rscript postprocess_model_data.R demos
+$(POST_STEM)_demos_t.rdata: $(OUT_STEM)_demos_mturk_t.rdata
+	Rscript postprocess_model_data.R $^
 	
-# Model outputs (in order of most to least specific)
-$(OUT_STEM)mturk_with_demos.rdata: $(DATAFILE)
-	Rscript run_models.R demos
-
-$(OUT_STEM)multi_all.rdata: $(DATAFILE)
-	Rscript run_models.R mv_all 
-
-$(OUT_STEM)multi_%.rdata: $(DATAFILE)
-	Rscript run_models.R mv $*
-	
-$(OUT_STEM)%.rdata: $(DATAFILE)
-	Rscript run_models.R hier $*
+# Model outputs 
+$(OUT_STEM)_%.rdata: $(DATAFILE)
+	Rscript run_models.R $(subst _, ,$*)

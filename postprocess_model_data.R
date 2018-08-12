@@ -1,19 +1,24 @@
 # take stan model output and perform expensive postprocessing
 # usage:
-# $ Rscript postprocess_model_data.R <model> 
-# <model> is the model to run: 
-#    'hier':   hierarchical (confidence rating)
-#    'mv':     multivariate outcomes (confidence, punishment)
-#    'mv_all': multivariate outcomes for all responses (mturk only)
-#    'demos':  hierarchical with demographics (mturk only)
+# $ Rscript postprocess_model_data.R <files>
+# <files> is a list of files to postprocess
+# entries should be of the form: stan_model_output_<model>_<group>_<distribution>.rdata
 
 library(tidyverse)
 library(stringr)
 library(rstan)
 
 # get command line arguments
-args = commandArgs(trailingOnly=TRUE)
-model <- args[1]
+datfiles <- commandArgs(trailingOnly=TRUE)
+
+# strip path and extension
+pieces <- str_split(datfiles[1], "/")[[1]] 
+file_part <- pieces[length(pieces)]
+ext_stripped <- str_split(file_part, "\\.")[[1]][1]
+name_parts <- str_split(ext_stripped, "_")[[1]]
+model <- name_parts[4]
+group <- name_parts[5]
+dist <- name_parts[6]
 
 renamer1 <- function(x) {
   gsub("\\[\\s*(\\d+)(,\\s*(\\d+))*\\s*\\]", "_\\3\\_\\1", x, perl=TRUE)
@@ -35,30 +40,18 @@ handle_omega <- FALSE
 multi_output <- FALSE
 
 switch(model,
-       'hier' = {
-         datfiles <- c('data/stan_model_output_hier_t_mturk.rdata',
-                       'data/stan_model_output_hier_t_ipls.rdata',
-                       'data/stan_model_output_hier_t_lsba.rdata',
-                       'data/stan_model_output_hier_t_ilsa.rdata')
-         outfile <- 'data/stan_hier_postprocess.rdata'
+       'sv' = {
          renamer <- renamer1
        },
        
-       'mv' = {
-         datfiles <- c('data/stan_model_output_hier_t_multi_mturk.rdata',
-                       'data/stan_model_output_hier_t_multi_ipls.rdata',
-                       'data/stan_model_output_hier_t_multi_lsba.rdata',
-                       'data/stan_model_output_hier_t_multi_ilsa.rdata')
-         outfile <- 'data/stan_hier_postprocess_multi.rdata'
+       '2v' = {
          renamer <- renamer2
          pars <- c(pars, 'Omega')
          handle_omega <- TRUE
          multi_output <- TRUE
        },
        
-       'mv_all' = {
-         datfiles <- c('data/stan_model_output_hier_t_multi_all.rdata') 
-         outfile <- 'data/stan_hier_postprocess_multi_all.rdata'
+       'mv' = {
          renamer <- renamer2
          pars <- c(pars, 'Omega')
          handle_omega <- TRUE
@@ -66,8 +59,6 @@ switch(model,
        },
        
        'demos' = {
-         datfiles <- c('data/stan_model_output_hier_t_mturk_with_demos.rdata')
-         outfile <- 'data/stan_hier_postprocess_with_demos.rdata'
          renamer <- renamer1
        }
 )
@@ -131,6 +122,7 @@ if (multi_output) {
 }
 
 # save data
+outfile <- paste(paste('stan', 'postprocess', model, dist, sep="_"), '.rdata', sep="")
 save(dat, effects, form, file=outfile)
 
 detach("package:rstan", unload = TRUE)
