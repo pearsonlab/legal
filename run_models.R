@@ -56,7 +56,6 @@ switch(model,
        'mv' = {
          modelstr <- 'models/mv_t.stan'
          dat <- dat %>% 
-         dat <- dat %>% 
            select(uid, scenario, physical, history, witness, rating, rating_type)
        },
        
@@ -122,7 +121,7 @@ C <- as.numeric(dat$scenario)
 # useful dimensions
 N <- dim(X)[1]
 P <- dim(X)[2]
-Nc <- length(unique(dat$scenario))
+Nc <- length(levels(dat$scenario))
 
 # write some stan
 library(rstan)

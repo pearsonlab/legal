@@ -5,7 +5,6 @@
 # entries should be of the form: stan_model_output_<model>_<group>_<distribution>.rdata
 
 library(tidyverse)
-library(stringr)
 library(rstan)
 
 # get command line arguments
