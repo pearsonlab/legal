@@ -4,10 +4,10 @@ library(rstan)
 
 ### First, do group comparisons for confidence 
 
-datfiles <- c('data/stan_model_output_hier_t_mturk.rdata',
-              'data/stan_model_output_hier_t_ipls.rdata',
-              'data/stan_model_output_hier_t_lsba.rdata',
-              'data/stan_model_output_hier_t_ilsa.rdata')
+datfiles <- c('data/stan_model_output_sv_mturk_t.rdata',
+              'data/stan_model_output_sv_legal_t.rdata',
+              'data/stan_model_output_sv_lsba_t.rdata',
+              'data/stan_model_output_sv_ilsa_t.rdata')
 datnames <- c("mTurk", "Law Students", "Louisiana Bar", "Illinois Prosecutors")
 
 mu_list <- list()
@@ -19,38 +19,38 @@ for (dd in 1:length(datfiles)) {
   mu_list[[length(mu_list) + 1]] <- mu
 }
   
-# for (dd in 1:length(datfiles)) 
-pval <- function(x, x0=0) {
-  pv <- sum(x <= x0)/length(x)
-  alpha <- 2 * min(pv, 1 - pv)  # because we want the 2-sided p-value, alpha is twice the threshold
-  minalpha <- 2 / length(x)
-  
-  # make sure we only output a bound if the answer is 0
-  signif(ifelse(alpha < minalpha, minalpha, alpha), 2)
+hpd <- function(x, coverage=0.95) {
+  # return an interval that covers a fraction coverage of the samples in x
+  sorted <- sort(x)
+  n <- length(sorted)
+  tail <- (1 - coverage)/2
+  lower <- floor(n * tail)
+  upper <- ceiling(n * (1 - tail))
+  return(list(sorted[lower], sorted[upper]))
 }
 
-make_pv_df <- function(mu_list, datnames) {
-  pv_list <- list()
+make_ci_df <- function(mu_list, datnames) {
+  ci_list <- list()
   for (ii in 1:(length(mu_list) - 1)) {
     for (jj in (ii + 1):length(mu_list)) {
       dmu <- (mu_list[[jj]] - mu_list[[ii]]) %>% 
-        do(data.frame(pvalue=apply(., 2, pval))) %>% t()
+        do(data.frame(ci=I(apply(., 2, hpd)))) %>% t()
       row.names(dmu) <- paste(datnames[jj], datnames[ii], sep = " - ")
-      pv_list[[length(pv_list) + 1]] <- as.data.frame(dmu)
+      ci_list[[length(ci_list) + 1]] <- as.data.frame(dmu)
     }
   }
-  pv_df = do.call(rbind, pv_list)
-  names(pv_df) <- c("Crime effect", "Non-DNA physical evidence", "DNA physical evidence",
+  ci_df = do.call(rbind, pv_list)
+  names(ci_df) <- c("Crime effect", "Non-DNA physical evidence", "DNA physical evidence",
                     "Unrelated prior crime", "Related prior crime", "Witness present")
-  pv_df <- pv_df[,c(3, 2, 6, 5, 4, 1)]
-  return(pv_df)
+  ci_df <- ci_df[,c(3, 2, 6, 5, 4, 1)]
+  return(ci_df)
 }
 
-group_pv_df <- make_pv_df(mu_list, datnames)
+group_ci_df <- make_pv_df(mu_list, datnames)
 
 ### Now, contrasts between rating types (mTurk)
 
-datfiles <- c('data/stan_model_output_hier_t_multi_all.rdata') 
+datfiles <- c('data/stan_model_output_mv_mturk_t.rdata') 
 load(datfiles)
 mu <- data.frame(extract(fit, pars='mu'))
 Noutcomes <- length(outcomes)
@@ -63,8 +63,8 @@ for (dd in 1:Noutcomes) {
   mu_list[[length(mu_list) + 1]] <- mm
 }
 
-ratings_pv_df <- make_pv_df(mu_list,  c("Outrage", "Punishment", "Proximity", "Threat", "Confidence"))
+ratings_ci_df <- make_pv_df(mu_list,  c("Outrage", "Punishment", "Proximity", "Threat", "Confidence"))
 
-save(group_pv_df, ratings_pv_df, file='data/stan_hier_postprocess_pvals.rdata')
+save(group_ci_df, ratings_ci_df, file='data/stan_postprocess_ci.rdata')
 
 detach("package:rstan", unload = TRUE)

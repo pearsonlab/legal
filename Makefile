@@ -43,6 +43,9 @@ $(POST_STEM)_mv_t.rdata: $(OUT_STEM)_mv_mturk_t.rdata
 
 $(POST_STEM)_demos_t.rdata: $(OUT_STEM)_demos_mturk_t.rdata
 	Rscript postprocess_model_data.R $^
+
+$(DATADIR)/stan_postprocess_ci.rdata: $(SV_OUTS) $(OUT_STEM)_mv_mturk_t.rdata
+	Rscript postprocess_for_intervals.R
 	
 # Model outputs 
 $(OUT_STEM)_%.rdata: $(DATAFILE)
