@@ -39,14 +39,14 @@ make_ci_df <- function(mu_list, datnames) {
       ci_list[[length(ci_list) + 1]] <- as.data.frame(dmu)
     }
   }
-  ci_df = do.call(rbind, pv_list)
+  ci_df = do.call(rbind, ci_list)
   names(ci_df) <- c("Crime effect", "Non-DNA physical evidence", "DNA physical evidence",
                     "Unrelated prior crime", "Related prior crime", "Witness present")
   ci_df <- ci_df[,c(3, 2, 6, 5, 4, 1)]
   return(ci_df)
 }
 
-group_ci_df <- make_pv_df(mu_list, datnames)
+group_ci_df <- make_ci_df(mu_list, datnames)
 
 ### Now, contrasts between rating types (mTurk)
 
@@ -63,7 +63,7 @@ for (dd in 1:Noutcomes) {
   mu_list[[length(mu_list) + 1]] <- mm
 }
 
-ratings_ci_df <- make_pv_df(mu_list,  c("Outrage", "Punishment", "Proximity", "Threat", "Confidence"))
+ratings_ci_df <- make_ci_df(mu_list,  c("Outrage", "Punishment", "Proximity", "Threat", "Confidence"))
 
 save(group_ci_df, ratings_ci_df, file='data/stan_postprocess_ci.rdata')
 
