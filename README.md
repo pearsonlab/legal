@@ -8,6 +8,8 @@ In particular, we use:
 - `rstan` (plus dependencies)
 - `tidyverse`
 - `kableExtra`
+- `magick`
+- `gridBase`
 
 # About the data
 The data are recorded in a single file, `combined_data.csv` in the `data` folder. The file is a single table, one line per rating given, with the following columns:
