@@ -6,6 +6,7 @@
 
 library(tidyverse)
 library(rstan)
+datadir <- 'data/'
 
 # get command line arguments
 datfiles <- commandArgs(trailingOnly=TRUE)
@@ -121,7 +122,7 @@ if (multi_output) {
 }
 
 # save data
-outfile <- paste(paste('stan', 'postprocess', model, dist, sep="_"), '.rdata', sep="")
+outfile <- paste(datadir, paste('stan', 'postprocess', model, dist, sep="_"), '.rdata', sep="")
 save(dat, effects, form, file=outfile)
 
 detach("package:rstan", unload = TRUE)
