@@ -21,7 +21,7 @@ docs/supplement.pdf: $(DATAFILE)
 	Rscript -e "library(rmarkdown); render('docs/supplement.Rmd', 'pdf_document')"
 
 # Model classes
-models: sv_models 2v_models mv_models demos_models
+models: sv_models 2v_models mv_models demos_models $(DATADIR)/stan_postprocess_ci.rdata
 
 sv_models: $(POST_STEM)_sv_t.rdata 
 
