@@ -71,34 +71,44 @@ kable(get_count_tbl("education"), caption="Participant Demographics - Education"
 kable(get_count_tbl("political_party"), caption="Participant Demographics - Political Party")
 ```
 
+\clearpage
 # Supplementary Notes
 
-## Testing differences in evidence effects
-The values displayed in Tables \ref{group_effects_table} and \ref{outcome_effects_table} are not, strictly speaking, Bayesian hypothesis tests. Here, we simply summarize the posterior probability that the evidence and crime effect means appearing in Figures 3A and 4A are different. We do so by (1) calculating the posteriors for their differences and (2) summarizing our confidence that these posteriors exclude 0 (no difference). More specifically, for two effects with a positive (mean) difference, we calculate the posterior probability that this difference is less than 0. (We do the reverse if the mean difference in effects is negative.) For comparison with a two-tailed test, we subsequently multiply by two. So, for example, a value of 0.02 in the table means that we are 99% confident that the difference in two effect sizes is greater than 0. Nevertheless, these numbers should not be interpreted as false positive rates, only as convenient summaries of posterior distributions.
+## Posteriors for differences in evidence effects
+In Tables \ref{group_effects_table} and \ref{outcome_effects_table}, we give 95\% credible intervals for the posterior differences in mean evidence effects across our population samples (Table \ref{group_effects_table}; cf. Figure 3A) and different rating types (Table \ref{outcome_effects_table}; cf. Figure 4A). That is, for each pair of variables, the numbers represent an interval that contains 95\% of the posterior probability mass.
 
 ```{r message=FALSE, echo=FALSE, warning=FALSE, fig.pos="H"}
 
-load('../data/stan_hier_postprocess_pvals.rdata')
-pv_table <- group_pv_df %>% mutate_all(funs(cell_spec(., "latex", bold=ifelse(. < 0.05, T, F))))
-row.names(pv_table) <- row.names(group_pv_df)
+load('../data/stan_postprocess_ci.rdata')
+not_in_ci <- function(ci, x=0) {
+  ifelse(x >= ci[[1]] && x <= ci[[2]], F, T)
+}
+ci_table <- group_ci_df %>% 
+  mutate_all(funs(lapply(., function(x){lapply(x, round, 1)}))) %>%
+  mutate_all(funs(cell_spec(., "latex", bold=lapply(., not_in_ci)))) %>%
+  mutate_all(funs(str_replace(., "list", "")))
+row.names(ci_table) <- row.names(group_ci_df)
 
-kable(pv_table, format="latex", booktabs=T, escape=F,
-      caption="Bayesian ``p-values'' (posterior probability mass exceeding 0) for contrasts 
-      between population mean effects. Cf. Figure 3A in main text.\\label{group_effects_table}") %>% 
-  kable_styling(full_width=F, latex_options = c("HOLD_position")) %>%
-  column_spec(1, width = "16em") %>%
-  column_spec(2:7, width = "4.5em")
+kable(ci_table, format="latex", booktabs=T, escape=F,
+      caption="Bayesian 95\\% highest posterior density credible intervals for contrasts 
+      between population mean effects. Cf. Figure 3A in main text. Intervals excluding 0 are in bold.\\label{group_effects_table}") %>% 
+  kable_styling(full_width=F, latex_options = c("HOLD_position"), font_size=8) %>%
+  column_spec(1, width = "10em") %>%
+  column_spec(2:7, width = "6.5em")
 
 
-pv_table <- ratings_pv_df %>% mutate_all(funs(cell_spec(., "latex", bold=ifelse(. < 0.05, T, F))))
-row.names(pv_table) <- row.names(ratings_pv_df)
+ci_table <- ratings_ci_df %>% 
+  mutate_all(funs(lapply(., function(x){lapply(x, round, 1)}))) %>%
+  mutate_all(funs(cell_spec(., "latex", bold=lapply(., not_in_ci)))) %>%
+  mutate_all(funs(str_replace(., "list", "")))
+row.names(ci_table) <- row.names(ratings_ci_df)
 
-kable(pv_table, format="latex", booktabs=T, escape=F,
-      caption="Bayesian ``p-values'' (posterior probability mass exceeding 0) for contrasts 
-      between rating type mean effects. Cf. Figure 4A in main text.\\label{outcome_effects_table}") %>% 
-  kable_styling(full_width=F, latex_options = c("HOLD_position")) %>%
-  column_spec(1, width = "16em") %>%
-  column_spec(2:7, width = "4.5em")
+kable(ci_table, format="latex", booktabs=T, escape=F,
+      caption="Bayesian 95\\% highest posterior density credible intervals for contrasts 
+      between rating type mean effects. Cf. Figure 4A in main text. Intervals excluding 0 are in bold.\\label{outcome_effects_table}") %>% 
+  kable_styling(full_width=F, latex_options = c("HOLD_position"), font_size=8) %>%
+  column_spec(1, width = "10em") %>%
+  column_spec(2:7, width = "6.5em")
 ```
 
 ## Sensitivity Analysis
