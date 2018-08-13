@@ -16,7 +16,8 @@ output:
 
 # Supplementary Tables
 
-```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=6, fig.cap="Deserved punishment ratings as a function of crime severity. Plotted separately for State (A) and Federal (B) crimes. \\label{demo_table}"}
+## Demographics
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=6, fig.position="H", fig.cap="\\label{demo_table}"}
 library(tidyverse)
 library(kableExtra)
 
@@ -70,9 +71,6 @@ kable(get_count_tbl("ethnicity"), caption="Participant Demographics - Ethnicity"
 kable(get_count_tbl("education"), caption="Participant Demographics - Education")
 kable(get_count_tbl("political_party"), caption="Participant Demographics - Political Party")
 ```
-
-\clearpage
-# Supplementary Notes
 
 ## Posteriors for differences in evidence effects
 In Tables \ref{group_effects_table} and \ref{outcome_effects_table}, we give 95\% credible intervals for the posterior differences in mean evidence effects across our population samples (Table \ref{group_effects_table}; cf. Figure 3A) and different rating types (Table \ref{outcome_effects_table}; cf. Figure 4A). That is, for each pair of variables, the numbers represent an interval that contains 95\% of the posterior probability mass.
@@ -129,7 +127,7 @@ subject $s$ and case $c$:
   \eta_p &\sim \mathrm{Ca}^+(0, 50) \\
   \tau_{c p} &\sim \mathrm{Ca}^+(0, 50) \\
   \sigma &\sim \mathrm{Ca}^+(0, 5) \\
-  \nu, \nu' &\sim \mathcal{N}^+(0, 100)
+  \nu, \nu' &\sim \mathcal{N}^+(0, 100) \label{nu}
 \end{align}
 
 That is:
@@ -160,7 +158,7 @@ vector of ratings, $R_r$, $r=1\ldots N_r$, similarly
   \eta_{p r} &\sim \mathrm{Ca}^+(0, 50) \\
   \tau_{p r} &\sim \mathrm{Ca}^+(0, 50) \\
   \sigma_r &\sim \mathrm{Ca}^+(0, 5) \\
-  \nu, \nu' &\sim \mathcal{N}^+(0, 100)
+  \nu, \nu' &\sim \mathcal{N}^+(0, 100) \label{nu_m}
 \end{align}
 
 Here, we have used a "long" or "melted" representation of $R$ in which each index $i$ corresponds to a single observation of a
@@ -183,7 +181,7 @@ in 2000 total samples for each variable, for which we report means as well as 95
 by the 2.5% and 97.5% samples from the distribution). We assessed convergence via effective sample size and the
 Gelman-Rubin statistic, for which all runs exhibited $\hat{R} < 1.1$ [@gelman2014bayesian].
 
-**cf supplementary tables XXX** for list of convergence diagnostics
+In addition, we include effective sample size diagnostics ($n_{\mathrm{eff}}$) for our our single-outcome, two-outcome, and all-outcome models in Supplementary Figures \ref{sv_neff}, \ref{2v_neff}, and \ref{mv_neff}.
 
 # Supplementary Figures
 
@@ -269,6 +267,55 @@ plt_2 <- ggplot(df %>% filter(crime_type=='federal')) +
 plot(arrangeGrob(plt_1, plt_2))
 ```
 
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.width = 8, fig.cap="Convergence diagnostic for MCMC fitting procedure for the single outcome model. Box plots show effective sample sizes ($n_{\\mathrm{eff}}$) for each of the variables in the model. Color indicates sample groups, which were fit using separate models. Better models have $n_{\\mathrm{eff}}$ close to 2000, the nominal sample size. For variable definitions, see (\\ref{rating}) - (\\ref{nu}). \\label{sv_neff}"}
+library(tidyverse)
+library(kableExtra)
+
+load('../data/stan_postprocess_sv_t.rdata')
+
+plt <- ggplot(effects) + 
+  geom_boxplot(aes(y=n_eff, x=variable, color=group)) +
+  group_color_scale +
+  labs(title="Effective sample size:\nSingle response model", size=rel(3)) +
+  th + 
+  theme(legend.position=c(0.2, 0.85))
+plt
+```
+
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.width = 8, fig.cap="Convergence diagnostic for MCMC fitting procedure for the two-outcome model. Box plots show effective sample sizes ($n_{\\mathrm{eff}}$) for each of the variables in the model. Color indicates sample groups, which were fit using separate models. Better models have $n_{\\mathrm{eff}}$ close to 2000, the nominal sample size. For variable definitions, see (\\ref{rating_m}) - (\\ref{nu_m}). \\label{2v_neff}"}
+library(tidyverse)
+library(kableExtra)
+
+load('../data/stan_postprocess_2v_t.rdata')
+
+eff_prettied <- effects %>% mutate(variable=str_extract(variable, "\\w*(?=\\.|$)"))
+
+plt <- ggplot(eff_prettied) + 
+  geom_boxplot(aes(y=n_eff, x=variable, color=group)) +
+  group_color_scale +
+  labs(title="Effective sample size:\nTwo-response model", size=rel(3)) +
+  th + 
+  theme(legend.position=c(0.2, 0.85))
+plt
+```
+
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.width = 8, fig.cap="Convergence diagnostic for MCMC fitting procedure for the multi-outcome model. Box plots show effective sample sizes ($n_{\\mathrm{eff}}$) for each of the variables in the model. Color indicates sample groups, which were fit using separate models. Better models have $n_{\\mathrm{eff}}$ close to 2000, the nominal sample size. For variable definitions, see (\\ref{rating_m}) - (\\ref{nu_m}). \\label{mv_neff}"}
+library(tidyverse)
+library(kableExtra)
+
+load('../data/stan_postprocess_mv_t.rdata')
+
+eff_prettied <- effects %>% mutate(variable=str_extract(variable, "\\w*(?=\\.|$)"))
+
+plt <- ggplot(eff_prettied) + 
+  geom_boxplot(aes(y=n_eff, x=variable, color=group)) +
+  group_color_scale +
+  labs(title="Effective sample size:\nAll-response model", size=rel(3)) +
+  th + 
+  theme(legend.position=c(0.2, 0.85))
+plt
+```
+
 ```{r message=FALSE, echo=FALSE, warning=FALSE, fig.width=8, fig.cap="Comparison of evidence and demographic effects for the mTurk sample (cf. Figure 2A). Analyses were performed on a reduced sample of $N=368$ participants with complete demographic information for the variables displayed.  Demographic variables were modeled as additional $\\beta$ effects as in (\\ref{theta}) and (\\ref{beta}). \\label{demo_effects}"}
 
 # based on postprocess_stan_hier_data.R and make_paper_figure_2.R
@@ -333,7 +380,7 @@ releveler <- function(x) {
   # now reorder levels so plot looks right
   factor(as.character(xfac), levels=c("rating", "rate_punishment", "rate_outrage", "rate_threat", "rate_threat_2"))
 }
-corrs <- effects %>% filter(grepl('rho', variable)) %>% 
+corrs <- effects %>% filter(grepl('Omega', variable)) %>% 
                      separate(variable, into=c("variable", "outcome1", "outcome2")) %>%
                      mutate_at(c("outcome1", "outcome2"), releveler) %>%
                      filter(evidence=='baseline') %>% 
@@ -358,7 +405,7 @@ plt_3
 
 load('../data/stan_postprocess_2v_t.rdata')
 
-plt_4 <- ggplot(data=(effects %>% filter(variable=='rho'))) +
+plt_4 <- ggplot(data=(effects %>% filter(grepl('Omega', variable)))) +
   geom_hline(yintercept=0, colour='grey') +
   geom_pointrange(aes(x=evidence, y=X50., ymin=X2.5., ymax=X97.5., color=group), 
                          position=position_dodge(width = 0.5)) + 
@@ -405,4 +452,4 @@ plt_5
 
 \clearpage
 
-# References
+# Supplementary References
