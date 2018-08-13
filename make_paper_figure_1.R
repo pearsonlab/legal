@@ -6,7 +6,7 @@ library(rstan)
 library(magick)
 
 source('ggplot_setup.R')
-load('data/stan_hier_postprocess.rdata')
+load('data/stan_postprocess_sv_t.rdata')
 effects <- effects %>% filter(group=='mturk')
 dat <- dat %>% filter(group=='mturk')
 
@@ -84,7 +84,7 @@ grid::grid.draw(plt_2)
 ####################
 
 # plot punishment ratings for each scenario
-load('data/stan_hier_postprocess_multi.rdata')
+load('data/stan_postprocess_2v_t.rdata')
 
 # dataframe linking scenarios to seriousness as rank ordered by PS
 sc_ranked <- as.factor(c(27, 6, 12, 29, 13, 14, 1, 24, 2, 22, 25,

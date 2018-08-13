@@ -6,7 +6,7 @@ library(gtable)
 library(gridBase)
 
 source('ggplot_setup.R')
-load('data/stan_hier_postprocess.rdata')
+load('data/stan_postprocess_sv_t.rdata')
 effects <- effects %>% filter(group=='mturk')
 dat <- dat %>% filter(group=='mturk')
 

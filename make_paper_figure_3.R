@@ -7,7 +7,7 @@ library(gridBase)
 library(broom)
 
 source('ggplot_setup.R')
-load('data/stan_hier_postprocess.rdata')
+load('data/stan_postprocess_sv_t.rdata')
 
 ############### Panel 1: Effect sizes for confidence ##################################
 # get evidence effects

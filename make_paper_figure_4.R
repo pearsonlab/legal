@@ -6,7 +6,7 @@ library(gtable)
 library(gridBase)
 
 source('ggplot_setup.R')
-load('data/stan_hier_postprocess_multi_all.rdata')
+load('data/stan_postprocess_mv_t.rdata')
 
 ############### Panel 1: mTurk effects by outcome type ##################################
 # get evidence effects
@@ -108,7 +108,7 @@ plt_3 <- ggplot(data = corrs) +
   
 
 ############### Panel 4: Punishment and case strength effect correlations ##################################
-load('data/stan_hier_postprocess_multi.rdata')
+load('data/stan_postprocess_2v_t.rdata')
 
 plt_4 <- ggplot(data=(effects %>% filter(variable=='rho', evidence=='baseline'))) +
   geom_hline(yintercept=0, colour='grey') +
