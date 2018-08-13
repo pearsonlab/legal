@@ -84,7 +84,7 @@ releveler <- function(x) {
   # now reorder levels so plot looks right
   factor(as.character(xfac), levels=c("rating", "rate_punishment", "rate_outrage", "rate_threat", "rate_threat_2"))
 }
-corrs <- effects %>% filter(grepl('rho', variable)) %>% 
+corrs <- effects %>% filter(grepl('Omega', variable)) %>% 
                      separate(variable, into=c("variable", "outcome1", "outcome2")) %>%
                      mutate_at(c("outcome1", "outcome2"), releveler) %>%
                      filter(evidence=='baseline') %>% 
@@ -110,7 +110,7 @@ plt_3 <- ggplot(data = corrs) +
 ############### Panel 4: Punishment and case strength effect correlations ##################################
 load('data/stan_postprocess_2v_t.rdata')
 
-plt_4 <- ggplot(data=(effects %>% filter(variable=='rho', evidence=='baseline'))) +
+plt_4 <- ggplot(data=(effects %>% filter(variable=='Omega', evidence=='baseline'))) +
   geom_hline(yintercept=0, colour='grey') +
   geom_pointrange(aes(x=evidence, y=X50., ymin=X2.5., ymax=X97.5., color=group), 
                          position=position_dodge(width = 0.5)) + 

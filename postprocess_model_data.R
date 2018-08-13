@@ -87,7 +87,7 @@ for (dd in 1:length(datfiles)) {
     corrs <- ss %>% filter(grepl("Omega", var)) %>% 
       filter(lowertri(var)) %>%
       mutate(var=sapply(var, function(x){gsub("Omega_(\\d+)_(\\d+)_(\\d+)", 
-                                              "rho\\.\\1\\.\\2__\\3_", x)}))
+                                              "Omega\\.\\1\\.\\2__\\3_", x)}))
     ss <- rbind(non_corrs, corrs)
   }
 
