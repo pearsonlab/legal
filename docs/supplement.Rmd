@@ -16,8 +16,6 @@ output:
 
 # Supplementary Tables
 
-## Participant Demographics
-
 ```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=6, fig.cap="Deserved punishment ratings as a function of crime severity. Plotted separately for State (A) and Federal (B) crimes. \\label{demo_table}"}
 library(tidyverse)
 library(kableExtra)
@@ -73,6 +71,8 @@ kable(get_count_tbl("education"), caption="Participant Demographics - Education"
 kable(get_count_tbl("political_party"), caption="Participant Demographics - Political Party")
 ```
 
+# Supplementary Notes
+
 ## Testing differences in evidence effects
 The values displayed in Tables \ref{group_effects_table} and \ref{outcome_effects_table} are not, strictly speaking, Bayesian hypothesis tests. Here, we simply summarize the posterior probability that the evidence and crime effect means appearing in Figures 3A and 4A are different. We do so by (1) calculating the posteriors for their differences and (2) summarizing our confidence that these posteriors exclude 0 (no difference). More specifically, for two effects with a positive (mean) difference, we calculate the posterior probability that this difference is less than 0. (We do the reverse if the mean difference in effects is negative.) For comparison with a two-tailed test, we subsequently multiply by two. So, for example, a value of 0.02 in the table means that we are 99% confident that the difference in two effect sizes is greater than 0. Nevertheless, these numbers should not be interpreted as false positive rates, only as convenient summaries of posterior distributions.
 
@@ -101,7 +101,11 @@ kable(pv_table, format="latex", booktabs=T, escape=F,
   column_spec(2:7, width = "4.5em")
 ```
 
-# Modeling: Case Strength
+## Sensitivity Analysis
+
+# Supplementary Methods
+
+## Single Rating Model
 For the case of a single rating outcome (case strength), we separately model each group of participants as follows: Given a set of
 ratings $R$ indexed by $i=1\ldots N$, and an $N \times P$ design matrix $X$ (with columns corresponding to regressors $p=1\ldots P$), we assume for a given observation $i$ corresponding to 
 subject $s$ and case $c$:
@@ -131,7 +135,7 @@ That is:
 This approach allows for flexible fitting (including estimates of variance) at the regressor, case, and individual levels, while
 at the same time leveraging partial pooling to share statistical strength across these levels [@gelman2006data].
 
-# Modeling: Multiple Ratings
+## Multiple Rating Model
 For the case in which subjects provide multiple ratings (punishment, case strength, etc.) for a given scenario, we model the resulting
 vector of ratings, $R_r$, $r=1\ldots N_r$, similarly
 
@@ -160,7 +164,7 @@ through their Cholesky factorization (\ref{L_m}).\footnote{Implemented as \textt
 Second, in order to more accurately estimate variances in the presence of missing data, we have restricted this model to a single
 value of $\tau$ across all cases (for each outcome and regressor) (\ref{beta_m}).
 
-# Model Fitting
+## Model Fitting
 We calculated posterior distributions and credible intervals for each variable of interest using Markov Chain Monte Carlo methods
 as implemented in the Stan probabilistic programming language [@carpenter2016stan]. Full code for all analyses is available at 
 [https://github.com/pearsonlab/legal](https://github.com/pearsonlab/legal). Models were fit by running 4 chains of either 1000 samples (case strength only model) with a thinning fraction of 1 or 2000
@@ -168,6 +172,8 @@ samples (multiple outcome models) with a thinning fraction of 2, of which the fi
 in 2000 total samples for each variable, for which we report means as well as 95% equal-tailed credible intervals (bounded 
 by the 2.5% and 97.5% samples from the distribution). We assessed convergence via effective sample size and the
 Gelman-Rubin statistic, for which all runs exhibited $\hat{R} < 1.1$ [@gelman2014bayesian].
+
+**cf supplementary tables XXX** for list of convergence diagnostics
 
 # Supplementary Figures
 
@@ -202,7 +208,7 @@ library(grid)
 library(gridExtra)
 source("../ggplot_setup.R")
 
-load('../data/stan_hier_postprocess_multi.rdata')
+load('../data/stan_postprocess_2v_t.rdata')
 
 # dataframe linking scenarios to seriousness as rank ordered by PS
 sc_ranked <- as.factor(c(27, 6, 12, 29, 13, 14, 1, 24, 2, 22, 25,
@@ -259,36 +265,9 @@ plot(arrangeGrob(plt_1, plt_2))
 library(tidyverse)
 library(ggplot2)
 
-renamer <- function(x) {
-  gsub("\\[\\s*(\\d+)(,\\s*(\\d+))*\\s*\\]", "_\\3\\_\\1", x, perl=TRUE)
-}
-qprobs <- c(0.025, 0.5, 0.975)
+load('../data/stan_postprocess_demos_t.rdata')
 
-load('../data/stan_model_output_hier_t_mturk_with_demos.rdata')
-
-# get matrix of summary statistics for each variable of interest
-ss <- data.frame(rstan::summary(fit, pars=c('mu', 'eta', 'gamma', 'tau', 'sigma'), probs=qprobs)$summary)
-
-# change rownames to make them easy to parse
-rownames(ss) <- sapply(rownames(ss), renamer)
-
-# make row names into a column
-ss$var <- rownames(ss)
-rownames(ss) <- NULL
-
-# make var into separate columns for variable, evidence code, and scenario
-ss <- ss %>% separate(var, into=c("variable", "evidence_num", "scenario"))
-
-# make group a character vector so we can merge without worrying about factor levels
-preds$group <- as.character(preds$group)
-
-# create a trivial evidence code column
-preds$evidence_num <- rownames(preds)
-
-# bind variables columnwise
-df <- left_join(ss, preds, by="evidence_num")
-
-fe <- df %>% filter(variable == 'mu', evidence != 'baseline') %>%
+fe <- effects %>% filter(variable == 'mu', evidence != 'baseline') %>%
       select(mean, evidence, X2.5., X97.5.) %>%
       mutate(evidence=factor(evidence, levels=c("physicalDNA", 
                                                 "physicalNon-DNA", 
@@ -333,7 +312,7 @@ plt_1
 ```
 
 ```{r message=FALSE, echo=FALSE, warning=FALSE, fig.width=8, fig.cap="Pairwise correlations for baseline effects across all outcome types. Includes both versions of the threat assessment question (cp. Figure 4C). \\label{baseline_correlations}"}
-load('../data/stan_hier_postprocess_multi_all.rdata')
+load('../data/stan_postprocess_mv_t.rdata')
 
 outcomes <- levels(effects$outcome)
 Nr <- length(outcomes)
@@ -367,7 +346,7 @@ plt_3
 
 ```{r message=FALSE, echo=FALSE, warning=FALSE, fig.width=8, fig.cap="Correlations between case strength and deserved punishment for all model effects across groups (cp. Figure 4D). \\label{all_group_correlations}"}
 
-load('../data/stan_hier_postprocess_multi.rdata')
+load('../data/stan_postprocess_2v_t.rdata')
 
 plt_4 <- ggplot(data=(effects %>% filter(variable=='rho'))) +
   geom_hline(yintercept=0, colour='grey') +
@@ -387,7 +366,7 @@ plt_4
 
 ```{r message=FALSE, echo=FALSE, warning=FALSE, fig.width=8, fig.cap="Comparison of sources of model variance. Points indicate posterior means of variance parameters. Lines indicate 95% credible intervals. Boxplots indicate variability of variance parameters across scenarios. Columns correspond to model variance parameters $\\tau^2$, $\\eta^2$, and $\\sigma^2$, respectively. \\label{model_variance_comparison}"}
 ############### Panel 5: Variance Comparison #################################
-load('../data/stan_hier_postprocess.rdata')
+load('../data/stan_postprocess_sv_t.rdata')
 variance_comparison <- effects %>%
   filter(variable %in% c('eta', 'tau', 'sigma'), (evidence=='baseline') | (variable == 'sigma')) %>%
   select(X2.5., X50., X97.5., variable, scenario, group) %>%
