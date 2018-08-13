@@ -111,7 +111,7 @@ preds <- data.frame(evidence=prednames, group=group)
 
 # break out ratings, subject mapping
 if ('rating_type' %in% names(dat)) {
-  Nr <- length(levels(dat$rating_type))
+  Nr <- length(unique(dat$rating_type)) # so that we count those appearing
 } else {
   Nr <- 1
 }
