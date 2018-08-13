@@ -17,7 +17,7 @@ supplement: docs/supplement.pdf
 $(FIGDIR)/figure_paper_%.pdf: models
 	Rscript make_paper_figure_$*.R
 
-docs/supplement.pdf: $(DATAFILE)
+docs/supplement.pdf: sv_models 2v_models mv_models demos_models
 	Rscript -e "library(rmarkdown); render('docs/supplement.Rmd', 'pdf_document')"
 
 # Model classes
