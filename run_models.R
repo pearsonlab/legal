@@ -50,6 +50,7 @@ switch(model,
          modelstr <- 'models/mv_t.stan'
          dat <- dat %>% 
            filter(rating_type=='rating' | rating_type=='rate_punishment') %>% 
+           mutate(rating_type=droplevels(rating_type)) %>%
            select(uid, scenario, physical, history, witness, rating, rating_type) 
        },
        
@@ -111,7 +112,7 @@ preds <- data.frame(evidence=prednames, group=group)
 
 # break out ratings, subject mapping
 if ('rating_type' %in% names(dat)) {
-  Nr <- length(unique(dat$rating_type)) # so that we count those appearing
+  Nr <- nlevels(dat$rating_type) 
 } else {
   Nr <- 1
 }
