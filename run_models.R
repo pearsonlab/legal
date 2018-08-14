@@ -78,7 +78,7 @@ if ('rating_type' %in% names(dat)) {
 }
 
 # subsample for quick prototyping
-dat <- dat %>% sample_frac(0.1)
+# dat <- dat %>% sample_frac(0.1)
 
 # final cleanup
 dat <- dat %>% na.omit() %>% mutate(uid=as.integer(droplevels(uid)))

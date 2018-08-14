@@ -12,12 +12,17 @@ data_file_names <- paste(datadir, c('data_mq_nothreat_deid.csv',
                                     'data_tq_deid.csv',
                                     'data_th_deid.csv'), sep="")
 dlist <- list()
+unique_ids <- c()
 for (ind in 1:length(data_file_names)) {
-  dlist[[ind]] <- read.csv(data_file_names[[ind]]) %>% mutate(hashedID = as.character(hashedID))
+  dlist[[ind]] <- read.csv(data_file_names[[ind]]) %>% 
+    mutate(hashedID = as.character(hashedID)) %>%
+    filter(!(hashedID %in% unique_ids))  # remove people who'd taken a previous version
+  
+  unique_ids <- c(unique_ids, unique(dlist[[ind]]$hashedID))
   
   # recode threat question in threat dataset as distinct
   if (ind == length(data_file_names)) {
-    dlist[[ind]] <- dlist[[ind]] %>% mutate(rate_threat_2=rate_threat) %>% select(-rate_threat)
+    dlist[[ind]] <- dlist[[ind]] %>%  mutate(rate_threat_2=rate_threat)  %>%  select(-rate_threat) 
   }
 }
 df <- do.call('bind_rows', dlist)
