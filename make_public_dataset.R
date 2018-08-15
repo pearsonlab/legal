@@ -15,13 +15,22 @@ dlist <- list()
 unique_ids <- c()
 for (ind in 1:length(data_file_names)) {
   dlist[[ind]] <- read.csv(data_file_names[[ind]]) %>% 
-    mutate(hashedID = as.character(hashedID)) %>%
-    filter(!(hashedID %in% unique_ids))  # remove people who'd taken a previous version
+    mutate(hashedID = as.character(hashedID)) 
+  # %>%
+    # filter(!(hashedID %in% unique_ids))  # remove people who'd taken a previous version
   
   unique_ids <- c(unique_ids, unique(dlist[[ind]]$hashedID))
   
+  #make sure 'no evidence' data are really coded as no evidence
+  if (str_detect(data_file_names[[ind]], '_nb_')) {
+    dlist[[ind]]$history <- 0
+    dlist[[ind]]$physical <- 0
+    dlist[[ind]]$witness <- 0
+    dlist[[ind]]$evidence_shown <- FALSE
+  }
+  
   # recode threat question in threat dataset as distinct
-  if (ind == length(data_file_names)) {
+  if (str_detect(data_file_names[[ind]], '_th_')) {
     dlist[[ind]] <- dlist[[ind]] %>%  mutate(rate_threat_2=rate_threat)  %>%  select(-rate_threat) 
   }
 }
@@ -38,7 +47,7 @@ df <- df %>% mutate(nonwhite=race != 5,
 dat <- df %>% dplyr::rename(uid=hashedID) %>%
               select(uid, scenario, physical, history, witness,
                      rating, rate_punishment, rate_threat, rate_threat_2, rate_outrage,
-                     nonwhite, hispanic, female, question,
+                     nonwhite, hispanic, female, question, evidence_shown,
                      age, gender, race, ethnicity, education, political_party) %>%
               gather(key=rating_type, value=rating, c(rating, rate_punishment, rate_threat, rate_threat_2, rate_outrage)) %>%
               mutate_at(c('uid', 'scenario', 'physical', 'history', 'witness', 'rating_type'), 'as.factor') %>%
@@ -49,13 +58,14 @@ levels(dat$physical) <- c("No Physical", "Non-DNA", "DNA")
 levels(dat$history) <- c("No History", "Unrelated", "Related")
 
 dat$gender = factor(dat$gender, labels=c("Male", "Female", "Other"))
-dat$race = factor(dat$race, labels=c("American Indian or Alaska Native", 
-                                     "Asian", 
-                                     "Black or African American",
-                                     "Native Hawaiian or other Pacific Islander",
-                                     "White",
-                                     "More than one race",
-                                     "Unknown or do not want to disclose"))
+dat$race = factor(dat$race, levels=1:7,
+                  labels=c("American Indian or Alaska Native", 
+                           "Asian", 
+                           "Black or African American",
+                           "Native Hawaiian or other Pacific Islander",
+                           "White",
+                           "More than one race",
+                           "Unknown or do not want to disclose"))
 dat$ethnicity = factor(dat$ethnicity, labels=c("Hispanic or Latino", 
                                                "Not Hispanic or Latino", 
                                                "Unknown or do not want to disclose"))
@@ -115,6 +125,9 @@ df <- df %>% select(uid, scenario, physical, history, witness, rating, rate_puni
   mutate(group=group)
 
 dat <- bind_rows(dat, df)
+
+# indicate that in all cases not otherwise specified, we did show evidence
+dat <- dat %>% replace_na(list(evidence_shown=TRUE))
 
 ### write out
 write.csv(dat, "data/combined_data.csv", row.names = FALSE)
