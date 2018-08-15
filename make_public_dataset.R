@@ -15,9 +15,8 @@ dlist <- list()
 unique_ids <- c()
 for (ind in 1:length(data_file_names)) {
   dlist[[ind]] <- read.csv(data_file_names[[ind]]) %>% 
-    mutate(hashedID = as.character(hashedID)) 
-  # %>%
-    # filter(!(hashedID %in% unique_ids))  # remove people who'd taken a previous version
+    mutate(hashedID = as.character(hashedID)) %>%
+    filter(!(hashedID %in% unique_ids))  # remove people who'd taken a previous version
   
   unique_ids <- c(unique_ids, unique(dlist[[ind]]$hashedID))
   
