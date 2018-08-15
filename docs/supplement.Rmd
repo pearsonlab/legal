@@ -28,32 +28,36 @@ mturk_demos <- read.csv('../data/combined_data.csv') %>% filter(group=='mturk') 
 cutpts = c(17, 21, 25, 30, 40, 50, 60, 90) # cutpoints for age ranges
 mturk_demos$age = cut(mturk_demos$age,cutpts)
 
-levels(mturk_demos$gender) <- c("Male", "Female", "Other")
-levels(mturk_demos$race) <- c("American Indian or Alaska Native", 
-                              "Asian", 
-                              "Black or African American",
-                              "Native Hawaiian or other Pacific Islander",
-                              "White",
-                              "More than one race",
-                              "Unknown or do not want to disclose")
-levels(mturk_demos$ethnicity) <- c("Hispanic or Latino", 
-                                   "Not Hispanic or Latino", 
-                                   "Unknown or do not want to disclose")
-levels(mturk_demos$education) <- c("Less than high school", 
-                                   "Completed high school",
-                                   "GED", 
-                                   "Some college",
-                                   "Associate's Degree", 
-                                   "Bachelor's Degree", 
-                                   "Master's Degree", 
-                                   "Ph.D.", 
-                                   "Law degree",
-                                   "Other professional degree")
-levels(mturk_demos$political_party) <- c("Independent or no party Affiliation", 
-                                         "Republican", 
-                                         "Democrat", 
-                                         "Other", 
-                                         "I am not a registered voter")
+mturk_demos$gender <- factor(mturk_demos$gender, levels=c("Male", "Female", "Other"))
+mturk_demos$race <- factor(mturk_demos$race, 
+                           levels=c("American Indian or Alaska Native", 
+                                    "Asian", 
+                                    "Black or African American",
+                                    "Native Hawaiian or other Pacific Islander",
+                                    "White",
+                                    "More than one race",
+                                    "Unknown or do not want to disclose"))
+mturk_demos$ethnicity <- factor(mturk_demos$ethnicity,
+                                levels=c("Hispanic or Latino", 
+                                         "Not Hispanic or Latino", 
+                                         "Unknown or do not want to disclose"))
+mturk_demos$education <- factor(mturk_demos$education,
+                                levels=c("Less than high school", 
+                                         "Completed high school",
+                                         "GED", 
+                                         "Some college",
+                                         "Associate's Degree", 
+                                         "Bachelor's Degree", 
+                                         "Master's Degree", 
+                                         "Ph.D.", 
+                                         "Law degree",
+                                         "Other professional degree"))
+mturk_demos$political_party <- factor(mturk_demos$political_party, 
+                                      levels=c("Independent or no party Affiliation", 
+                                               "Republican", 
+                                               "Democrat", 
+                                               "Other", 
+                                               "I am not a registered voter"))
 
 get_count_tbl <- function(varname){
   id <- "uid"

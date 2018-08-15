@@ -68,9 +68,10 @@ switch(model,
        }
 )
 
-levels(dat$witness) <- c("No Witness", "Yes Witness")
-levels(dat$physical) <- c("No Physical", "Non-DNA", "DNA")
-levels(dat$history) <- c("No History", "Unrelated", "Related")
+# reorder levels appropriately
+dat$witness <- factor(dat$witness, levels=c("No Witness", "Yes Witness"))
+dat$physical <- factor(dat$physical, levels=c("No Physical", "Non-DNA", "DNA"))
+dat$history <- factor(dat$history, levels=c("No History", "Unrelated", "Related"))
 
 # useful for postprocessing:
 if ('rating_type' %in% names(dat)) {
