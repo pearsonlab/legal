@@ -1,25 +1,30 @@
 ---
-title: 'Supplementary Information S5: Participant Characteristics, Statistical Modeling,
-  and Figures'
+title: 'Supplementary Information'
 author: "Pearson et al."
-date: "4/27/2018"
+date: "8/20/2018"
 output:
   pdf_document:
     fig_caption: yes
+    keep_tex: false
   html_document: default
 header-includes:
 - \usepackage{amsmath, amssymb}
 - \usepackage[labelfont=bf]{caption}
 - \usepackage{float}
+
 bibliography: supp.bib
 ---
 \captionsetup[table]{name=Supplementary Table}
 \captionsetup[figure]{name=Supplementary Figure}
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.pos= "H", out.extra='')
+```
+
 # Supplementary Tables
 
 ## Demographics
-Here, we give a breakdown of our mTurk sample. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis quam in tincidunt feugiat. Phasellus erat felis, dignissim in consequat ac, ultrices nec elit. Aliquam sagittis fermentum nisi, in ultricies diam. Donec quis dolor turpis. In hac habitasse platea dictumst. Proin sapien lacus, euismod sagittis quam eu, pellentesque suscipit neque. Mauris semper urna sed tellus ullamcorper fringilla. Praesent porta consequat ante. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque leo velit, rutrum et magna ac, placerat rutrum nibh. Suspendisse eget augue et dolor pretium blandit nec ut dui. In hac habitasse platea dictumst. Duis diam odio, lobortis cursus ante ut, volutpat varius lorem.
+Here, we give a breakdown of our mTurk sample. We include all participants, including those in Experiment 1C (no evidence), though these were not used in our models.
 ```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=6, fig.cap="\\label{demo_table}"}
 library(tidyverse)
 library(kableExtra)
@@ -71,12 +76,18 @@ get_count_tbl <- function(varname){
   return(tbl)
 }
 
-kable(get_count_tbl("gender"), caption="Participant Demographics - Gender")
-kable(get_count_tbl("age"), caption="Participant Demographics - Age")
-kable(get_count_tbl("race"), caption="Participant Demographics - Race")
-kable(get_count_tbl("ethnicity"), caption="Participant Demographics - Ethnicity")
-kable(get_count_tbl("education"), caption="Participant Demographics - Education")
-kable(get_count_tbl("political_party"), caption="Participant Demographics - Political Party")
+kable(get_count_tbl("gender"), caption="Participant Demographics - Gender") %>%
+  kable_styling(latex_options = c("HOLD_position"))
+kable(get_count_tbl("age"), caption="Participant Demographics - Age") %>%
+  kable_styling(latex_options = c("HOLD_position"))
+kable(get_count_tbl("race"), caption="Participant Demographics - Race") %>%
+  kable_styling(latex_options = c("HOLD_position"))
+kable(get_count_tbl("ethnicity"), caption="Participant Demographics - Ethnicity") %>%
+  kable_styling(latex_options = c("HOLD_position"))
+kable(get_count_tbl("education"), caption="Participant Demographics - Education") %>%
+  kable_styling(latex_options = c("HOLD_position"))
+kable(get_count_tbl("political_party"), caption="Participant Demographics - Political Party") %>%
+  kable_styling(latex_options = c("HOLD_position"))
 ```
 
 ## Posteriors for differences in evidence effects
@@ -190,6 +201,9 @@ Gelman-Rubin statistic, for which all runs exhibited $\hat{R} < 1.1$ [@gelman201
 In addition, we include effective sample size diagnostics ($n_{\mathrm{eff}}$) for our our single-outcome, two-outcome, and all-outcome models in Supplementary Figures \ref{sv_rhat}, \ref{2v_rhat}, and \ref{mv_rhat}.
 
 ## Sensitivity Analysis
+Given the large number of model parameters in comparison to the numer of data points, it is quite possible that the particular modeling assumptions above may affect the posteriors. To test this, we performed a sensitivity analysis in which the distributions for case- and subject-specific effects (\ref{beta}), (\ref{gamma}), (\ref{beta_m}), and (\ref{gamma_m}) were changed from Student t to normal. This assumption reflects a belief that few cases and subjects are true outliers, and should result in larger estimates of the relevant variance parameters and more shrinkage of estimates toward the mean. We re-ran all models (single-, double-, and multi-outcome) from our main analyses again using these alternate assumptions.
+
+**this is what we found...** Figures 2-4 from the main text are reproduced below as Supplementary Figures **XX - XX**. **more disscussion...**
 
 \newpage
 # Supplementary Figures
@@ -430,9 +444,10 @@ plt_4 <- ggplot(data=(effects %>% filter(grepl('Omega', variable)))) +
 plt_4
 ```
 
-```{r message=FALSE, echo=FALSE, warning=FALSE, fig.width=8, fig.cap="Comparison of sources of model variance. Points indicate posterior means of variance parameters. Lines indicate 95% credible intervals. Boxplots indicate variability of variance parameters across scenarios. Columns correspond to model variance parameters $\\tau^2$, $\\eta^2$, and $\\sigma^2$, respectively. \\label{model_variance_comparison}"}
-############### Panel 5: Variance Comparison #################################
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.width=8, fig.cap="Comparison of sources of model variance. Points indicate posterior means of variance parameters. Lines indicate 95\\% credible intervals. Boxplots indicate variability of variance parameters across scenarios. Columns correspond to model variance parameters $\\tau^2$, $\\eta^2$, and $\\sigma^2$, respectively. \\label{model_variance_comparison}"}
+
 load('../data/stan_postprocess_sv_t.rdata')
+
 variance_comparison <- effects %>%
   filter(variable %in% c('eta', 'tau', 'sigma'), (evidence=='baseline') | (variable == 'sigma')) %>%
   select(X2.5., X50., X97.5., variable, scenario, group) %>%
@@ -450,7 +465,6 @@ plt_5 <- ggplot() +
   ylim(0, 50) +
   ylab("Standard Deviation (points)") + 
   xlab("Variance") +
-  labs(title="E", size=rel(3)) +
   th +
   theme(
     axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black'),
@@ -459,6 +473,6 @@ plt_5 <- ggplot() +
 plt_5
 ```
 
-\clearpage
+\newpage
 
 # Supplementary References
