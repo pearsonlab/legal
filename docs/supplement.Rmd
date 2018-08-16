@@ -1,23 +1,26 @@
 ---
-title: "Supplementary Information S5: Participant Characteristics, Statistical Modeling, and Figures"
+title: 'Supplementary Information S5: Participant Characteristics, Statistical Modeling,
+  and Figures'
 author: "Pearson et al."
 date: "4/27/2018"
-header-includes:
-  - \usepackage{amsmath, amssymb}
-  - \usepackage[labelfont=bf]{caption}
-bibliography: supp.bib
-output: 
+output:
   pdf_document:
-    fig_caption: true 
+    fig_caption: yes
+  html_document: default
+header-includes:
+- \usepackage{amsmath, amssymb}
+- \usepackage[labelfont=bf]{caption}
+- \usepackage{float}
+bibliography: supp.bib
 ---
 \captionsetup[table]{name=Supplementary Table}
 \captionsetup[figure]{name=Supplementary Figure}
 
-
 # Supplementary Tables
 
 ## Demographics
-```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=6, fig.position="H", fig.cap="\\label{demo_table}"}
+Here, we give a breakdown of our mTurk sample. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque iaculis quam in tincidunt feugiat. Phasellus erat felis, dignissim in consequat ac, ultrices nec elit. Aliquam sagittis fermentum nisi, in ultricies diam. Donec quis dolor turpis. In hac habitasse platea dictumst. Proin sapien lacus, euismod sagittis quam eu, pellentesque suscipit neque. Mauris semper urna sed tellus ullamcorper fringilla. Praesent porta consequat ante. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque leo velit, rutrum et magna ac, placerat rutrum nibh. Suspendisse eget augue et dolor pretium blandit nec ut dui. In hac habitasse platea dictumst. Duis diam odio, lobortis cursus ante ut, volutpat varius lorem.
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=6, fig.cap="\\label{demo_table}"}
 library(tidyverse)
 library(kableExtra)
 
@@ -79,7 +82,7 @@ kable(get_count_tbl("political_party"), caption="Participant Demographics - Poli
 ## Posteriors for differences in evidence effects
 In Tables \ref{group_effects_table} and \ref{outcome_effects_table}, we give 95\% credible intervals for the posterior differences in mean evidence effects across our population samples (Table \ref{group_effects_table}; cf. Figure 3A) and different rating types (Table \ref{outcome_effects_table}; cf. Figure 4A). That is, for each pair of variables, the numbers represent an interval that contains 95\% of the posterior probability mass.
 
-```{r message=FALSE, echo=FALSE, warning=FALSE, fig.pos="H"}
+```{r message=FALSE, echo=FALSE, warning=FALSE}
 
 load('../data/stan_postprocess_ci.rdata')
 not_in_ci <- function(ci, x=0) {
@@ -113,8 +116,7 @@ kable(ci_table, format="latex", booktabs=T, escape=F,
   column_spec(2:7, width = "6.5em")
 ```
 
-## Sensitivity Analysis
-
+\newpage
 # Supplementary Methods
 
 ## Single Rating Model
@@ -185,8 +187,11 @@ in 2000 total samples for each variable, for which we report means as well as 95
 by the 2.5% and 97.5% samples from the distribution). We assessed convergence via effective sample size and the
 Gelman-Rubin statistic, for which all runs exhibited $\hat{R} < 1.1$ [@gelman2014bayesian].
 
-In addition, we include effective sample size diagnostics ($n_{\mathrm{eff}}$) for our our single-outcome, two-outcome, and all-outcome models in Supplementary Figures \ref{sv_neff}, \ref{2v_neff}, and \ref{mv_neff}.
+In addition, we include effective sample size diagnostics ($n_{\mathrm{eff}}$) for our our single-outcome, two-outcome, and all-outcome models in Supplementary Figures \ref{sv_rhat}, \ref{2v_rhat}, and \ref{mv_rhat}.
 
+## Sensitivity Analysis
+
+\newpage
 # Supplementary Figures
 
 
@@ -271,22 +276,22 @@ plt_2 <- ggplot(df %>% filter(crime_type=='federal')) +
 plot(arrangeGrob(plt_1, plt_2))
 ```
 
-```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.width = 8, fig.cap="Convergence diagnostic for MCMC fitting procedure for the single outcome model. Box plots show effective sample sizes ($n_{\\mathrm{eff}}$) for each of the variables in the model. Color indicates sample groups, which were fit using separate models. Better models have $n_{\\mathrm{eff}}$ close to 2000, the nominal sample size. For variable definitions, see (\\ref{rating}) - (\\ref{nu}). \\label{sv_neff}"}
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.width = 8, fig.cap="Convergence diagnostic for MCMC fitting procedure for the single outcome model. Box plots show Gelman-Rubin statistics ($\\hat{R}$) for each of the variables in the model. Color indicates sample groups, which were fit using separate models. Values $\\hat{R} < 1.1$ are typically taken to represent satisfactory convergence. For variable definitions, see (\\ref{rating}) - (\\ref{nu}). \\label{sv_rhat}"}
 library(tidyverse)
 library(kableExtra)
 
 load('../data/stan_postprocess_sv_t.rdata')
 
 plt <- ggplot(effects) + 
-  geom_boxplot(aes(y=n_eff, x=variable, color=group)) +
+  geom_boxplot(aes(y=Rhat, x=variable, color=group)) +
   group_color_scale +
   labs(title="Effective sample size:\nSingle response model", size=rel(3)) +
   th + 
-  theme(legend.position=c(0.2, 0.85))
+  theme(legend.position=c(0.68, 0.75))
 plt
 ```
 
-```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.width = 8, fig.cap="Convergence diagnostic for MCMC fitting procedure for the two-outcome model. Box plots show effective sample sizes ($n_{\\mathrm{eff}}$) for each of the variables in the model. Color indicates sample groups, which were fit using separate models. Better models have $n_{\\mathrm{eff}}$ close to 2000, the nominal sample size. For variable definitions, see (\\ref{rating_m}) - (\\ref{nu_m}). \\label{2v_neff}"}
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.width = 8, fig.cap="Convergence diagnostic for MCMC fitting procedure for the two-outcome model. Box plots show Gelman-Rubin statistics ($\\hat{R}$) for each of the variables in the model. Color indicates sample groups, which were fit using separate models. Values $\\hat{R} < 1.1$ are typically taken to represent satisfactory convergence. For variable definitions, see (\\ref{rating_m}) - (\\ref{nu_m}). \\label{2v_rhat}"}
 library(tidyverse)
 library(kableExtra)
 
@@ -295,15 +300,15 @@ load('../data/stan_postprocess_2v_t.rdata')
 eff_prettied <- effects %>% mutate(variable=str_extract(variable, "\\w*(?=\\.|$)"))
 
 plt <- ggplot(eff_prettied) + 
-  geom_boxplot(aes(y=n_eff, x=variable, color=group)) +
+  geom_boxplot(aes(y=Rhat, x=variable, color=group)) +
   group_color_scale +
   labs(title="Effective sample size:\nTwo-response model", size=rel(3)) +
   th + 
-  theme(legend.position=c(0.2, 0.85))
+  theme(legend.position=c(0.78, 0.75))
 plt
 ```
 
-```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.width = 8, fig.cap="Convergence diagnostic for MCMC fitting procedure for the multi-outcome model. Box plots show effective sample sizes ($n_{\\mathrm{eff}}$) for each of the variables in the model. Color indicates sample groups, which were fit using separate models. Better models have $n_{\\mathrm{eff}}$ close to 2000, the nominal sample size. For variable definitions, see (\\ref{rating_m}) - (\\ref{nu_m}). \\label{mv_neff}"}
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.width = 8, fig.cap="Convergence diagnostic for MCMC fitting procedure for the multi-outcome model. Box plots show Gelman-Rubin statistics ($\\hat{R}$) for each of the variables in the model. Color indicates sample groups, which were fit using separate models. Values $\\hat{R} < 1.1$ are typically taken to represent satisfactory convergence. For variable definitions, see (\\ref{rating_m}) - (\\ref{nu_m}). \\label{mv_rhat}"}
 library(tidyverse)
 library(kableExtra)
 
@@ -312,11 +317,11 @@ load('../data/stan_postprocess_mv_t.rdata')
 eff_prettied <- effects %>% mutate(variable=str_extract(variable, "\\w*(?=\\.|$)"))
 
 plt <- ggplot(eff_prettied) + 
-  geom_boxplot(aes(y=n_eff, x=variable, color=group)) +
+  geom_boxplot(aes(y=Rhat, x=variable, color=group)) +
   group_color_scale +
   labs(title="Effective sample size:\nAll-response model", size=rel(3)) +
   th + 
-  theme(legend.position=c(0.2, 0.85))
+  theme(legend.position=c(0.7, 0.75))
 plt
 ```
 
