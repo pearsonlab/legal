@@ -41,13 +41,13 @@ dat <- read.csv('data/combined_data.csv') %>%
 
 switch(model, 
        'sv'= {
-         modelstr <- 'models/sv_t.stan'
+         modelstr <- paste('models/sv_', dist, '.stan', sep='')
          dat <- dat %>% filter(rating_type=='rating') %>% 
            select(uid, scenario, physical, history, witness, rating, group)
        },
        
        '2v' = {
-         modelstr <- 'models/mv_t.stan'
+         modelstr <- paste('models/mv_', dist, '.stan', sep='')
          dat <- dat %>% 
            filter(rating_type=='rating' | rating_type=='rate_punishment') %>% 
            mutate(rating_type=droplevels(rating_type)) %>%
@@ -55,13 +55,13 @@ switch(model,
        },
        
        'mv' = {
-         modelstr <- 'models/mv_t.stan'
+         modelstr <- paste('models/mv_', dist, '.stan', sep='')
          dat <- dat %>% 
            select(uid, scenario, physical, history, witness, rating, rating_type)
        },
        
        'demos' = {
-         modelstr <- 'models/sv_t.stan'
+         modelstr <- paste('models/sv_', dist, '.stan', sep='')
          dat <- dat %>% filter(rating_type=='rating') %>% 
            select(uid, scenario, physical, history, witness, rating, 
                   nonwhite, hispanic, female)
