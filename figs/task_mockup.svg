@@ -1,103 +1,91 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="227.4973mm"
-   height="165.12825mm"
-   viewBox="0 0 806.09279 585.10009"
-   id="svg18709"
    version="1.1"
-   inkscape:version="0.91 r13725"
-   sodipodi:docname="task_mockup.svg">
+   id="svg18709"
+   viewBox="0 0 806.09279 585.10009"
+   height="165.12825mm"
+   width="227.4973mm"
+   sodipodi:docname="task_mockup._newsvg.svg"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1151"
+     inkscape:window-height="709"
+     id="namedview82"
+     showgrid="false"
+     inkscape:zoom="0.47368946"
+     inkscape:cx="271.64231"
+     inkscape:cy="357.94233"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg18709" />
   <defs
      id="defs18711">
     <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath7027">
+       id="clipPath7027"
+       clipPathUnits="userSpaceOnUse">
       <path
-         d="m 0,2592 4320,0 L 4320,0 0,0 0,2592 Z"
          id="path7029"
-         inkscape:connector-curvature="0" />
+         d="m 0,2592 4320,0 L 4320,0 0,0 0,2592 Z" />
     </clipPath>
     <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath6997">
+       id="clipPath6997"
+       clipPathUnits="userSpaceOnUse">
       <path
-         d="m 0,2592 4320,0 L 4320,0 0,0 0,2592 Z"
          id="path6999"
-         inkscape:connector-curvature="0" />
+         d="m 0,2592 4320,0 L 4320,0 0,0 0,2592 Z" />
     </clipPath>
     <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath6967">
+       id="clipPath6967"
+       clipPathUnits="userSpaceOnUse">
       <path
-         d="m 0,2592 4320,0 L 4320,0 0,0 0,2592 Z"
          id="path6969"
-         inkscape:connector-curvature="0" />
+         d="m 0,2592 4320,0 L 4320,0 0,0 0,2592 Z" />
     </clipPath>
     <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath6939">
+       id="clipPath6939"
+       clipPathUnits="userSpaceOnUse">
       <path
-         d="m 0,2592 4320,0 L 4320,0 0,0 0,2592 Z"
          id="path6941"
-         inkscape:connector-curvature="0" />
+         d="m 0,2592 4320,0 L 4320,0 0,0 0,2592 Z" />
     </clipPath>
     <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath6897">
+       id="clipPath6897"
+       clipPathUnits="userSpaceOnUse">
       <path
-         d="m 0,2592 4320,0 L 4320,0 0,0 0,2592 Z"
          id="path6899"
-         inkscape:connector-curvature="0" />
+         d="m 0,2592 4320,0 L 4320,0 0,0 0,2592 Z" />
     </clipPath>
     <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath6881">
+       id="clipPath6881"
+       clipPathUnits="userSpaceOnUse">
       <path
-         d="m 0,2592 4320,0 L 4320,0 0,0 0,2592 Z"
          id="path6883"
-         inkscape:connector-curvature="0" />
+         d="m 0,2592 4320,0 L 4320,0 0,0 0,2592 Z" />
     </clipPath>
     <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath6897-3">
+       id="clipPath6897-3"
+       clipPathUnits="userSpaceOnUse">
       <path
-         d="m 0,2592 4320,0 L 4320,0 0,0 0,2592 Z"
          id="path6899-7"
-         inkscape:connector-curvature="0" />
+         d="m 0,2592 4320,0 L 4320,0 0,0 0,2592 Z" />
     </clipPath>
   </defs>
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="423.81688"
-     inkscape:cy="281.93796"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     inkscape:window-width="1440"
-     inkscape:window-height="806"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     fit-margin-top="5"
-     fit-margin-left="5"
-     fit-margin-right="5"
-     fit-margin-bottom="5" />
   <metadata
      id="metadata18714">
     <rdf:RDF>
@@ -111,322 +99,269 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(814.99492,-75.464417)">
+     id="g6919"
+     transform="matrix(14.5341,0,0,-20.763,620.42183,282.75233)" />
+  <text
+     y="363.61536"
+     x="86.347031"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'.Times LT MM';-inkscape-font-specification:'.Times LT MM, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#231f20;fill-opacity:1;fill-rule:nonzero;stroke:none"
+     id="text6931">
+    <tspan
+       id="tspan6933"
+       x="86.347031"
+       y="363.61536"
+       style="font-size:22.5px;line-height:1.25"> </tspan>
+  </text>
+  <text
+     y="436.71356"
+     x="86.347031"
+     style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'.Times LT MM';-inkscape-font-specification:'.Times LT MM, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#231f20;fill-opacity:1;fill-rule:nonzero;stroke:none"
+     id="text6959">
+    <tspan
+       id="tspan6961"
+       x="86.347031"
+       y="436.71356"
+       style="font-size:22.5px;line-height:1.25"> </tspan>
+  </text>
+  <path
+     inkscape:connector-curvature="0"
+     d="M 787.83592,566.84319 H 18.2569 V 18.256897 h 769.57902 z"
+     style="fill:none;stroke:#231f20;stroke-width:1.08072376;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     id="path7081" />
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     x="48.347763"
+     y="67.901947"
+     id="text19106"><tspan
+       id="tspan19108"
+       x="48.347763"
+       y="67.901947"
+       style="font-size:20px;line-height:1.25">Atlee Newman is accused of shooting Melanie Farris while stealing</tspan><tspan
+       x="48.347763"
+       y="92.901947"
+       style="font-size:20px;line-height:1.25"
+       id="tspan19110">her car. Newman allegedly dragged Farris out of her Acura</tspan><tspan
+       x="48.347763"
+       y="117.90195"
+       style="font-size:20px;line-height:1.25"
+       id="tspan19112">before shooting her twice in the head and driving off.</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     x="47.478622"
+     y="169.92737"
+     id="text19114"><tspan
+       id="tspan19116"
+       x="47.478622"
+       y="169.92737"
+       style="font-size:20px;line-height:1.25">Click and hold to reveal text</tspan></text>
+  <text
+     id="text19118"
+     y="210.31317"
+     x="503.09656"
+     style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     xml:space="preserve"><tspan
+       style="font-size:20px;line-height:1.25"
+       y="210.31317"
+       x="503.09656"
+       id="tspan19120">Hairs matching Newman's</tspan><tspan
+       style="font-size:20px;line-height:1.25"
+       y="235.31317"
+       x="503.09656"
+       id="tspan19122">DNA were found in the</tspan><tspan
+       style="font-size:20px;line-height:1.25"
+       y="260.31317"
+       x="503.09656"
+       id="tspan19124">fabric of the Acura's</tspan><tspan
+       style="font-size:20px;line-height:1.25"
+       y="285.31317"
+       x="503.09656"
+       id="tspan19126">driver's seat.</tspan></text>
+  <g
+     id="g19218"
+     transform="translate(704.9289,-72.467438)">
+    <rect
+       ry="26.263966"
+       style="fill:#969696;fill-opacity:1"
+       y="258.53696"
+       x="-655.39081"
+       height="109.09647"
+       width="188.89853"
+       id="rect19395" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-600.25305"
+       y="320.27271"
+       id="text19128"><tspan
+         style="font-size:20px;line-height:1.25"
+         id="tspan19130"
+         x="-600.25305"
+         y="320.27271">Witness</tspan></text>
+  </g>
+  <rect
+     ry="26.263966"
+     style="fill:#969696;fill-opacity:1"
+     y="186.06952"
+     x="288.47107"
+     height="109.09647"
+     width="188.89853"
+     id="rect20217" />
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     x="311.26996"
+     y="246.2037"
+     id="text20219"><tspan
+       id="tspan20221"
+       x="311.26996"
+       y="246.2037"
+       style="font-size:20px;line-height:1.25">Criminal History</tspan></text>
+  <text
+     id="text19192"
+     y="350.56192"
+     x="46.648544"
+     style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     xml:space="preserve"><tspan
+       y="350.56192"
+       x="46.648544"
+       id="tspan19194"
+       style="font-size:20px;line-height:1.25">How strong is the case that the accused committed this crime?</tspan></text>
+  <g
+     id="g19257"
+     transform="translate(854.57231,-71.464417)">
     <g
-       id="g6919"
-       transform="matrix(14.5341,0,0,-20.763,-194.57309,358.21675)">
-    </g>
-    <text
-       y="439.07977"
-       x="-728.64789"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5px;line-height:125%;font-family:'.Times LT MM';-inkscape-font-specification:'.Times LT MM, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#231f20;fill-opacity:1;fill-rule:nonzero;stroke:none"
-       id="text6931"
-       sodipodi:linespacing="125%">
-      <tspan
-         sodipodi:role="line"
-         id="tspan6933"
-         x="-728.64789"
-         y="439.07977" />
-    </text>
-    <text
-       y="512.17798"
-       x="-728.64789"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5px;line-height:125%;font-family:'.Times LT MM';-inkscape-font-specification:'.Times LT MM, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#231f20;fill-opacity:1;fill-rule:nonzero;stroke:none"
-       id="text6959"
-       sodipodi:linespacing="125%">
-      <tspan
-         sodipodi:role="line"
-         id="tspan6961"
-         x="-728.64789"
-         y="512.17798" />
-    </text>
-    <path
-       d="m -27.159001,642.30761 -769.579019,0 0,-548.586296 769.579019,0 0,548.586296 z"
-       style="fill:none;stroke:#231f20;stroke-width:1.08072376;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="path7081"
-       inkscape:connector-curvature="0" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5px;line-height:125%;font-family:'.Times LT MM';-inkscape-font-specification:'.Times LT MM, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="-840.24878"
-       y="253.47299"
-       id="text19098"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan19100"
-         x="-840.24878"
-         y="253.47299" /></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:22.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="-816.00513"
-       y="5.9856296"
-       id="text19102"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan19104"
-         x="-816.00513"
-         y="5.9856296" /></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:25px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="-766.64716"
-       y="143.36636"
-       id="text19106"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan19108"
-         x="-766.64716"
-         y="143.36636"
-         style="font-size:20px">Atlee Newman is accused of shooting Melanie Farris while stealing</tspan><tspan
-         sodipodi:role="line"
-         x="-766.64716"
-         y="168.36636"
-         style="font-size:20px"
-         id="tspan19110">her car. Newman allegedly dragged Farris out of her Acura</tspan><tspan
-         sodipodi:role="line"
-         x="-766.64716"
-         y="193.36636"
-         style="font-size:20px"
-         id="tspan19112">before shooting her twice in the head and driving off.</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:20px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="-767.5163"
-       y="245.39178"
-       id="text19114"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan19116"
-         x="-767.5163"
-         y="245.39178">Click and hold to reveal text</tspan></text>
-    <g
-       id="g19234"
-       transform="translate(-4,2)">
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:20px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         x="-307.89838"
-         y="283.77759"
-         id="text19118"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           id="tspan19120"
-           x="-307.89838"
-           y="283.77759">Hairs matching Newman's</tspan><tspan
-           id="tspan19122"
-           sodipodi:role="line"
-           x="-307.89838"
-           y="308.77759">DNA were found in the</tspan><tspan
-           id="tspan19124"
-           sodipodi:role="line"
-           x="-307.89838"
-           y="333.77759">fabric of the Acura's</tspan><tspan
-           id="tspan19126"
-           sodipodi:role="line"
-           x="-307.89838"
-           y="358.77759">driver's seat.</tspan></text>
+       id="g6935"
+       transform="matrix(1.25,0,0,-1.25,-1705.7703,1421.6025)">
       <g
-         transform="translate(-106.06602,0.99697889)"
-         id="g19218">
-        <rect
-           id="rect19395"
-           width="188.89853"
-           height="109.09647"
-           x="-655.39081"
-           y="258.53696"
-           style="fill:#969696;fill-opacity:1"
-           ry="26.263966" />
-        <text
-           sodipodi:linespacing="125%"
-           id="text19128"
-           y="320.27271"
-           x="-600.25305"
-           style="font-style:normal;font-weight:normal;font-size:20px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-           xml:space="preserve"><tspan
-             y="320.27271"
-             x="-600.25305"
-             id="tspan19130"
-             sodipodi:role="line">Witness</tspan></text>
-      </g>
-      <g
-         id="g20215"
-         transform="translate(132.86697,0.99697856)">
-        <rect
-           ry="26.263966"
-           style="fill:#969696;fill-opacity:1"
-           y="258.53696"
-           x="-655.39081"
-           height="109.09647"
-           width="188.89853"
-           id="rect20217" />
-        <text
-           xml:space="preserve"
-           style="font-style:normal;font-weight:normal;font-size:20px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-           x="-641.96692"
-           y="318.67114"
-           id="text20219"
-           sodipodi:linespacing="125%"><tspan
-             sodipodi:role="line"
-             id="tspan20221"
-             x="-641.96692"
-             y="318.67114">Criminal History</tspan></text>
-      </g>
-    </g>
-    <text
-       sodipodi:linespacing="125%"
-       id="text19192"
-       y="426.02634"
-       x="-768.34637"
-       style="font-style:normal;font-weight:normal;font-size:20px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       xml:space="preserve"><tspan
-         y="426.02634"
-         x="-768.34637"
-         id="tspan19194"
-         sodipodi:role="line">How strong is the case that the accused committed this crime?</tspan></text>
-    <g
-       id="g19257"
-       transform="translate(39.577393,4)">
-      <g
-         id="g6935"
-         transform="matrix(1.25,0,0,-1.25,-1705.7703,1421.6025)">
+         clip-path="url(#clipPath6939)"
+         id="g6937">
         <g
-           clip-path="url(#clipPath6939)"
-           id="g6937">
-          <g
-             transform="translate(847.6265,775.6797)"
-             id="g6943">
-            <path
-               inkscape:connector-curvature="0"
-               id="path6945"
-               style="fill:none;stroke:#636467;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-               d="M 0,0 260.598,0" />
-          </g>
-          <g
-             transform="translate(1078.3618,775.6797)"
-             id="g6947">
-            <path
-               inkscape:connector-curvature="0"
-               id="path6949"
-               style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
-               d="m 0,0 c 0,-2.403 -1.948,-4.352 -4.35,-4.352 -2.404,0 -4.351,1.949 -4.351,4.352 0,2.401 1.947,4.35 4.351,4.35 C -1.948,4.35 0,2.401 0,0" />
-          </g>
-          <g
-             transform="translate(1078.3618,775.6797)"
-             id="g6951">
-            <path
-               inkscape:connector-curvature="0"
-               id="path6953"
-               style="fill:none;stroke:#636467;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-               d="m 0,0 c 0,-2.403 -1.948,-4.352 -4.35,-4.352 -2.404,0 -4.351,1.949 -4.351,4.352 0,2.401 1.947,4.35 4.351,4.35 C -1.948,4.35 0,2.401 0,0 Z" />
-          </g>
+           transform="translate(847.6265,775.6797)"
+           id="g6943">
+          <path
+             inkscape:connector-curvature="0"
+             id="path6945"
+             style="fill:none;stroke:#636467;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             d="M 0,0 H 260.598" />
+        </g>
+        <g
+           transform="translate(1078.3618,775.6797)"
+           id="g6947">
+          <path
+             inkscape:connector-curvature="0"
+             id="path6949"
+             style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             d="m 0,0 c 0,-2.403 -1.948,-4.352 -4.35,-4.352 -2.404,0 -4.351,1.949 -4.351,4.352 0,2.401 1.947,4.35 4.351,4.35 C -1.948,4.35 0,2.401 0,0" />
+        </g>
+        <g
+           transform="translate(1078.3618,775.6797)"
+           id="g6951">
+          <path
+             inkscape:connector-curvature="0"
+             id="path6953"
+             style="fill:none;stroke:#636467;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             d="m 0,0 c 0,-2.403 -1.948,-4.352 -4.35,-4.352 -2.404,0 -4.351,1.949 -4.351,4.352 0,2.401 1.947,4.35 4.351,4.35 C -1.948,4.35 0,2.401 0,0 Z" />
         </g>
       </g>
-      <text
-         sodipodi:linespacing="125%"
-         id="text19196"
+    </g>
+    <text
+       id="text19196"
+       y="457.59009"
+       x="-764.48737"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
          y="457.59009"
          x="-764.48737"
-         style="font-style:normal;font-weight:normal;font-size:20px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         xml:space="preserve"><tspan
-           y="457.59009"
-           x="-764.48737"
-           id="tspan19198"
-           sodipodi:role="line">Very Weak</tspan></text>
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:20px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         id="tspan19198"
+         style="font-size:20px;line-height:1.25">Very Weak</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-315.97961"
+       y="457.34106"
+       id="text19200"><tspan
+         id="tspan19202"
          x="-315.97961"
          y="457.34106"
-         id="text19200"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           id="tspan19202"
-           x="-315.97961"
-           y="457.34106">Very Strong</tspan></text>
+         style="font-size:20px;line-height:1.25">Very Strong</tspan></text>
+  </g>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+     x="47.586044"
+     y="442.10004"
+     id="text19204"><tspan
+       id="tspan19206"
+       x="47.586044"
+       y="442.10004"
+       style="font-size:20px;line-height:1.25">How severe should the punishment be for someone who commits</tspan><tspan
+       x="47.586044"
+       y="467.10004"
+       id="tspan19208"
+       style="font-size:20px;line-height:1.25">a crime like this one?</tspan></text>
+  <g
+     id="g19271"
+     transform="translate(864.99492,-61.464417)">
+    <g
+       id="g6963"
+       transform="matrix(1.25,0,0,-1.25,-1711.6068,1463.4579)">
+      <g
+         clip-path="url(#clipPath6967)"
+         id="g6965">
+        <g
+           transform="translate(873.7656,717.1992)"
+           id="g6971">
+          <path
+             inkscape:connector-curvature="0"
+             id="path6973"
+             style="fill:none;stroke:#636467;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             d="M 0,0 H 260.599" />
+        </g>
+        <g
+           transform="translate(1091.3413,717.1992)"
+           id="g6975">
+          <path
+             inkscape:connector-curvature="0"
+             id="path6977"
+             style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+             d="m 0,0 c 0,-2.403 -1.947,-4.35 -4.35,-4.35 -2.403,0 -4.351,1.947 -4.351,4.35 0,2.404 1.948,4.352 4.351,4.352 C -1.947,4.352 0,2.404 0,0" />
+        </g>
+        <g
+           transform="translate(1091.3413,717.1992)"
+           id="g6979">
+          <path
+             inkscape:connector-curvature="0"
+             id="path6981"
+             style="fill:none;stroke:#636467;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+             d="m 0,0 c 0,-2.403 -1.947,-4.35 -4.35,-4.35 -2.403,0 -4.351,1.947 -4.351,4.35 0,2.404 1.948,4.352 4.351,4.352 C -1.947,4.352 0,2.404 0,0 Z" />
+        </g>
+      </g>
     </g>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:20px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="-767.40887"
-       y="517.56445"
-       id="text19204"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan19206"
-         x="-767.40887"
-         y="517.56445">How severe should the punishment be for someone who commits</tspan><tspan
-         sodipodi:role="line"
-         x="-767.40887"
-         y="542.56445"
-         id="tspan19208">a crime like this one?</tspan></text>
-    <g
-       id="g19271"
-       transform="translate(50,14)">
-      <g
-         id="g6963"
-         transform="matrix(1.25,0,0,-1.25,-1711.6068,1463.4579)">
-        <g
-           clip-path="url(#clipPath6967)"
-           id="g6965">
-          <g
-             transform="translate(873.7656,717.1992)"
-             id="g6971">
-            <path
-               inkscape:connector-curvature="0"
-               id="path6973"
-               style="fill:none;stroke:#636467;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-               d="M 0,0 260.599,0" />
-          </g>
-          <g
-             transform="translate(1091.3413,717.1992)"
-             id="g6975">
-            <path
-               inkscape:connector-curvature="0"
-               id="path6977"
-               style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
-               d="m 0,0 c 0,-2.403 -1.947,-4.35 -4.35,-4.35 -2.403,0 -4.351,1.947 -4.351,4.35 0,2.404 1.948,4.352 4.351,4.352 C -1.947,4.352 0,2.404 0,0" />
-          </g>
-          <g
-             transform="translate(1091.3413,717.1992)"
-             id="g6979">
-            <path
-               inkscape:connector-curvature="0"
-               id="path6981"
-               style="fill:none;stroke:#636467;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-               d="m 0,0 c 0,-2.403 -1.947,-4.35 -4.35,-4.35 -2.403,0 -4.351,1.947 -4.351,4.35 0,2.404 1.948,4.352 4.351,4.352 C -1.947,4.352 0,2.404 0,0 Z" />
-          </g>
-        </g>
-      </g>
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-weight:normal;font-size:20px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-776.60919"
+       y="572.54358"
+       id="text19210"><tspan
+         id="tspan19212"
          x="-776.60919"
          y="572.54358"
-         id="text19210"
-         sodipodi:linespacing="125%"><tspan
-           sodipodi:role="line"
-           id="tspan19212"
-           x="-776.60919"
-           y="572.54358">No punishment</tspan></text>
-      <text
-         sodipodi:linespacing="125%"
-         id="text19214"
+         style="font-size:20px;line-height:1.25">No punishment</tspan></text>
+    <text
+       id="text19214"
+       y="560.09241"
+       x="-285.67508"
+       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       xml:space="preserve"><tspan
          y="560.09241"
          x="-285.67508"
-         style="font-style:normal;font-weight:normal;font-size:20px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         xml:space="preserve"><tspan
-           y="560.09241"
-           x="-285.67508"
-           id="tspan19216"
-           sodipodi:role="line">Life in prison </tspan><tspan
-           id="tspan19255"
-           y="585.09241"
-           x="-285.67508"
-           sodipodi:role="line">without parole</tspan></text>
-    </g>
+         id="tspan19216"
+         style="font-size:20px;line-height:1.25">Life in prison </tspan><tspan
+         id="tspan19255"
+         y="585.09241"
+         x="-285.67508"
+         style="font-size:20px;line-height:1.25">without parole</tspan></text>
   </g>
 </svg>

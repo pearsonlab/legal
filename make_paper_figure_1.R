@@ -12,7 +12,7 @@ dat <- dat %>% filter(group=='mturk')
 
 ####################
 # task mockup from svg
-task_mock <- image_read('figs/task_mockup.svg')
+task_mock <- image_read('figs/task_mockup.pdf')
 plt_1 <- ggplot() + th + 
   labs(title="A", size=rel(3)) +
   annotation_custom(rasterGrob(task_mock))
