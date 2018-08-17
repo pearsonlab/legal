@@ -51,19 +51,19 @@ switch(model,
          dat <- dat %>% 
            filter(rating_type=='rating' | rating_type=='rate_punishment') %>% 
            mutate(rating_type=droplevels(rating_type)) %>%
-           select(uid, scenario, physical, history, witness, rating, rating_type) 
+           select(uid, scenario, physical, history, witness, rating, rating_type, group) 
        },
        
        'mv' = {
          modelstr <- paste('models/mv_', dist, '.stan', sep='')
          dat <- dat %>% 
-           select(uid, scenario, physical, history, witness, rating, rating_type)
+           select(uid, scenario, physical, history, witness, rating, rating_type, group)
        },
        
        'demos' = {
          modelstr <- paste('models/sv_', dist, '.stan', sep='')
          dat <- dat %>% filter(rating_type=='rating') %>% 
-           select(uid, scenario, physical, history, witness, rating, 
+           select(uid, scenario, physical, history, witness, rating, group,
                   nonwhite, hispanic, female)
        }
 )
@@ -146,6 +146,10 @@ if ('rating_type' %in% names(dat)) {
   pars <- c('mu', 'eta', 'gamma', 'tau', 'sigma')
   iter <- 1000
   thin <- 1
+}
+
+if (dist == 't') {
+  pars <- c(pars, 'nu_eps', 'nu_delta')
 }
 
 

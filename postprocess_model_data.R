@@ -63,6 +63,9 @@ switch(model,
        }
 )
 
+if (dist == 't') {
+  pars <- c(pars, 'nu_eps', 'nu_delta')
+}
 
 qprobs <- c(0.025, 0.5, 0.975)
 eff_list <- list()
