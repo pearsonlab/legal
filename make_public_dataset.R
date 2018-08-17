@@ -40,13 +40,13 @@ df <- do.call('bind_rows', dlist)
 df <- df %>% mutate(nonwhite=race != 5, 
                     hispanic=ethnicity == 1, 
                     female=gender == 2) %>%
-  mutate_at(c('nonwhite', 'hispanic', 'female'), 'as.factor')
+  mutate_at(c('nonwhite', 'hispanic', 'female', 'guilty'), 'as.factor')
 
 # do some cleaing of datasets prior to merge
 dat <- df %>% dplyr::rename(uid=hashedID) %>%
               select(uid, scenario, physical, history, witness,
                      rating, rate_punishment, rate_threat, rate_threat_2, rate_outrage,
-                     nonwhite, hispanic, female, question, evidence_shown,
+                     nonwhite, hispanic, female, question, evidence_shown, guilty,
                      age, gender, race, ethnicity, education, political_party) %>%
               gather(key=rating_type, value=rating, c(rating, rate_punishment, rate_threat, rate_threat_2, rate_outrage)) %>%
               mutate_at(c('uid', 'scenario', 'physical', 'history', 'witness', 'rating_type'), 'as.factor') %>%

@@ -122,15 +122,8 @@ plt_3 <- ggplot(df) +
 ################
 # plot relationship between case strength and guilt
 
-datadir <- 'data'
-dsets <- c('data_mq_nothreat_deid.csv', 'data_sq_nothreat_deid.csv', 'data_nb_deid.csv')
-
-df_list <- list()
-for (ii in 1:length(dsets)) {
-  df_list[[ii]] <- read.csv(paste(datadir, "/", dsets[ii], sep=""))
-}
-
-dat <- bind_rows(df_list) %>% filter(!is.na(guilty), !is.na(rating))
+dat <- read.csv('data/combined_data.csv') %>% 
+  filter(!is.na(guilty), !is.na(rating), rating_type=='rating')
 
 fit <- glm(guilty ~ rating, family = binomial(), data=dat)
 preds <- predict.glm(fit, newdata=data.frame(rating=1:100), type="response")
@@ -146,9 +139,6 @@ plt_4 <- ggplot(pred_dat) + geom_line(aes(x=rating, y=prob)) +
 #Scenario make a list of panels
 plt_list <- list(plt_1, plt_2, plt_3, plt_4)
 
-# convert to grobs
-# grob_list <- lapply(plt_list, ggplotGrob)
-
 # make sure axes align
 max_heights <- do.call(unit.pmax, lapply(plt_list, function(x) {x$heights}))
 grob_list <- lapply(plt_list, function(x) {x$heights <- max_heights; x})
@@ -157,6 +147,5 @@ grob_list <- lapply(plt_list, function(x) {x$heights <- max_heights; x})
 lay <- rbind(c(1, 2), c(4, 3))
 plt_all <- do.call(arrangeGrob, c(plt_list, ncol=2, layout_matrix=list(lay),
                                   widths=list(c(1, 1))))
-# plt_all <- arrangeGrob(plt_1, plt_2, plt_3)
 
 ggsave('figs/figure_paper_1.pdf', plot=plt_all, width=12, height=10, units='in', useDingbats=FALSE)

@@ -24,6 +24,7 @@ The data are recorded in a single file, `combined_data.csv` in the `data` folder
 - `female`: Did the participant identify as female? (`FALSE`, `TRUE`)
 - `question`: In what order did the participant encounter this case to be rated? (0 - 32)
 - `evidence_shown`: Was any evidence shown? Some participants performed a version of the task with no evidence.
+- `guilty`: Did the participant think the defendant was guilty?
 - `age`: Participant's reported age.
 - `gender`: Participant's reported gender. Recoded as `female` for modeling.
 - `race`: Participant's reported race. Binarized as `nonwhite` for modeling.
