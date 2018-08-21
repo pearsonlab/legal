@@ -24,7 +24,7 @@ The data are recorded in a single file, `combined_data.csv` in the `data` folder
 - `female`: Did the participant identify as female? (`FALSE`, `TRUE`)
 - `question`: In what order did the participant encounter this case to be rated? (0 - 32)
 - `evidence_shown`: Was any evidence shown? Some participants performed a version of the task with no evidence.
-- `guilty`: Did the participant think the defendant was guilty?
+- `guilty`: Did the participant think the defendant was guilty? (0, 1, or `NA`)
 - `age`: Participant's reported age.
 - `gender`: Participant's reported gender. Recoded as `female` for modeling.
 - `race`: Participant's reported race. Binarized as `nonwhite` for modeling.
@@ -69,4 +69,4 @@ Finally, if you want to make everything, just do
 $ make
 ```
 
-**Warning:** The Stan models can be time-consuming to run. On a four-core machine with a decent processor, the entire set of models produces a couple hundred MB of outputs and requires over **14 hours** to finish. If you're on a laptop that's put to sleep, Stan should resume when the laptop wakes up, but the whole process is best done on a desktop that can be left alone for the better part of a day.
+**Warning:** The Stan models can be time-consuming to run. On a four-core machine with a decent processor, the entire set of models produces a couple hundred MB of outputs and requires over **14 hours** to finish (and that's not including the sensitivity analysis models, which double the time). If you're on a laptop that's put to sleep, Stan should resume when the laptop wakes up, but the whole process is best done on a desktop that can be left alone for the better part of a day.
