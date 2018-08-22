@@ -35,7 +35,7 @@ dat <- read.csv('../data/combined_data.csv') %>%
   distinct() %>%
   mutate(rating_type=factor(rating_type, levels=c(
     'rating', 'rate_punishment', 'rate_outrage', 'rate_threat', 'rate_threat_2', 'guilty'),
-    labels=c('Confidence', 'Punishment', 'Outrage', 'Proximity', 'Threat', 'Guilt')
+    labels=c('Confidence', 'Punishment', 'Outrage', 'Likelihood', 'Threat', 'Guilt')
   )) %>%
   rename(Experiment=experiment)
 
