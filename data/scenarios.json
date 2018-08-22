@@ -1,0 +1,728 @@
+[
+  {
+    "abbr": "01",
+   "vars": {
+      "base": {
+        "Base": "Chelsea McNeil is accused of drug possession. McNeil allegedly sold two 80-microgram hits of LSD from an Altoids tin."
+      },
+      "Criminal History": {
+        "relatedPrior": "McNeil has a prior conviction for possession of methamphetamine.",
+        "unrelatedPrior": "McNeil has a prior conviction for reckless driving.",
+        "noPrior": "McNeil has no criminal record."
+      },
+      "Witness": {
+        "isWitness": "A witness saw McNeil accept cash in exchange for the tin's contents.",
+        "noWitness": "No witnesses saw McNeil with the LSD."
+      },
+      "Physical Evidence": {
+        "DNA": "Hairs matching McNeil's DNA were found in a tin containing a small vial of LSD.",
+        "nonDNA": "Fingerprints matching McNeil's were found on tin containing a small vial of LSD.",
+        "noPhys": "No physical evidence links McNeil to the drug-laden tin."
+      }
+    }
+  },
+  {
+    "abbr": "02",
+    "vars": {
+      "base": {
+        "Base": "Jackie Archer stands accused of burglary. Archer allegedly entered a cafe after closing and took $230 from the cash register."
+      },
+      "Criminal History": {
+        "relatedPrior": "Archer was previously convicted of breaking and entering.",
+        "unrelatedPrior": "Archer was previously convicted of disturbing the peace.",
+        "noPrior": "Archer has no criminal record."
+      },
+      "Witness": {
+        "isWitness": "An eyewitness saw Archer enter the back door of the coffee shop after closing.",
+        "noWitness": "No witnesses saw Archer enter the coffee shop"
+      },
+      "Physical Evidence": {
+        "DNA": "Skin flakes matching Archer's DNA were found in the cash register.",
+        "nonDNA": "A fingerprint matching Archer's was found on the cash register.",
+        "noPhys": "No physical evidence links Archer to the burglary."
+      }
+    }
+  },
+  {
+    "abbr": "03",
+    "vars": {
+      "base": {
+        "Base": "Dan Montes is accused of theft. Montes allegedly took an unattended laptop from a library desk."
+      },
+      "Criminal History": {
+        "relatedPrior": "Montes was previously convicted of burglary.",
+        "unrelatedPrior": "Montes was previously convicted of driving while intoxicated.",
+        "noPrior": "Montes has no criminal record."
+      },
+      "Witness": {
+        "isWitness": "A witness saw Montes take the computer.",
+        "noWitness": "There were no witnesses to the laptop theft."
+      },
+      "Physical Evidence": {
+        "DNA": "Police discovered hairs on the library desk matching Montes's DNA.",
+        "nonDNA": "Cloth fibers matching a tear in Montes's jacket were found on the library desk.",
+        "noPhys": "No physical evidence links Dan to the theft."
+      }
+    }
+  },
+  {
+    "abbr": "04",
+    "vars": {
+      "base": {
+        "Base": "Keith Galloway is on trial for bribing a public official. Galloway allegedly offered jewelry, cash, and other perks to a zoning official due to vote on a potential business development."
+      },
+      "Criminal History": {
+        "relatedPrior": "Galloway was previously convicted of making illegal campaign contributions.",
+        "unrelatedPrior": "Galloway was previously convicted of cocaine possession.",
+        "noPrior": "Galloway has no criminal record."
+      },
+      "Witness": {
+        "isWitness": "A golf caddy saw Galloway pass several pieces of jewelry to the official while playing on the course.",
+        "noWitness": "No one saw Galloway bribe the official."
+      },
+      "Physical Evidence": {
+        "DNA": "Saliva matching Galloway's DNA was found on the seal of cash envelopes in the official's office.",
+        "nonDNA": "Fingerprints matching Galloway's were found on cash envelopes at the official's office.",
+        "noPhys": "No physical evidence supports the bribery allegations."
+      }
+    }
+  },
+  {
+    "abbr": "05",
+    "vars": {
+      "base": {
+        "Base": "Dennis Fray is accused of producing child pornography. Fray allegedly filmed 70 minutes of pornographic footage involving a child."
+      },
+      "Criminal History": {
+        "relatedPrior": "Fray was previously convicted of statutory rape.",
+        "unrelatedPrior": "Fray was previously convicted of tax fraud.",
+        "noPrior": "Fray has no criminal record."
+      },
+      "Witness": {
+        "isWitness": "An eyewitness testified that she saw Fray leading children into the hotel in which the videos were filmed.",
+        "noWitness": "There are no witnesses linking Fray to the pornographic videos."
+      },
+      "Physical Evidence": {
+        "DNA": "Police discovered traces of semen matching Fray's DNA on memory sticks containing the footage.",
+        "nonDNA": "Police discovered fingerprints matching Fray's on memory sticks containing the footage.",
+        "noPhys": "No physical evidence links Fray to the videos."
+      }
+    }
+  },
+  {
+    "abbr": "06",
+    "vars": {
+      "base": {
+        "Base": "Quentin MacDonough is accused of shoplifting. MacDonough allegedly smuggled a guitar out of a music store in a case he carried in with him."
+      },
+      "Criminal History": {
+        "relatedPrior": "MacDonough was previously convicted of larceny.",
+        "unrelatedPrior": "MacDonough was previously convicted of reckless driving.",
+        "noPrior": "MacDonough has no prior convictions.."
+      },
+      "Witness": {
+        "isWitness": "A witness testified that he saw MacDonough place the guitar into a case.",
+        "noWitness": "There were no witnesses to the theft."
+      },
+      "Physical Evidence": {
+        "DNA": "Skin flakes matching MacDonough's DNA were found on the strings and bridge of the stolen guitar.",
+        "nonDNA": "Fingerprints matching MacDonough's were found on the stolen guitar.",
+        "noPhys": "No physical evidence links MacDonough to the stolen guitar."
+      }
+    }
+  },
+  {
+    "abbr": "07",
+    "vars": {
+      "base": {
+        "Base": "Dylan Turner stands accused of voluntary manslaughter. Turner allegedly bludgeoned his wife Marie and her lover with a table leg upon discovering them together in a motel, killing them."
+      },
+      "Criminal History": {
+        "noPrior": "Turner has no criminal history.",
+        "unrelatedPrior": "Turner was previously convicted of income tax evasion.",
+        "relatedPrior": "Turner was previously convicted of domestic assault."
+      },
+      "Witness": {
+        "isWitness": "A witness saw Turner fleeing the hotel shortly after the killings.",
+        "noWitness": "There are no witnesses to link Turner to the killings."
+      },
+      "Physical Evidence": {
+        "DNA": "Blood matching Dylan Turner's DNA was discovered in the hotel room.",
+        "nonDNA": "Fingerprints matching Turner's were found on the table leg used to kill Marie.",
+        "noPhys": "No physical evidence links Turner to the killings."
+      }
+    }
+  },
+  {
+    "abbr": "08",
+    "vars": {
+      "base": {
+        "Base": "Teri Anderson is accused of telemarketing fraud. Anderson allegedly used a prepaid cell phone to make calls in which she impersonated an insurance agent to collect the personal information of two dozen victims."
+      },
+      "Criminal History": {
+        "noPrior": "Anderson has no record of prior offenses.",
+        "unrelatedPrior": "Anderson was previously convicted of driving while impaired.",
+        "relatedPrior": "Anderson was previously convicted of wire fraud."
+      },
+      "Witness": {
+        "isWitness": "A store clerk testified that he sold Anderson the cell phone used to make the calls.",
+        "noWitness": "There are no witnesses linking Anderson to the calls."
+      },
+      "Physical Evidence": {
+        "noPhys": "No physical evidence links Anderson to the phone used to place the calls.",
+        "nonDNA": "Police found fingerprints matching Anderson's on the phone used to place the calls.",
+        "DNA": "Police found skin flakes matching Anderson's DNA in the casing of the phone used to place the calls."
+      }
+    }
+  },
+  {
+    "abbr": "09",
+    "vars": {
+      "base": {
+        "Base": "Miranda Rasmussen is on trial for money laundering. Rasmussen, an accountant, allegedly helped a pair of convicted drug dealers disguise their profits by preparing financial documents on their behalf."
+      },
+      "Criminal History": {
+        "noPrior": "Rasmussen has no record of any prior convictions.",
+        "unrelatedPrior": "Rasmussen was previously convicted of providing alcohol to a minor.",
+        "relatedPrior": "Rasmussen was previously convicted of extortion."
+      },
+      "Witness": {
+        "isWitness": "A bystander saw the drug dealers entering and leaving Rasmussen's office.",
+        "noWitness": "No witnesses link Rasmussen to the drug dealers."
+      },
+      "Physical Evidence": {
+        "noPhys": "No physical evidence links Rasmussen to the fraudulent transactions.",
+        "nonDNA": "Fingerprints matching Rasmussen's were found on financial documents seized from the drug dealers.",
+        "DNA": "Hairs matching Rasmussen's DNA were found on financial documents seized from the drug dealers."
+      }
+    }
+  },
+  {
+    "abbr": "10",
+    "vars": {
+      "base": {
+        "Base": "Maxine Franks is accused of first-degree murder. Franks allegedly waited in a parking deck for Gerald Dodd before fatally stabbing him in the back, arm, and throat with a six-inch knife."
+      },
+      "Criminal History": {
+        "noPrior": "Franks has no record of prior convictions.",
+        "unrelatedPrior": "Franks was previously convicted of writing bad checks.",
+        "relatedPrior": "Franks was previously convicted of assault."
+      },
+      "Witness": {
+        "isWitness": "A woman saw Franks enter the parking lot clutching a small bundle half an hour before Dodd's death.",
+        "noWitness": "No witnesses have linked Franks to Dodd's death."
+      },
+      "Physical Evidence": {
+        "noPhys": "No physical evidence links Franks to Dodd's death.",
+        "nonDNA": "Fingerprints matching Franks's were found on the handle of the knife used to kill Dodd.",
+        "DNA": "Hairs matching Franks's DNA were found on and around Dodd's body."
+      }
+    }
+  },
+  {
+    "abbr": "11",
+    "vars": {
+      "base": {
+        "Base": "Luke Friedman is accused of second-degree murder. Friedman allegedly struck James Cole with a tire iron during a traffic altercation, killing him."
+      },
+      "Criminal History": {
+        "noPrior": "Friedman has no record of prior convictions.",
+        "unrelatedPrior": "Friedman was previously convicted of possessing drug paraphernalia.",
+        "relatedPrior": "Friedman was previously convicted of aggravated assault."
+      },
+      "Witness": {
+        "isWitness": "A witness testified that she saw Friedman reaching into his trunk while arguing with Cole.",
+        "noWitness": "There were no witnesses to Cole's killing."
+      },
+      "Physical Evidence": {
+        "noPhys": "No physical evidence links Friedman to Cole's death.",
+        "nonDNA": "Fingerprints matching Friedman's were found on the tire iron used to kill Cole.",
+        "DNA": "Blood matching Friedman's DNA was found on a sharp edge of the tire iron used to kill Cole."
+      }
+    }
+  },
+  {
+    "abbr": "12",
+    "vars": {
+      "base": {
+        "Base": "Steven Douglas stands accused of robbery. Douglas allegedly stole Sabine Hoffman's purse and $250 by approaching her from behind and claiming to have a gun."
+      },
+      "Criminal History": {
+        "noPrior": "Douglas has no history of prior convictions.",
+        "unrelatedPrior": "Douglas was previously convicted of animal cruelty.",
+        "relatedPrior": "Douglas was previously convicted of larceny."
+      },
+      "Witness": {
+        "isWitness": "A bystander identified Douglas as the only man hurrying from the scene.",
+        "noWitness": "There were no witnesses to the robbery."
+      },
+      "Physical Evidence": {
+        "noPhys": "No physical evidence links Douglas to the robbery.",
+        "nonDNA": "Hoffman's empty purse was recovered nearby, bearing fingerprints matching Douglas's.",
+        "DNA": "Hoffman's empty purse was recovered nearby, containing skin flakes and hair matching Douglas's DNA."
+      }
+    }
+  },
+  {
+    "abbr": "13",
+    "vars": {
+      "base": {
+        "Base": "Harold Butler stands accused of sexual battery. Butler allegedly groped Carrie Bryant's thigh and buttocks while she was jogging."
+      },
+      "Criminal History": {
+        "noPrior": "Butler has no criminal record.",
+        "unrelatedPrior": "Butler was previously convicted of reselling prescription drugs.",
+        "relatedPrior": "Butler was previously convicted of rape."
+      },
+      "Witness": {
+        "isWitness": "A witness saw Butler grope Bryant.",
+        "noWitness": "There were no witnesses to the groping."
+      },
+      "Physical Evidence": {
+        "noPhys": "No physical evidence supports the allegations against Butler.",
+        "nonDNA": "Police found a swatch of cloth matching a tear in Bryant's shorts in Butler's home.",
+        "DNA": "Skin flakes matching Butler's DNA were recovered from the fabric of Bryant's running shorts."
+      }
+    }
+  },
+  {
+    "abbr": "14",
+    "vars": {
+      "base": {
+        "Base": "Miranda Hamlin stands accused of vehicular manslaughter. Hamlin allegedly crashed a stolen vehicle into Diana Masters's Prius, killing her, before fleeing the scene."
+      },
+      "Criminal History": {
+        "noPrior": "Hamlin has no criminal record.",
+        "unrelatedPrior": "Hamlin was previously convicted of bribing a public official.",
+        "relatedPrior": "Hamlin was previously convicted of reckless driving."
+      },
+      "Witness": {
+        "isWitness": "A driver testified that Hamlin was the woman he saw running from the stolen vehicle.",
+        "noWitness": "There were no witnesses to the crash."
+      },
+      "Physical Evidence": {
+        "noPhys": "No physical evidence links Hamlin to the fatal crash.",
+        "nonDNA": "Police discovered fingerprints matching Hamlin's on the steering wheel and gearshift of the stolen vehicle.",
+        "DNA": "Police discovered blood matching Hamlin's on the steering wheel of the stolen vehicle."
+      }
+    }
+  },
+  {
+    "abbr": "15",
+    "vars": {
+      "base": {
+        "Base": "Virginia Davis is accused of stealing dogs from backyards and demanding a ransom from the owners for their safe return."
+      },
+      "Criminal History": {
+        "unrelatedPrior": "Davis was previously convicted of running an unlicensed gambling operation.",
+        "relatedPrior": "Davis was previously convicted of animal cruelty.",
+        "noPrior": "Davis has no criminal history."
+      },
+      "Witness": {
+        "isWitness": "A postal carrier identified Davis as the woman he saw herding dogs into a van in the neighborhood.",
+        "noWitness": "There are no witnesses."
+      },
+      "Physical Evidence": {
+        "DNA": "Police found skin flakes matching Davis's DNA on the post of an enclosure from which one of the dogs went missing.",
+        "nonDNA": "Police have found Davis' fingerprints on the gates of several yards from which dogs went missing.",
+        "noPhys": "There is no physical evidence associating Davis with the thefts."
+      }
+    }
+  },
+  {
+    "abbr": "16",
+    "vars": {
+      "base": {
+        "Base": "Atlee Newman is accused of shooting Melanie Farris while stealing her car. Newman allegedly dragged Farris out of her Acura before shooting her twice in the head and driving off."
+      },
+      "Criminal History": {
+        "unrelatedPrior": "Newman was previously convicted of poaching endangered bears.",
+        "relatedPrior": "Newman was previously convicted of mugging a couple at gunpoint.",
+        "noPrior": "Newman has no prior convictions."
+      },
+      "Witness": {
+        "isWitness": "A cyclist identified Newman as the driver of the Acura that nearly ran him off the road near the crime.",
+        "noWitness": "No witnesses observed Newman shoot Farris or steal the car."
+      },
+      "Physical Evidence": {
+        "DNA": "Hairs matching Newman's DNA were found in the fabric of the Acura's driver's seat.",
+        "nonDNA": "Newman's fingerprints were found on the Acura's steering wheel and dash.",
+        "noPhys": "No physical evidence links Newman to the carjacking."
+      }
+    }
+  },
+  {
+    "abbr": "17",
+    "vars": {
+      "base": {
+        "Base": "Thomas Mitchell is accused of injuring two gang members in a drive-by shooting."
+      },
+      "Criminal History": {
+        "unrelatedPrior": "Mitchell previously served a sentence for identity theft.",
+        "relatedPrior": "Mitchell previously served a sentence for assaulting a gang member with a knife.",
+        "noPrior": "Mitchell has no prior convictions."
+      },
+      "Witness": {
+        "isWitness": "A witness saw Mitchell's red Suzuki and Mitchell's distinctive arm tattoos during the shooting.",
+        "noWitness": "There are no other witnesses."
+      },
+      "Physical Evidence": {
+        "DNA": "Blood matching Mitchell's DNA was discovered on a handkerchief discarded near the scene.",
+        "nonDNA": "Mitchell's fingerprints were discovered on the ejected bullet casings at the scene.",
+        "noPhys": "No physical evidence links Mitchell to the shooting."
+      }
+    }
+  },
+  {
+    "abbr": "18",
+    "vars": {
+      "base": {
+        "Base": "Arthur Jefferson is accused of starting a four-alarm fire that burned his own warehouse to the ground in order to collect the insurance on it."
+      },
+      "Criminal History": {
+        "unrelatedPrior": "Jefferson was previously convicted of domestic assault.",
+        "relatedPrior": "Jefferson was previously convicted of arson.",
+        "noPrior": "Jefferson has no record of prior convictions."
+      },
+      "Witness": {
+        "isWitness": "An eyewitness saw Jefferson's red pickup pulling away just after the fire started.",
+        "noWitness": "There were no witnesses to who started the fire."
+      },
+      "Physical Evidence": {
+        "DNA": "Traces of Jefferson's DNA were found on a lighter near the blaze.",
+        "nonDNA": "Jefferson's fingerprints were found on a lighter near the blaze.",
+        "noPhys": "No physical evidence links Jefferson to the blaze."
+      }
+    }
+  },
+  {
+    "abbr": "19",
+    "vars": {
+      "base": {
+        "Base": "Samuel Minor is accused of picking the lock on the front door of Thomas and Linda Harringtons' home as they slept, and stealing a television, a computer, and some artwork."
+      },
+      "Criminal History": {
+        "unrelatedPrior": "Minor was previously convicted of driving while impaired.",
+        "relatedPrior": "Minor was previously convicted of breaking into a parked car to steal stereo equipment.",
+        "noPrior": "Minor has no record of previous criminal activity."
+      },
+      "Witness": {
+        "isWitness": "A neighbor testified that he saw Minor hunched over the doorknob of the front door for a long time before entering.",
+        "noWitness": "There were no witnesses to the break-in at the Harringtons' home."
+      },
+      "Physical Evidence": {
+        "DNA": "Skin flakes containing Minor's DNA have been found near the broken lock of the Harringtons' front door.",
+        "nonDNA": "Minor's fingerprints have been found along the doorjamb of the house.",
+        "noPhys": "No physical evidence links Minor to the scene."
+      }
+    }
+  },
+  {
+    "abbr": "20",
+    "vars": {
+      "base": {
+        "Base": "Mark Pearson is accused of locking 24-year-old Brianne Mills, an African American student, into the trunk of her car and pushing it into a river, nearly drowning her. He also spray-painted the car with a large swastika and racial and sexual epithets including 'slut','dyke',and 'nigger'."
+      },
+      "Criminal History": {
+        "unrelatedPrior": "Pearson was previously convicted of using false identification to purchase alcohol.",
+        "relatedPrior": "Pearson was previously convicted of battery alongside several known members of a local skinhead gang.",
+        "noPrior": "Pearson has no record of prior convictions."
+      },
+      "Witness": {
+        "isWitness": "A fisherman walking by the river identified Pearson as the person who discarded a ski mask near the riverbank.",
+        "noWitness": "There were no witnesses to Mills's assault."
+      },
+      "Physical Evidence": {
+        "DNA": "Police discovered blood containing Pearson's DNA under Mills's fingernails.",
+        "nonDNA": "Pearson's fingerprints were found on a can of spray paint dropped by the sinking car.",
+        "noPhys": "There is no physical evidence linking Pearson to the crime."
+      }
+    }
+  },
+  {
+    "abbr": "21",
+    "vars": {
+      "base": {
+        "Base": "Ronald Parker is accused of breaking through a townhouse back door, entering the bedroom of Tammy King and raping her at knife-point."
+      },
+      "Criminal History": {
+        "unrelatedPrior": "Parker has a previous conviction for fraud.",
+        "relatedPrior": "Parker has a previous conviction for rape.",
+        "noPrior": "Parker has never been arrested for a felony."
+      },
+      "Witness": {
+        "isWitness": "The victim did not see her attacker, but a neighbor identified Parker as the man who ran out of the house.",
+        "noWitness": " The victim did not see her attacker and there are no other witnesses."
+      },
+      "Physical Evidence": {
+        "DNA": "Blood with Parker's DNA is found on the knife blade.",
+        "nonDNA": "Fingerprints matching Parker's are found at the scene.",
+        "noPhys": "No physical evidence links Parker to the crime scene."
+      }
+    }
+  },
+  {
+    "abbr": "22",
+    "vars": {
+      "base": {
+        "Base": "Robert Campbell is accused of mugging Jack and Rosa Smith in a grocery store parking lot."
+      },
+      "Criminal History": {
+        "unrelatedPrior": "Campbell has served prison time in the past for possession of heroin.",
+        "relatedPrior": "Campbell has served prison time in the past for armed robbery.",
+        "noPrior": "Campbell has no record of prior offenses."
+      },
+      "Witness": {
+        "isWitness": "A greeter at the store identified Campbell as the Smiths' assailant.",
+        "noWitness": "There were no other witnesses to the crime."
+      },
+      "Physical Evidence": {
+        "DNA": "A pistol was found discarded nearby, with Campbell's DNA on the grip.",
+        "nonDNA": "Jack's empty wallet was found discarded nearby, bearing Campbell's fingerprints.",
+        "noPhys": "No physical evidence links Campbell to the Smiths' assault."
+      }
+    }
+  },
+  {
+    "abbr": "23",
+    "vars": {
+      "base": {
+        "Base": "Jerry Lee, a known gang member, is accused of the murder of a grocery store owner and his wife after they refused to pay him 'protection' money."
+      },
+      "Criminal History": {
+        "unrelatedPrior": "Lee has a prior conviction for possession of crack cocaine.",
+        "relatedPrior": "Lee has a prior conviction for extortion.",
+        "noPrior": "Lee has no criminal record."
+      },
+      "Witness": {
+        "isWitness": "A neighboring shopkeeper identified Lee as the man fleeing after the shooting.",
+        "noWitness": "No witnesses saw Lee at the scene."
+      },
+      "Physical Evidence": {
+        "DNA": "Blood matching Lee's DNA was found on a broken bottle near the grocer's body.",
+        "nonDNA": "Lee's fingerprints were found on the pistol used in the shooting.",
+        "noPhys": "No physical evidence links Lee to the murders."
+      }
+    }
+  },
+  {
+    "abbr": "24",
+    "vars": {
+      "base": {
+        "Base": "Christopher Pepper and Alva Bennett are accused of manufacturing counterfeit cashier's cheques using a printing press located in a condemned office building."
+      },
+      "Criminal History": {
+        "unrelatedPrior": "Pepper has a past conviction for battery, and Bennett for driving with a suspended license.",
+        "relatedPrior": "Pepper has a past conviction for fraud, and Bennett for selling knockoff handbags on eBay.",
+        "noPrior": "Neither Pepper nor Bennett has any prior record of convictions."
+      },
+      "Witness": {
+        "isWitness": "A barista at a nearby cafe observed Pepper and Bennett going in and out of the condemned building.",
+        "noWitness": "No witnesses observed Peppers or Bennett entering the condemned building during the past few months."
+      },
+      "Physical Evidence": {
+        "DNA": "Hair and skin flakes with Pepper's and Bennett's DNA were found on and around the counterfeit press.",
+        "nonDNA": "Pepper's and Bennett's fingerprints were found on and around the counterfeit press.",
+        "noPhys": "No physical evidence links Pepper or Bennett to the counterfeiting."
+      }
+    }
+  },
+  {
+    "abbr": "25",
+    "vars": {
+      "base": {
+        "Base": "Janet Norment is accused of smuggling a suitcase of marijuana into the United States."
+      },
+      "Criminal History": {
+        "unrelatedPrior": "Norment was recently released from prison following an armed robbery sentence.",
+        "relatedPrior": "Norment was recently released from prison following a sentence for manufacturing methamphetamine.",
+        "noPrior": "Norment has no prior convictions."
+      },
+      "Witness": {
+        "isWitness": "A check-in attendant at the airport identified Norment as the woman who checked the suitcase in.",
+        "noWitness": "No witnesses saw Norment check the bags in."
+      },
+      "Physical Evidence": {
+        "DNA": "Eyelashes with Norment's DNA were discovered in the suitcase.",
+        "nonDNA": "Cloth fibers matching several articles of clothing in Norment's home were discovered in the suitcase.",
+        "noPhys": "No physical evidence was discovered linking Norment to the luggage."
+      }
+    }
+  },
+  {
+    "abbr": "26",
+    "vars": {
+      "base": {
+        "Base": "Trevor Allen and Kenneth Green are accused of leaving 13 undocumented immigrants to die in a truck. Allen and Green were allegedly smuggling the immigrants across the U.S. border, but after the truck stopped working, they allegedly fled while leaving the immigrants locked in the back. By the time the immigrants were found, they had all died of exposure."
+      },
+      "Criminal History": {
+        "unrelatedPrior": "Green has a prior conviction for marijuana possession, and Allen for domestic violence.",
+        "relatedPrior": "Green and Allen both have prior convictions for illegally transporting noncitizens into the United States.",
+        "noPrior": "Neither Green nor Allen has a record of prior convictions."
+      },
+      "Witness": {
+        "isWitness": "A gas station attendant identified Green and Allen as the men who borrowed his phone to call for a ride near where the truck was discovered.",
+        "noWitness": "No witnesses saw either of the men load or depart from the vehicle."
+      },
+      "Physical Evidence": {
+        "DNA": "Green's and Allen's DNA was found on the lips of several empty soda bottles in the truck.",
+        "nonDNA": "Green and Allen's fingerprints were found on the truck's front seat.",
+        "noPhys": "No physical evidence links Allen or Green to the truck."
+      }
+    }
+  },
+  {
+    "abbr": "27",
+    "vars": {
+      "base": {
+        "Base": "Clarence Warren is accused of operating an unlicensed distillery. Police discovered a makeshift pot still, several hundred pounds of white sugar, some coiled copper piping, and forty gallons of moonshine on an abandoned farm."
+      },
+      "Criminal History": {
+        "unrelatedPrior": "Warren has a previous conviction for armed robbery.",
+        "relatedPrior": "Warren has a previous conviction for manufacturing methamphetamine.",
+        "noPrior": "Warren has no record of prior convictions."
+      },
+      "Witness": {
+        "isWitness": "An electrical maintenance worker testified that he saw Warren around the still.",
+        "noWitness": "No witnesses saw Warren in or around the farmhouse."
+      },
+      "Physical Evidence": {
+        "DNA": "Warren's DNA was found on the lips of mason jars at the scene.",
+        "nonDNA": "A strip of fabric matching a tear in Warren's jacket was found on a nail protruding from the farmhouse.",
+        "noPhys": "No physical evidence links Warren to the distillery."
+      }
+    }
+  },
+  {
+    "abbr": "28",
+    "vars": {
+      "base": {
+        "Base": "Jeff Martinez is accused of bombing a shopping center. An unregistered black pickup truck was loaded with explosives, driven through the main entrance, and detonated after the driver fled."
+      },
+      "Criminal History": {
+        "unrelatedPrior": "Martinez was previously convicted of indecent exposure.",
+        "relatedPrior": "Martinez was previously convicted of aggravated arson.",
+        "noPrior": "Martinez has no criminal history."
+      },
+      "Witness": {
+        "isWitness": "A bystander identified Martinez as the truck's driver.",
+        "noWitness": "No witnesses were able to identify the truck's driver."
+      },
+      "Physical Evidence": {
+        "DNA": "Blood matching Martinez's DNA was found on a piece of shrapnel near the mall entrance.",
+        "nonDNA": "Martinez's fingerprints were found on an undamaged section of the truck.",
+        "noPhys": "No physical evidence links Martinez to the bombing."
+      }
+    }
+  },
+  {
+    "abbr": "29",
+    "vars": {
+      "base": {
+        "Base": "Bret Botham is accused of critically injuring two people while illegally racing. The car collided with a stopped van after he skidded out of control on a patch of gravel."
+      },
+      "Criminal History": {
+        "unrelatedPrior": "Botham had been convicted of shoplifting last year.",
+        "relatedPrior": "Botham had his license suspended last year for driving recklessly.",
+        "noPrior": "Botham has no prior convictions."
+      },
+      "Witness": {
+        "isWitness": "The driver of the van testified that Botham was the driver.",
+        "noWitness": "The driver of the van, dazed by the impact, was unable to identify the fleeing motorist."
+      },
+      "Physical Evidence": {
+        "DNA": "The car's driver fled into the woods, leaving blood with Botham's DNA on the car's airbag and dash.",
+        "nonDNA": "The car's driver fled into the woods, but Botham's fingerprints were found on the car's dash, console, and gearshift.",
+        "noPhys": "The car's driver fled into the woods, leaving no recoverable physical evidence."
+      }
+    }
+  },
+  {
+    "abbr": "30",
+    "vars": {
+      "base": {
+        "Base": "Virginia MacPherson is accused of sending anthrax-laced envelopes to a United States senator and the father of her boyfriend. After intercepting the envelopes, the FBI arrested MacPherson."
+      },
+      "Criminal History": {
+        "unrelatedPrior": "MacPherson had previously been convicted for shoplifting.",
+        "relatedPrior": "As a high school student, MacPherson sent threatening letters to the parents of a previous boyfriend.",
+        "noPrior": "MacPherson has no criminal record."
+      },
+      "Witness": {
+        "isWitness": "A researcher testified that he saw MacPherson walking around a lab from which anthrax samples went missing.",
+        "noWitness": "Investigators were unable to find anyone who could link MacPherson to the anthrax."
+      },
+      "Physical Evidence": {
+        "DNA": "FBI agents discovered saliva matching MacPherson's DNA on the stamps of several envelopes.",
+        "nonDNA": "FBI agents discovered MacPherson's fingerprints on several of the tainted envelopes.",
+        "noPhys": "No physical evidence was found to link MacPherson to the envelopes."
+      }
+    }
+  },
+  {
+    "abbr": "31",
+    "vars": {
+      "base": {
+        "Base": "Nathan Lewis is accused of sexually abusing a fourteen-year-old boy after police find a camera with pornographic images of the boy in the junior high locker room."
+      },
+      "Criminal History": {
+        "unrelatedPrior": "Lewis was previously convicted of fraud.",
+        "relatedPrior": "Lewis was previously convicted of sexually harassing an intern.",
+        "noPrior": "Lewis has no prior convictions."
+      },
+      "Witness": {
+        "isWitness": "The boy is too traumatized to testify, but a school custodian saw Saunders carrying photo equipment into the locker room.",
+        "noWitness": "The boy is too traumatized to testify and there are no witnesses."
+      },
+      "Physical Evidence": {
+        "DNA": "Semen with Lewis's DNA was found on the camera.",
+        "nonDNA": "Lewis's fingerprints were found on the camera.",
+        "noPhys": "No physical evidence links Lewis to the photos."
+      }
+    }
+  },
+  {
+    "abbr": "32",
+    "vars": {
+      "base": {
+        "Base": "Brian Jones is accused of shooting Judge Timothy Baker in the back outside a courthouse. As Jones fled, he banged his hand into a door jamb and dropped his gun."
+      },
+      "Criminal History": {
+        "unrelatedPrior": "Jones was previously convicted of fraud.",
+        "relatedPrior": "Jones was previously convicted of battery.",
+        "noPrior": "Jones has no criminal record."
+      },
+      "Witness": {
+        "isWitness": "A bystander saw Jones running away after she heard a gunshot.",
+        "noWitness": "No witnesses were present in the courthouse alley to identify Baker's attacker."
+      },
+      "Physical Evidence": {
+        "DNA": "Blood with Jones's DNA is found on an ejected bullet casing.",
+        "nonDNA": "Jones's fingerprints were found on the pistol's grip and trigger.",
+        "noPhys": "No usable physical evidence identifying Jones could be found."
+      }
+    }
+  },
+  {
+    "abbr": "33",
+    "vars": {
+      "base": {
+        "Base": "Samantha Harris is accused of vehicular manslaughter during a hit-and-run. She had been texting while driving and collided with Cameron Bailey, who later died."
+      },
+      "Criminal History": {
+        "unrelatedPrior": "Harris had previously been convicted of shoplifting.",
+        "relatedPrior": "Harris had previously been convicted of leaving a child she was babysitting locked in a hot car.",
+        "noPrior": "Harris has no criminal record."
+      },
+      "Witness": {
+        "isWitness": "A witness saw Harris texting at a red light, two blocks from where the accident happened.",
+        "noWitness": "No witness saw Harris either texting or driving."
+      },
+      "Physical Evidence": {
+        "DNA": "A paper soda cup with Harris's saliva was found near Bailey's body.",
+        "nonDNA": "Paint matching the color of Harris's car was found scraped onto Bailey's belt buckle.",
+        "noPhys": "There was no physical evidence found linking Harris to Bailey."
+      }
+    }
+  }
+]
