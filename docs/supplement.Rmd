@@ -23,6 +23,74 @@ knitr::opts_chunk$set(fig.pos= "H", out.extra='')
 
 # Supplementary Tables
 
+## Experimental design
+```{r message=FALSE, echo=FALSE, warning=FALSE}
+library(tidyverse)
+library(kableExtra)
+
+dat <- read.csv('../data/combined_data.csv') %>% 
+  select(uid, experiment, rating_type, rating) %>%
+  na.omit %>%
+  select(-rating) %>%
+  distinct() %>%
+  mutate(rating_type=factor(rating_type, levels=c(
+    'rating', 'rate_punishment', 'rate_outrage', 'rate_threat', 'rate_threat_2', 'guilty'),
+    labels=c('Confidence', 'Punishment', 'Outrage', 'Proximity', 'Threat', 'Guilt')
+  )) %>%
+  rename(Experiment=experiment)
+
+
+experiment_counts <- dat %>% select(-rating_type) %>% distinct() %>% 
+  count(Experiment) %>% rename(Subjects=n)
+question_counts <- dat %>% count(Experiment, rating_type) %>%
+  spread(key=rating_type, value=n)
+details_table <- data.frame(Experiment=c('1A', '1B', '1C', '1D', '1E', '1F', '2A', '2B', '2C'),
+                            Description=c('Five questions',
+                                          'Single question',
+                                          'No evidence',
+                                          'Explicit directions',
+                                          'Two questions',
+                                          'Threat',
+                                          'Law students',
+                                          'LA state bar',
+                                          'IL prosecutors'),
+                            Format=c('Group', rep('Sequential', 2), rep('Group', 6)))
+subject_counts <- merge(details_table, merge(experiment_counts, question_counts))
+
+options(knitr.kable.NA = '')
+kable(subject_counts, format="latex", booktabs=T, escape=F,
+      caption="Task variations and subjects.\\label{exp_variants_table}",
+      linesep=c('', '', '', '', '', '\\addlinespace')) %>% 
+  kable_styling(full_width=F, latex_options = c("HOLD_position", "striped", "scale_down")) %>%
+  add_header_above(c(" " = 4, "Question" = 6))
+```
+
+```{r message=FALSE, echo=FALSE, warning=FALSE}
+library(tidyverse)
+library(kableExtra)
+
+analysis_sets <- data.frame(Figure=c('1', '1', '1', '2', '3', '4', '4'),
+                            Panels=c('B', 'C', 'D', 'A, B, C', 'A, B, C, D', 'A, B, C', 'D'),
+                            Criteria=c('mTurk, evidence presented, confidence question',
+                                       'mTurk, evidence presented, confidence \\emph{and} guilt questions',
+                                       'mTurk, evidence presented, punishment question',
+                                       'mTurk, evidence presented, confidence question',
+                                       'evidence presented, confidence question',
+                                       'mTurk, evidence presented, any non-guilt question',
+                                       'evidence presented, \\emph{either} confidence or punishment question'),
+                            Experiments=c('1A, 1B, 1D, 1E, 1F',
+                                          '1A',
+                                          '1A, 1B, 1D, 1E',
+                                          '1A, 1B, 1D, 1E, 1F',
+                                          '1A, 1B, 1D, 1E, 1F, 2A, 2B, 2C',
+                                          '1A, 1B, 1D, 1E, 1F',
+                                          '1A, 1B, 1D, 1E, 2A, 2B, 2C'))
+
+kable(analysis_sets, format="latex", booktabs=T, escape=F,
+      caption="Subsets of data used in each analysis.\\label{subsets_table}") %>% 
+  kable_styling(full_width=F, latex_options = c("HOLD_position", "striped", "scale_down"))
+```
+
 ## Demographics
 Here, we give a breakdown of our mTurk sample. We include all participants, including those in Experiment 1C (no evidence), though these were not used in our models.
 ```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=6, fig.cap="\\label{demo_table}"}
