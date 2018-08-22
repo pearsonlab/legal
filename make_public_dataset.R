@@ -11,6 +11,8 @@ data_file_names <- paste(datadir, c('data_mq_nothreat_deid.csv',
                                     'data_cu_deid.csv',
                                     'data_tq_deid.csv',
                                     'data_th_deid.csv'), sep="")
+experiment_codes <- c('1A', '1B', '1C', '1D', '1E', '1F')
+
 dlist <- list()
 unique_ids <- c()
 for (ind in 1:length(data_file_names)) {
@@ -32,6 +34,8 @@ for (ind in 1:length(data_file_names)) {
   if (str_detect(data_file_names[[ind]], '_th_')) {
     dlist[[ind]] <- dlist[[ind]] %>%  mutate(rate_threat_2=rate_threat)  %>%  select(-rate_threat) 
   }
+  
+  dlist[[ind]]$experiment <- experiment_codes[ind]
 }
 df <- do.call('bind_rows', dlist)
 
@@ -40,15 +44,15 @@ df <- do.call('bind_rows', dlist)
 df <- df %>% mutate(nonwhite=race != 5, 
                     hispanic=ethnicity == 1, 
                     female=gender == 2) %>%
-  mutate_at(c('nonwhite', 'hispanic', 'female', 'guilty'), 'as.factor')
+  mutate_at(c('nonwhite', 'hispanic', 'female'), 'as.factor')
 
 # do some cleaing of datasets prior to merge
 dat <- df %>% dplyr::rename(uid=hashedID) %>%
-              select(uid, scenario, physical, history, witness,
+              select(uid, experiment, scenario, physical, history, witness,
                      rating, rate_punishment, rate_threat, rate_threat_2, rate_outrage,
                      nonwhite, hispanic, female, question, evidence_shown, guilty,
                      age, gender, race, ethnicity, education, political_party) %>%
-              gather(key=rating_type, value=rating, c(rating, rate_punishment, rate_threat, rate_threat_2, rate_outrage)) %>%
+              gather(key=rating_type, value=rating, c(rating, rate_punishment, rate_threat, rate_threat_2, rate_outrage, guilty), na.rm=TRUE) %>%
               mutate_at(c('uid', 'scenario', 'physical', 'history', 'witness', 'rating_type'), 'as.factor') %>%
               mutate(group=group)
               
@@ -93,7 +97,7 @@ load('data/dat_ipls.rdata')
 group <- 'legal'
 df <- dat_ipls %>% select(uid, scenario, physical, history, witness, rating, rate_punishment) %>%
   gather(key=rating_type, value=rating, c(rating, rate_punishment)) %>%
-  mutate(group=group)
+  mutate(group=group, experiment='2A')
 
 dat <- bind_rows(dat, df)
 
@@ -107,7 +111,7 @@ df$witness <- factor(df$witness, labels=c('No Witness', 'Yes Witness'))
 df <- df %>% filter(group == 'LSBA2016')
 df <- df %>% select(uid, scenario, physical, history, witness, rating, rate_punishment) %>% 
   gather(key=rating_type, value=rating, c(rating, rate_punishment)) %>%
-  mutate(group=group)
+  mutate(group=group, experiment='2B')
 
 dat <- bind_rows(dat, df)
 
@@ -121,7 +125,7 @@ df$witness <- factor(df$witness, labels=c('No Witness', 'Yes Witness'))
 df <- df %>% filter(group == 'ILSA2016')
 df <- df %>% select(uid, scenario, physical, history, witness, rating, rate_punishment) %>%
   gather(key=rating_type, value=rating, c(rating, rate_punishment)) %>%
-  mutate(group=group)
+  mutate(group=group, experiment='2C')
 
 dat <- bind_rows(dat, df)
 

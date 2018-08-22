@@ -123,9 +123,10 @@ plt_3 <- ggplot(df) +
 # plot relationship between case strength and guilt
 
 dat <- read.csv('data/combined_data.csv') %>% 
-  filter(!is.na(guilty), !is.na(rating), rating_type=='rating')
+  filter(rating_type=='rating' | rating_type=='guilty') %>%
+  spread(key=rating_type, value=rating)
 
-fit <- glm(guilty ~ rating, family = binomial(), data=dat)
+fit <- glm(guilty ~ rating, family = binomial(), data=dat, na.action=na.omit)
 preds <- predict.glm(fit, newdata=data.frame(rating=1:100), type="response")
 
 pred_dat <- data.frame(prob=preds, rating=1:100)

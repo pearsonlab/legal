@@ -36,7 +36,7 @@ if (model == 'mv' | model == 'demos') {
 
 # load data and subset
 dat <- read.csv('data/combined_data.csv') %>%
-  filter(group==!!group, evidence_shown) %>% 
+  filter(group==!!group, evidence_shown, rating_type != 'guilty') %>% 
   mutate_at(c('scenario', 'nonwhite', 'hispanic', 'female'),  'as.factor')
 
 switch(model, 

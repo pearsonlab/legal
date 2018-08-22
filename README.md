@@ -15,6 +15,7 @@ In particular, we use:
 # About the data
 The data are recorded in a single file, `combined_data.csv` in the `data` folder. The file is a single table, one line per rating given, with the following columns:
 - `uid`: Unique id for each participant.
+- `experiment`: Version of the experiment run. Cf. Supplementary Table 2.
 - `scenario`: Integer indicating which crime was presented on a given trial: (1 - 33).
 - `physical`: Which physical evidence was presented? (`No Physical`, `Non-DNA`, `DNA`)
 - `history`: What criminal history information was presented? (`No History`, `Unrelated`, `Related`)
@@ -24,7 +25,6 @@ The data are recorded in a single file, `combined_data.csv` in the `data` folder
 - `female`: Did the participant identify as female? (`FALSE`, `TRUE`)
 - `question`: In what order did the participant encounter this case to be rated? (0 - 32)
 - `evidence_shown`: Was any evidence shown? Some participants performed a version of the task with no evidence.
-- `guilty`: Did the participant think the defendant was guilty? (0, 1, or `NA`)
 - `age`: Participant's reported age.
 - `gender`: Participant's reported gender. Recoded as `female` for modeling.
 - `race`: Participant's reported race. Binarized as `nonwhite` for modeling.
@@ -37,6 +37,7 @@ The data are recorded in a single file, `combined_data.csv` in the `data` folder
   - `rate_outrage`: "When you read about crimes like this one, how upset to you feel?"
   - `rate_threat`: "How likely is this crime to occur in your community?"
   - `rate_threat2`: "When you read about a crime like this, how concerned do you feel for your own safety, or the safety of your community?"
+  - `guilty`: Did the participant think the defendant was guilty? (`rating` of 0 or 1)
 - `rating`: Numerical rating for the relevant question (1 - 100).
 - `group`: Which experimental group the participant belonged to:
   - `mturk`: Amazon Mechanical Turk sample.
