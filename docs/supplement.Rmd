@@ -280,7 +280,8 @@ We found nearly identical results for the two models. Figures 2-4 from the main 
 ```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.cap="Task learning effect. Comparison of distributions of first and last five ratings given by each participant. \\label{task_learning_effect}"}
 source("../ggplot_setup.R")
 
-mturk_ratings <- read.csv('../data/combined_data.csv') %>% filter(group=='mturk')
+mturk_ratings <- read.csv('../data/combined_data.csv') %>% 
+  filter(group=='mturk', evidence_shown, rating_type != 'guilty')
 maxq <- max(unique(mturk_ratings$question))
 
 # filter to first five and last five questions 
@@ -367,7 +368,7 @@ load('../data/stan_postprocess_sv_t.rdata')
 plt <- ggplot(effects) + 
   geom_boxplot(aes(y=Rhat, x=variable, color=group)) +
   group_color_scale +
-  labs(title="Effective sample size:\nSingle response model", size=rel(3)) +
+  labs(title="Convergence diagnostics:\nSingle response model", size=rel(3)) +
   th + 
   theme(legend.position=c(0.68, 0.75))
 plt
@@ -384,7 +385,7 @@ eff_prettied <- effects %>% mutate(variable=str_extract(variable, "\\w*(?=\\.|$)
 plt <- ggplot(eff_prettied) + 
   geom_boxplot(aes(y=Rhat, x=variable, color=group)) +
   group_color_scale +
-  labs(title="Effective sample size:\nTwo-response model", size=rel(3)) +
+  labs(title="Convergence diagnostics:\nTwo-response model", size=rel(3)) +
   th + 
   theme(legend.position=c(0.78, 0.75))
 plt
@@ -401,7 +402,7 @@ eff_prettied <- effects %>% mutate(variable=str_extract(variable, "\\w*(?=\\.|$)
 plt <- ggplot(eff_prettied) + 
   geom_boxplot(aes(y=Rhat, x=variable, color=group)) +
   group_color_scale +
-  labs(title="Effective sample size:\nAll-response model", size=rel(3)) +
+  labs(title="Convergence diagnostics:\nAll-response model", size=rel(3)) +
   th + 
   theme(legend.position=c(0.7, 0.75))
 plt
