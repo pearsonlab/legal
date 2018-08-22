@@ -1,5 +1,7 @@
 ---
-title: 'Supplementary Information'
+title: |
+  | Supplementary Information for: 
+  | "Modeling the effects of crime type and evidence on judgments about guilt"
 author: "Pearson et al."
 date: "8/20/2018"
 output:
@@ -57,12 +59,15 @@ details_table <- data.frame(Experiment=c('1A', '1B', '1C', '1D', '1E', '1F', '2A
                             Format=c('Group', rep('Sequential', 2), rep('Group', 6)))
 subject_counts <- merge(details_table, merge(experiment_counts, question_counts))
 
-options(knitr.kable.NA = '')
+op <- options(knitr.kable.NA = '')
+
 kable(subject_counts, format="latex", booktabs=T, escape=F,
       caption="Task variations and subjects.\\label{exp_variants_table}",
       linesep=c('', '', '', '', '', '\\addlinespace')) %>% 
   kable_styling(full_width=F, latex_options = c("HOLD_position", "striped", "scale_down")) %>%
   add_header_above(c(" " = 4, "Question" = 6))
+
+options(op)
 ```
 
 ```{r message=FALSE, echo=FALSE, warning=FALSE}
@@ -197,6 +202,142 @@ kable(ci_table, format="latex", booktabs=T, escape=F,
 
 \newpage
 # Supplementary Methods
+
+## Scenario crime descriptions and evidence options
+
+```{r message=FALSE, echo=FALSE, warning=FALSE, results = "asis"}
+library(jsonlite)
+
+sc <- fromJSON('../data/scenarios.json', flatten=TRUE) 
+
+template <- "### Scenario %s:
+%s
+
+- **Criminal History**
+  - *Related*:   %s
+  - *Unrelated*: %s
+  - *No prior*:  %s
+
+- **Witness**
+  - *Witness*:   %s
+  - *No witness*: %s
+
+- **Physical evidence**
+  - *DNA*:   %s
+  - *non-DNA*: %s
+  - *none*:  %s
+
+"
+
+sc_formatted <- sprintf(template, sc$abbr, 
+                        sc[['vars.base.Base']],
+                        sc[['vars.Criminal History.relatedPrior']],
+                        sc[['vars.Criminal History.unrelatedPrior']],
+                        sc[['vars.Criminal History.noPrior']],
+                        sc[['vars.Witness.isWitness']],
+                        sc[['vars.Witness.noWitness']],
+                        sc[['vars.Physical Evidence.DNA']],
+                        sc[['vars.Physical Evidence.nonDNA']],
+                        sc[['vars.Physical Evidence.noPhys']]
+                        )
+
+cat(sc_formatted, sep='')
+```
+
+## Task Directions and Questions
+
+### Standard directions
+
+You are about to read a series of short fictitious criminal cases. After
+reading the accusation against the defendant, view additional
+information by clicking each of the three grey buttons and holding for
+as long as you want to read.
+
+For example, clicking on the button labeled \"Physical Evidence\" would
+show any physical evidence that had been found in the case. You may
+click and read the facts in each box as many times as you like.
+
+After reading the entire story and the additional information, reflect
+on how you feel about the facts in the case as it is presented. Please
+do not be concerned about making a legal judgment, especially with
+regard to the rules of evidence or the law, but rather merely consider
+your personal opinions and intuitions about the case. 
+
+You will then be asked about the strength of the case against the
+accused and the amount of punishment that type of crime deserves.
+
+For each question, move the slider to the position that best reflects
+your personal judgment.
+
+When you are finished, click the Submit button to go to the next
+question.
+
+### Explicit/curative directions
+
+You are about to read a series of short descriptions of fictitious
+criminal cases. After reading the accusation against the defendant, view
+additional information by clicking and holding down the mouse button
+over each of the four grey boxes.
+
+For example, clicking on the button labeled \"Physical Evidence\" would
+show any physical evidence that had been found in the case. You may
+click and read the facts in each box as many times as you like.
+
+After reading the entire story, reflect on how you feel about the facts
+in the case as it is presented. Do not be concerned about making a legal
+judgment. Rather, think about your personal opinions and intuitions
+about the case.
+
+You will then be asked two questions.
+
+First, how strong is the case against the person who was accused of the
+crime? How confident are you, based on the evidence that you read, that
+the accused actually did it? Is the evidence in the case strong or weak?
+Do not let your feelings about the seriousness or awfulness of the crime
+sway your judgment about whether that person actually committed the
+crime.
+
+The second question is the opposite. Setting aside whether you think the
+accused committed the crime, how severely should anyone who commits a
+crime like this be punished? Is it a horrible and heinous crime,
+deserving of life in prison without parole? Or is it not serious, and
+should be punished very lightly, if at all? When choosing the amount of
+punishment, think only about the kind of crime that the accused is
+accused of, not whether he or she actually did it.
+
+For both questions, move the slider to the position that best reflects
+your personal judgment. When you are finished, click the Submit button
+to go to the next question.
+
+### Questions
+
+**Confidence** (C): How strong is the case that the accused committed this
+crime?
+
+Slider: Very weak, Very strong
+
+**Punishment** (P): How severe should the punishment be for someone who
+commits a crime like this one?
+
+Slider: No punishment, Life in prison without parole
+
+**Guilt** (G): Based on what you've read, do you think the accused is
+guilty?
+
+Button: Yes, guilty; No, not guilty
+
+**Outrage** (O): When you read about crimes like this one, how upset to you
+feel?
+
+Slider: Not upset, Outraged
+
+**Threat** (T): When you read about a crime like this, how concerned do you
+fell for your own safety, or the safety of your community?
+
+Slider: Not concerned at all, Very concerned
+
+**Likelihood** (L): How likely is this crime to occur in your community?
+
 
 ## Single Rating Model
 For the case of a single rating outcome (case strength), we separately model each group of participants as follows: Given a set of
