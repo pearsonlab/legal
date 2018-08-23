@@ -22,185 +22,6 @@ bibliography: supp.bib
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(fig.pos= "H", out.extra='')
 ```
-
-# Supplementary Tables
-
-## Experimental design
-```{r message=FALSE, echo=FALSE, warning=FALSE}
-library(tidyverse)
-library(kableExtra)
-
-dat <- read.csv('../data/combined_data.csv') %>% 
-  select(uid, experiment, rating_type, rating) %>%
-  na.omit %>%
-  select(-rating) %>%
-  distinct() %>%
-  mutate(rating_type=factor(rating_type, levels=c(
-    'rating', 'rate_punishment', 'rate_outrage', 'rate_threat', 'rate_threat_2', 'guilty'),
-    labels=c('Confidence', 'Punishment', 'Outrage', 'Likelihood', 'Threat', 'Guilt')
-  )) %>%
-  rename(Experiment=experiment)
-
-
-experiment_counts <- dat %>% select(-rating_type) %>% distinct() %>% 
-  count(Experiment) %>% rename(Subjects=n)
-question_counts <- dat %>% count(Experiment, rating_type) %>%
-  spread(key=rating_type, value=n)
-details_table <- data.frame(Experiment=c('1A', '1B', '1C', '1D', '1E', '1F', '2A', '2B', '2C'),
-                            Description=c('Five questions',
-                                          'Single question',
-                                          'No evidence',
-                                          'Explicit directions',
-                                          'Two questions',
-                                          'Threat',
-                                          'Law students',
-                                          'LA state bar',
-                                          'IL prosecutors'),
-                            Format=c('Group', rep('Sequential', 2), rep('Group', 6)))
-subject_counts <- merge(details_table, merge(experiment_counts, question_counts))
-
-op <- options(knitr.kable.NA = '')
-
-kable(subject_counts, format="latex", booktabs=T, escape=F,
-      caption="Task variations and subjects.\\label{exp_variants_table}",
-      linesep=c('', '', '', '', '', '\\addlinespace')) %>% 
-  kable_styling(full_width=F, latex_options = c("HOLD_position", "striped", "scale_down")) %>%
-  add_header_above(c(" " = 4, "Question" = 6))
-
-options(op)
-```
-
-```{r message=FALSE, echo=FALSE, warning=FALSE}
-library(tidyverse)
-library(kableExtra)
-
-analysis_sets <- data.frame(Figure=c('1', '1', '1', '2', '3', '4', '4'),
-                            Panels=c('B', 'C', 'D', 'A, B, C', 'A, B, C, D', 'A, B, C', 'D'),
-                            Criteria=c('mTurk, evidence presented, confidence question',
-                                       'mTurk, evidence presented, confidence \\emph{and} guilt questions',
-                                       'mTurk, evidence presented, punishment question',
-                                       'mTurk, evidence presented, confidence question',
-                                       'evidence presented, confidence question',
-                                       'mTurk, evidence presented, any non-guilt question',
-                                       'evidence presented, \\emph{either} confidence or punishment question'),
-                            Experiments=c('1A, 1B, 1D, 1E, 1F',
-                                          '1A',
-                                          '1A, 1B, 1D, 1E',
-                                          '1A, 1B, 1D, 1E, 1F',
-                                          '1A, 1B, 1D, 1E, 1F, 2A, 2B, 2C',
-                                          '1A, 1B, 1D, 1E, 1F',
-                                          '1A, 1B, 1D, 1E, 2A, 2B, 2C'))
-
-kable(analysis_sets, format="latex", booktabs=T, escape=F,
-      caption="Subsets of data used in each analysis.\\label{subsets_table}") %>% 
-  kable_styling(full_width=F, latex_options = c("HOLD_position", "striped", "scale_down"))
-```
-
-## Demographics
-Here, we give a breakdown of our mTurk sample. We include all participants, including those in Experiment 1C (no evidence), though these were not used in our models.
-```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=6, fig.cap="\\label{demo_table}"}
-library(tidyverse)
-library(kableExtra)
-
-mturk_demos <- read.csv('../data/combined_data.csv') %>% filter(group=='mturk') %>%
-  distinct(uid, .keep_all=TRUE)
-
-# renaming, etc.
-cutpts = c(17, 21, 25, 30, 40, 50, 60, 90) # cutpoints for age ranges
-mturk_demos$age = cut(mturk_demos$age,cutpts)
-
-mturk_demos$gender <- factor(mturk_demos$gender, levels=c("Male", "Female", "Other"))
-mturk_demos$race <- factor(mturk_demos$race, 
-                           levels=c("American Indian or Alaska Native", 
-                                    "Asian", 
-                                    "Black or African American",
-                                    "Native Hawaiian or other Pacific Islander",
-                                    "White",
-                                    "More than one race",
-                                    "Unknown or do not want to disclose"))
-mturk_demos$ethnicity <- factor(mturk_demos$ethnicity,
-                                levels=c("Hispanic or Latino", 
-                                         "Not Hispanic or Latino", 
-                                         "Unknown or do not want to disclose"))
-mturk_demos$education <- factor(mturk_demos$education,
-                                levels=c("Less than high school", 
-                                         "Completed high school",
-                                         "GED", 
-                                         "Some college",
-                                         "Associate's Degree", 
-                                         "Bachelor's Degree", 
-                                         "Master's Degree", 
-                                         "Ph.D.", 
-                                         "Law degree",
-                                         "Other professional degree"))
-mturk_demos$political_party <- factor(mturk_demos$political_party, 
-                                      levels=c("Independent or no party Affiliation", 
-                                               "Republican", 
-                                               "Democrat", 
-                                               "Other", 
-                                               "I am not a registered voter"))
-
-get_count_tbl <- function(varname){
-  id <- "uid"
-  Ntot <- dim(mturk_demos)[1]
-  tbl <- mturk_demos %>% select_(id, varname) %>% group_by_(varname) %>% 
-    summarize(count=n(), percent=round(100 * n()/Ntot, 1))
-  names(tbl) <- str_replace_all(names(tbl), "_", " ") %>% tools::toTitleCase()
-  return(tbl)
-}
-
-kable(get_count_tbl("gender"), caption="Participant Demographics - Gender") %>%
-  kable_styling(latex_options = c("HOLD_position"))
-kable(get_count_tbl("age"), caption="Participant Demographics - Age") %>%
-  kable_styling(latex_options = c("HOLD_position"))
-kable(get_count_tbl("race"), caption="Participant Demographics - Race") %>%
-  kable_styling(latex_options = c("HOLD_position"))
-kable(get_count_tbl("ethnicity"), caption="Participant Demographics - Ethnicity") %>%
-  kable_styling(latex_options = c("HOLD_position"))
-kable(get_count_tbl("education"), caption="Participant Demographics - Education") %>%
-  kable_styling(latex_options = c("HOLD_position"))
-kable(get_count_tbl("political_party"), caption="Participant Demographics - Political Party") %>%
-  kable_styling(latex_options = c("HOLD_position"))
-```
-
-## Posteriors for differences in evidence effects
-In Tables \ref{group_effects_table} and \ref{outcome_effects_table}, we give 95\% credible intervals for the posterior differences in mean evidence effects across our population samples (Table \ref{group_effects_table}; cf. Figure 3A) and different rating types (Table \ref{outcome_effects_table}; cf. Figure 4A). That is, for each pair of variables, the numbers represent an interval that contains 95\% of the posterior probability mass.
-
-```{r message=FALSE, echo=FALSE, warning=FALSE}
-
-load('../data/stan_postprocess_ci.rdata')
-not_in_ci <- function(ci, x=0) {
-  ifelse(x >= ci[[1]] && x <= ci[[2]], F, T)
-}
-ci_table <- group_ci_df %>% 
-  mutate_all(funs(lapply(., function(x){lapply(x, round, 1)}))) %>%
-  mutate_all(funs(cell_spec(., "latex", bold=lapply(., not_in_ci)))) %>%
-  mutate_all(funs(str_replace(., "list", "")))
-row.names(ci_table) <- row.names(group_ci_df)
-
-kable(ci_table, format="latex", booktabs=T, escape=F,
-      caption="Bayesian 95\\% highest posterior density credible intervals for contrasts 
-      between population mean effects. Cf. Figure 3A in main text. Intervals excluding 0 are in bold.\\label{group_effects_table}") %>% 
-  kable_styling(full_width=F, latex_options = c("HOLD_position"), font_size=8) %>%
-  column_spec(1, width = "10em") %>%
-  column_spec(2:7, width = "6.5em")
-
-
-ci_table <- ratings_ci_df %>% 
-  mutate_all(funs(lapply(., function(x){lapply(x, round, 1)}))) %>%
-  mutate_all(funs(cell_spec(., "latex", bold=lapply(., not_in_ci)))) %>%
-  mutate_all(funs(str_replace(., "list", "")))
-row.names(ci_table) <- row.names(ratings_ci_df)
-
-kable(ci_table, format="latex", booktabs=T, escape=F,
-      caption="Bayesian 95\\% highest posterior density credible intervals for contrasts 
-      between rating type mean effects. Cf. Figure 4A in main text. Intervals excluding 0 are in bold.\\label{outcome_effects_table}") %>% 
-  kable_styling(full_width=F, latex_options = c("HOLD_position"), font_size=8) %>%
-  column_spec(1, width = "10em") %>%
-  column_spec(2:7, width = "6.5em")
-```
-
-\newpage
 # Supplementary Methods
 
 ## Scenario crime descriptions and evidence options
@@ -415,6 +236,199 @@ Given the large number of model parameters in comparison to the numer of data po
 We found nearly identical results for the two models. Figures 2-4 from the main text are reproduced below as Supplementary Figures \ref{fig_2_norm}--\ref{fig_4_norm}. Indeed, in our single-response models, we verified posterior means $\mathbb{E}\nu > 100$ and $91 > \mathbb{E}\nu' > 61$ for all groups, indicating that our Student t models are very close to normal.
 
 \newpage
+
+# Supplementary Tables
+
+## Demographics
+Here, we give a breakdown of our mTurk sample. We include all participants, including those in Experiment 1C (no evidence), though these were not used in our models.
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=6, fig.cap="\\label{demo_table}"}
+library(tidyverse)
+library(kableExtra)
+
+mturk_demos <- read.csv('../data/combined_data.csv') %>% filter(group=='mturk') %>%
+  distinct(uid, .keep_all=TRUE)
+
+# renaming, etc.
+cutpts = c(17, 21, 25, 30, 40, 50, 60, 90) # cutpoints for age ranges
+mturk_demos$age = cut(mturk_demos$age,cutpts)
+
+mturk_demos$gender <- factor(mturk_demos$gender, levels=c("Male", "Female", "Other"))
+mturk_demos$race <- factor(mturk_demos$race, 
+                           levels=c("American Indian or Alaska Native", 
+                                    "Asian", 
+                                    "Black or African American",
+                                    "Native Hawaiian or other Pacific Islander",
+                                    "White",
+                                    "More than one race",
+                                    "Unknown or do not want to disclose"))
+mturk_demos$ethnicity <- factor(mturk_demos$ethnicity,
+                                levels=c("Hispanic or Latino", 
+                                         "Not Hispanic or Latino", 
+                                         "Unknown or do not want to disclose"))
+mturk_demos$education <- factor(mturk_demos$education,
+                                levels=c("Less than high school", 
+                                         "Completed high school",
+                                         "GED", 
+                                         "Some college",
+                                         "Associate's Degree", 
+                                         "Bachelor's Degree", 
+                                         "Master's Degree", 
+                                         "Ph.D.", 
+                                         "Law degree",
+                                         "Other professional degree"))
+mturk_demos$political_party <- factor(mturk_demos$political_party, 
+                                      levels=c("Independent or no party Affiliation", 
+                                               "Republican", 
+                                               "Democrat", 
+                                               "Other", 
+                                               "I am not a registered voter"))
+
+get_count_tbl <- function(varname){
+  id <- "uid"
+  Ntot <- dim(mturk_demos)[1]
+  tbl <- mturk_demos %>% select_(id, varname) %>% group_by_(varname) %>% 
+    summarize(count=n(), percent=round(100 * n()/Ntot, 1))
+  names(tbl) <- str_replace_all(names(tbl), "_", " ") %>% tools::toTitleCase()
+  return(tbl)
+}
+
+kable(get_count_tbl("gender"), caption="Participant Demographics - Gender") %>%
+  kable_styling(latex_options = c("HOLD_position"))
+kable(get_count_tbl("age"), caption="Participant Demographics - Age") %>%
+  kable_styling(latex_options = c("HOLD_position"))
+kable(get_count_tbl("race"), caption="Participant Demographics - Race") %>%
+  kable_styling(latex_options = c("HOLD_position"))
+kable(get_count_tbl("ethnicity"), caption="Participant Demographics - Ethnicity") %>%
+  kable_styling(latex_options = c("HOLD_position"))
+kable(get_count_tbl("education"), caption="Participant Demographics - Education") %>%
+  kable_styling(latex_options = c("HOLD_position"))
+kable(get_count_tbl("political_party"), caption="Participant Demographics - Political Party") %>%
+  kable_styling(latex_options = c("HOLD_position"))
+```
+
+## Experimental design
+```{r message=FALSE, echo=FALSE, warning=FALSE}
+library(tidyverse)
+library(kableExtra)
+
+dat <- read.csv('../data/combined_data.csv') %>% 
+  select(uid, experiment, rating_type, rating) %>%
+  na.omit %>%
+  select(-rating) %>%
+  distinct() %>%
+  mutate(rating_type=factor(rating_type, levels=c(
+    'rating', 'rate_punishment', 'rate_outrage', 'rate_threat', 'rate_threat_2', 'guilty'),
+    labels=c('Confidence', 'Punishment', 'Outrage', 'Likelihood', 'Threat', 'Guilt')
+  )) %>%
+  rename(Experiment=experiment)
+
+
+experiment_counts <- dat %>% select(-rating_type) %>% distinct() %>% 
+  count(Experiment) %>% rename(Subjects=n)
+question_counts <- dat %>% count(Experiment, rating_type) %>%
+  spread(key=rating_type, value=n)
+details_table <- data.frame(Experiment=c('1A', '1B', '1C', '1D', '1E', '1F', '2A', '2B', '2C'),
+                            Description=c('Five questions',
+                                          'Single question',
+                                          'No evidence',
+                                          'Explicit directions',
+                                          'Two questions',
+                                          'Threat',
+                                          'Law students',
+                                          'LA state bar',
+                                          'IL prosecutors'),
+                            Format=c('Group', rep('Sequential', 2), rep('Group', 6)))
+subject_counts <- merge(details_table, merge(experiment_counts, question_counts))
+
+op <- options(knitr.kable.NA = '')
+
+kable(subject_counts, format="latex", booktabs=T, escape=F,
+      caption="Task variations and subjects.\\label{exp_variants_table}",
+      linesep=c('', '', '', '', '', '\\addlinespace')) %>% 
+  kable_styling(full_width=F, latex_options = c("HOLD_position", "striped", "scale_down")) %>%
+  add_header_above(c(" " = 4, "Question" = 6))
+
+options(op)
+```
+
+```{r message=FALSE, echo=FALSE, warning=FALSE}
+library(tidyverse)
+library(kableExtra)
+
+analysis_sets <- data.frame(Figure=c('1', '1', '1', '2', '3', '4', '4'),
+                            Panels=c('B', 'C', 'D', 'A, B, C', 'A, B, C, D', 'A, B, C', 'D'),
+                            Criteria=c('mTurk, evidence presented, confidence question',
+                                       'mTurk, evidence presented, confidence \\emph{and} guilt questions',
+                                       'mTurk, evidence presented, punishment question',
+                                       'mTurk, evidence presented, confidence question',
+                                       'evidence presented, confidence question',
+                                       'mTurk, evidence presented, any non-guilt question',
+                                       'evidence presented, \\emph{either} confidence or punishment question'),
+                            Experiments=c('1A, 1B, 1D, 1E, 1F',
+                                          '1A',
+                                          '1A, 1B, 1D, 1E',
+                                          '1A, 1B, 1D, 1E, 1F',
+                                          '1A, 1B, 1D, 1E, 1F, 2A, 2B, 2C',
+                                          '1A, 1B, 1D, 1E, 1F',
+                                          '1A, 1B, 1D, 1E, 2A, 2B, 2C'))
+
+kable(analysis_sets, format="latex", booktabs=T, escape=F,
+      caption="Subsets of data used in each analysis.\\label{subsets_table}") %>% 
+  kable_styling(full_width=F, latex_options = c("HOLD_position", "striped", "scale_down"))
+```
+
+```{r message=FALSE, echo=FALSE, warning=FALSE}
+library(tidyverse)
+library(kableExtra)
+
+sc_class <- read.csv('../data/scenario_classification.csv', check.names=FALSE) %>%
+  select(`Scenario`, `Base crime description`, `Crime type`, `Category`, `Class`) 
+
+kable(sc_class, format="latex", booktabs=T, escape=F,
+      caption="Scenario legal classifications.\\label{seriousness_table}") %>% 
+  column_spec(2, width='30em') %>%
+  kable_styling(full_width=F, latex_options = c("HOLD_position", "striped", "scale_down"))
+```
+
+## Posteriors for differences in evidence effects
+In Tables \ref{group_effects_table} and \ref{outcome_effects_table}, we give 95\% credible intervals for the posterior differences in mean evidence effects across our population samples (Table \ref{group_effects_table}; cf. Figure 3A) and different rating types (Table \ref{outcome_effects_table}; cf. Figure 4A). That is, for each pair of variables, the numbers represent an interval that contains 95\% of the posterior probability mass.
+
+```{r message=FALSE, echo=FALSE, warning=FALSE}
+
+load('../data/stan_postprocess_ci.rdata')
+not_in_ci <- function(ci, x=0) {
+  ifelse(x >= ci[[1]] && x <= ci[[2]], F, T)
+}
+ci_table <- group_ci_df %>% 
+  mutate_all(funs(lapply(., function(x){lapply(x, round, 1)}))) %>%
+  mutate_all(funs(cell_spec(., "latex", bold=lapply(., not_in_ci)))) %>%
+  mutate_all(funs(str_replace(., "list", "")))
+row.names(ci_table) <- row.names(group_ci_df)
+
+kable(ci_table, format="latex", booktabs=T, escape=F,
+      caption="Bayesian 95\\% highest posterior density credible intervals for contrasts 
+      between population mean effects. Cf. Figure 3A in main text. Intervals excluding 0 are in bold.\\label{group_effects_table}") %>% 
+  kable_styling(full_width=F, latex_options = c("HOLD_position"), font_size=8) %>%
+  column_spec(1, width = "10em") %>%
+  column_spec(2:7, width = "6.5em")
+
+
+ci_table <- ratings_ci_df %>% 
+  mutate_all(funs(lapply(., function(x){lapply(x, round, 1)}))) %>%
+  mutate_all(funs(cell_spec(., "latex", bold=lapply(., not_in_ci)))) %>%
+  mutate_all(funs(str_replace(., "list", "")))
+row.names(ci_table) <- row.names(ratings_ci_df)
+
+kable(ci_table, format="latex", booktabs=T, escape=F,
+      caption="Bayesian 95\\% highest posterior density credible intervals for contrasts 
+      between rating type mean effects. Cf. Figure 4A in main text. Intervals excluding 0 are in bold.\\label{outcome_effects_table}") %>% 
+  kable_styling(full_width=F, latex_options = c("HOLD_position"), font_size=8) %>%
+  column_spec(1, width = "10em") %>%
+  column_spec(2:7, width = "6.5em")
+```
+
+\newpage
+
 # Supplementary Figures
 
 
@@ -500,55 +514,6 @@ plt_2 <- ggplot(df %>% filter(crime_type=='federal')) +
 plot(arrangeGrob(plt_1, plt_2))
 ```
 
-```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.width = 8, fig.cap="Convergence diagnostic for MCMC fitting procedure for the single outcome model. Box plots show Gelman-Rubin statistics ($\\hat{R}$) for each of the variables in the model. Color indicates sample groups, which were fit using separate models. Values $\\hat{R} < 1.1$ are typically taken to represent satisfactory convergence. For variable definitions, see (\\ref{rating}) - (\\ref{nu}). \\label{sv_rhat}"}
-library(tidyverse)
-library(kableExtra)
-
-load('../data/stan_postprocess_sv_t.rdata')
-
-plt <- ggplot(effects) + 
-  geom_boxplot(aes(y=Rhat, x=variable, color=group)) +
-  group_color_scale +
-  labs(title="Convergence diagnostics:\nSingle response model", size=rel(3)) +
-  th + 
-  theme(legend.position=c(0.68, 0.75))
-plt
-```
-
-```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.width = 8, fig.cap="Convergence diagnostic for MCMC fitting procedure for the two-outcome model. Box plots show Gelman-Rubin statistics ($\\hat{R}$) for each of the variables in the model. Color indicates sample groups, which were fit using separate models. Values $\\hat{R} < 1.1$ are typically taken to represent satisfactory convergence. For variable definitions, see (\\ref{rating_m}) - (\\ref{nu_m}). \\label{2v_rhat}"}
-library(tidyverse)
-library(kableExtra)
-
-load('../data/stan_postprocess_2v_t.rdata')
-
-eff_prettied <- effects %>% mutate(variable=str_extract(variable, "\\w*(?=\\.|$)"))
-
-plt <- ggplot(eff_prettied) + 
-  geom_boxplot(aes(y=Rhat, x=variable, color=group)) +
-  group_color_scale +
-  labs(title="Convergence diagnostics:\nTwo-response model", size=rel(3)) +
-  th + 
-  theme(legend.position=c(0.78, 0.75))
-plt
-```
-
-```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.width = 8, fig.cap="Convergence diagnostic for MCMC fitting procedure for the multi-outcome model. Box plots show Gelman-Rubin statistics ($\\hat{R}$) for each of the variables in the model. Color indicates sample groups, which were fit using separate models. Values $\\hat{R} < 1.1$ are typically taken to represent satisfactory convergence. For variable definitions, see (\\ref{rating_m}) - (\\ref{nu_m}). \\label{mv_rhat}"}
-library(tidyverse)
-library(kableExtra)
-
-load('../data/stan_postprocess_mv_t.rdata')
-
-eff_prettied <- effects %>% mutate(variable=str_extract(variable, "\\w*(?=\\.|$)"))
-
-plt <- ggplot(eff_prettied) + 
-  geom_boxplot(aes(y=Rhat, x=variable, color=group)) +
-  group_color_scale +
-  labs(title="Convergence diagnostics:\nAll-response model", size=rel(3)) +
-  th + 
-  theme(legend.position=c(0.7, 0.75))
-plt
-```
-
 ```{r message=FALSE, echo=FALSE, warning=FALSE, fig.width=8, fig.cap="Comparison of evidence and demographic effects for the mTurk sample (cf. Figure 2A). Analyses were performed on a reduced sample of $N=368$ participants with complete demographic information for the variables displayed.  Demographic variables were modeled as additional $\\beta$ effects as in (\\ref{theta}) and (\\ref{beta}). \\label{demo_effects}"}
 
 # based on postprocess_stan_hier_data.R and make_paper_figure_2.R
@@ -599,6 +564,35 @@ plt_1 <- ggplot(data=fe) +
   theme(
     axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black'))
 plt_1
+```
+
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.width=8, fig.cap="Comparison of sources of model variance. Points indicate posterior means of variance parameters. Lines indicate 95\\% credible intervals. Boxplots indicate variability of variance parameters across scenarios. Columns correspond to model variance parameters $\\tau^2$, $\\eta^2$, and $\\sigma^2$, respectively. \\label{model_variance_comparison}"}
+
+load('../data/stan_postprocess_sv_t.rdata')
+
+variance_comparison <- effects %>%
+  filter(variable %in% c('eta', 'tau', 'sigma'), (evidence=='baseline') | (variable == 'sigma')) %>%
+  select(X2.5., X50., X97.5., variable, scenario, group) %>%
+  mutate(variable = factor(variable, levels=c('eta', 'tau', 'sigma')))
+
+plt_5 <- ggplot() +
+  geom_pointrange(data=variance_comparison %>% filter(variable %in% c('eta', 'sigma')),
+                  aes(x=variable, y=X50., ymin=X2.5., ymax=X97.5., color=group),
+                  position=position_dodge(width=0.5), size=1) +
+  geom_boxplot(data=variance_comparison %>% filter(variable=='tau'),
+               aes(x=variable, y=X50., color=group), lwd=1, fatten=1, 
+               position=position_dodge(width=0.85)) +
+  variance_x_axis +
+  group_color_scale +
+  ylim(0, 50) +
+  ylab("Standard Deviation (points)") + 
+  xlab("Variance") +
+  th +
+  theme(
+    axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black'),
+    legend.position = c(0.8, 0.8)
+  )
+plt_5
 ```
 
 ```{r message=FALSE, echo=FALSE, warning=FALSE, fig.width=8, fig.cap="Pairwise correlations for baseline effects across all outcome types. Includes both versions of the threat assessment question (cp. Figure 4C). \\label{baseline_correlations}"}
@@ -654,34 +648,59 @@ plt_4 <- ggplot(data=(effects %>% filter(grepl('Omega', variable)))) +
 plt_4
 ```
 
-```{r message=FALSE, echo=FALSE, warning=FALSE, fig.width=8, fig.cap="Comparison of sources of model variance. Points indicate posterior means of variance parameters. Lines indicate 95\\% credible intervals. Boxplots indicate variability of variance parameters across scenarios. Columns correspond to model variance parameters $\\tau^2$, $\\eta^2$, and $\\sigma^2$, respectively. \\label{model_variance_comparison}"}
+
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.width = 8, fig.cap="Convergence diagnostic for MCMC fitting procedure for the single outcome model. Box plots show Gelman-Rubin statistics ($\\hat{R}$) for each of the variables in the model. Color indicates sample groups, which were fit using separate models. Values $\\hat{R} < 1.1$ are typically taken to represent satisfactory convergence. For variable definitions, see (\\ref{rating}) - (\\ref{nu}). \\label{sv_rhat}"}
+library(tidyverse)
+library(kableExtra)
 
 load('../data/stan_postprocess_sv_t.rdata')
 
-variance_comparison <- effects %>%
-  filter(variable %in% c('eta', 'tau', 'sigma'), (evidence=='baseline') | (variable == 'sigma')) %>%
-  select(X2.5., X50., X97.5., variable, scenario, group) %>%
-  mutate(variable = factor(variable, levels=c('eta', 'tau', 'sigma')))
-
-plt_5 <- ggplot() +
-  geom_pointrange(data=variance_comparison %>% filter(variable %in% c('eta', 'sigma')),
-                  aes(x=variable, y=X50., ymin=X2.5., ymax=X97.5., color=group),
-                  position=position_dodge(width=0.5), size=1) +
-  geom_boxplot(data=variance_comparison %>% filter(variable=='tau'),
-               aes(x=variable, y=X50., color=group), lwd=1, fatten=1, 
-               position=position_dodge(width=0.85)) +
-  variance_x_axis +
+plt <- ggplot(effects) + 
+  geom_boxplot(aes(y=Rhat, x=variable, color=group)) +
   group_color_scale +
-  ylim(0, 50) +
-  ylab("Standard Deviation (points)") + 
-  xlab("Variance") +
-  th +
-  theme(
-    axis.text.x = element_text(hjust = 0.5, size=rel(1), color='black'),
-    legend.position = c(0.8, 0.8)
-  )
-plt_5
+  labs(title="Convergence diagnostics:\nSingle response model", size=rel(3)) +
+  th + 
+  theme(legend.position=c(0.68, 0.75))
+plt
 ```
+
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.width = 8, fig.cap="Convergence diagnostic for MCMC fitting procedure for the two-outcome model. Box plots show Gelman-Rubin statistics ($\\hat{R}$) for each of the variables in the model. Color indicates sample groups, which were fit using separate models. Values $\\hat{R} < 1.1$ are typically taken to represent satisfactory convergence. For variable definitions, see (\\ref{rating_m}) - (\\ref{nu_m}). \\label{2v_rhat}"}
+library(tidyverse)
+library(kableExtra)
+
+load('../data/stan_postprocess_2v_t.rdata')
+
+eff_prettied <- effects %>% mutate(variable=str_extract(variable, "\\w*(?=\\.|$)"))
+
+plt <- ggplot(eff_prettied) + 
+  geom_boxplot(aes(y=Rhat, x=variable, color=group)) +
+  group_color_scale +
+  labs(title="Convergence diagnostics:\nTwo-response model", size=rel(3)) +
+  th + 
+  theme(legend.position=c(0.78, 0.75))
+plt
+```
+
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.width = 8, fig.cap="Convergence diagnostic for MCMC fitting procedure for the multi-outcome model. Box plots show Gelman-Rubin statistics ($\\hat{R}$) for each of the variables in the model. Color indicates sample groups, which were fit using separate models. Values $\\hat{R} < 1.1$ are typically taken to represent satisfactory convergence. For variable definitions, see (\\ref{rating_m}) - (\\ref{nu_m}). \\label{mv_rhat}"}
+library(tidyverse)
+library(kableExtra)
+
+load('../data/stan_postprocess_mv_t.rdata')
+
+eff_prettied <- effects %>% mutate(variable=str_extract(variable, "\\w*(?=\\.|$)"))
+
+plt <- ggplot(eff_prettied) + 
+  geom_boxplot(aes(y=Rhat, x=variable, color=group)) +
+  group_color_scale +
+  labs(title="Convergence diagnostics:\nAll-response model", size=rel(3)) +
+  th + 
+  theme(legend.position=c(0.7, 0.75))
+plt
+```
+
+
+
+
 
 ```{r message=FALSE, echo=FALSE, warning=FALSE, fig.width=13, fig.height=4.5, fig.cap="Same as Figure 2, but for models with Student t distributions replaced by normal distributions.\\label{fig_2_norm}"}
 
