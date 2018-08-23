@@ -14,7 +14,9 @@ In particular, we use:
 - `jsonlite`
 
 # About the data
-The data are recorded in a single file, `combined_data.csv` in the `data` folder. The file is a single table, one line per rating given, with the following columns:
+The data are recorded in a single file, `combined_data.csv` in the `data` folder. It is the output of `make_public_dataset.R`, which uses files derived from the experiment. 
+
+The file is a single table, one line per rating given, with the following columns:
 - `uid`: Unique id for each participant.
 - `experiment`: Version of the experiment run. Cf. Supplementary Table 2.
 - `scenario`: Integer indicating which crime was presented on a given trial: (1 - 33).
