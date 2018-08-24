@@ -384,10 +384,11 @@ library(kableExtra)
 sc_class <- read.csv('../data/scenario_classification.csv', check.names=FALSE) %>%
   select(`Scenario`, `Base crime description`, `Crime type`, `Category`, `Class`) 
 
-kable(sc_class, format="latex", booktabs=T, escape=F,
-      caption="Scenario legal classifications.\\label{seriousness_table}") %>% 
-  column_spec(2, width='30em') %>%
-  kable_styling(full_width=F, latex_options = c("HOLD_position", "striped", "scale_down"))
+kable(sc_class, format="latex", booktabs=T, escape=T, longtable=T,
+      caption="Scenario legal classifications.\\label{seriousness_table}")  %>%
+  column_spec(2, width='20em') %>%
+  column_spec(c(3, 5), width='8em') %>%
+  kable_styling(full_width=F, latex_options = c("HOLD_position", "striped", "repeat_header"))
 ```
 
 ## Posteriors for differences in evidence effects
@@ -697,9 +698,6 @@ plt <- ggplot(eff_prettied) +
   theme(legend.position=c(0.7, 0.75))
 plt
 ```
-
-
-
 
 
 ```{r message=FALSE, echo=FALSE, warning=FALSE, fig.width=13, fig.height=4.5, fig.cap="Same as Figure 2, but for models with Student t distributions replaced by normal distributions.\\label{fig_2_norm}"}
