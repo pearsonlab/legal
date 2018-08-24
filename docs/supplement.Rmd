@@ -606,11 +606,12 @@ releveler <- function(x) {
   xfac <- factor(x, levels=1:length(outcomes), labels=outcomes)
   
   # now reorder levels so plot looks right
-  factor(as.character(xfac), levels=c("rating", "rate_punishment", "rate_outrage", "rate_threat", "rate_threat_2"))
+  factor(as.character(xfac), levels=c("rating", "rate_punishment", "rate_outrage", "rate_threat", "rate_threat_2", "guilty"))
 }
 corrs <- effects %>% filter(grepl('Omega', variable)) %>% 
                      separate(variable, into=c("variable", "outcome1", "outcome2")) %>%
                      mutate_at(c("outcome1", "outcome2"), releveler) %>%
+                     filter(outcome1 != 'guilty', outcome2 != 'guilty') %>%
                      filter(evidence=='baseline') %>% 
                      unite(col=contrast, outcome1, outcome2, sep='-') %>%
                      mutate(contrast=factor(contrast, levels=outcome_corr_levels,
