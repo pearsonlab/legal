@@ -3,7 +3,7 @@ title: |
   | Supplementary Information for: 
   | "Modeling the effects of crime type and evidence on judgments about guilt"
 author: "Pearson et al."
-date: "8/20/2018"
+date: "9/28/2018"
 output:
   pdf_document:
     fig_caption: yes
@@ -69,7 +69,7 @@ cat(sc_formatted, sep='')
 
 ### Standard directions
 
-You are about to read a series of short fictitious criminal cases. After
+You are about to read a series of short, fictitious criminal cases. After
 reading the accusation against the defendant, view additional
 information by clicking each of the three grey buttons and holding for
 as long as you want to read.
@@ -159,6 +159,7 @@ Slider: Not concerned at all, Very concerned
 
 **Likelihood** (L): How likely is this crime to occur in your community?
 
+Slider: Not at all likely, Very likely
 
 ## Single Rating Model
 For the case of a single rating outcome (case strength), we separately model each group of participants as follows: Given a set of
@@ -181,8 +182,8 @@ That is:
 
 - ratings are generated from a normal distribution censored to lie in the range $[0, 100]$ (\ref{rating})
 - linear predictors of ratings are weighted sums of subject-, case-, and regressor-specific effects (\ref{theta})
-- $\beta$ effects for each subject are drawn from a case-specific distribution (\ref{beta})
-- $\gamma$ effects for each case are themselves drawn from a distribution of effects (\ref{gamma})
+- $\beta$ effects for each subject are drawn from a case- and regressor-specific distribution (\ref{beta})
+- $\gamma$ effects for each case are themselves drawn from a regressor-specific distribution of effects (\ref{gamma})
 - effects at the case and single-subject level are modeled as robuts/fat-tailed, with Student-t distributions (\ref{beta},\ref{gamma})
 - variances ($\eta^2$, $\tau^2$, $\sigma^2$) are modeled using weakly informative half-Cauchy priors [@gelman2006prior], 
   while degrees of freedom ($\nu$, $\nu'$) are modeled using weak half-Normal priors
@@ -192,7 +193,7 @@ at the same time leveraging partial pooling to share statistical strength across
 
 ## Multiple Rating Model
 For the case in which subjects provide multiple ratings (punishment, case strength, etc.) for a given scenario, we model the resulting
-vector of ratings, $R_r$, $r=1\ldots N_r$, similarly
+vector of ratings, $R_r$, $r=1\ldots N_r$, similarly:
 
 \begin{align}
   R_i &\sim \left[\mathcal{N}(\theta_i, \sigma^2_{r(i)})\right]^{100}_0 \label{rating_m}\\
@@ -212,8 +213,8 @@ Here, we have used a "long" or "melted" representation of $R$ in which each inde
 single rating scale $r(i)$. This allows us to more easily handle missing data in the model fitting procedure (see below). 
 The model is almost equivalent to concatenating $N_r$ versions of the first model, one for each rating, 
 aside from two key differences: First (\ref{gamma_m}) and (\ref{L_m}) involve a multivariate t-distribution on the population 
-effects $\gamma$ specific to 
-each case. That is, we allow for covariance among the ratings for each effect at the population level, where the magnitudes of the 
+effects specific to 
+each case ($\gamma$). That is, we allow for covariance among the ratings for each effect at the population level, where the magnitudes of the 
 variances are again controlled by $\eta$ and the correlations $\Omega = LL^\top$ are modeled according to the LKJ distribution [@Lewandowski2009-tm]
 through their Cholesky factorization (\ref{L_m}).\footnote{Implemented as \texttt{L \textasciitilde{} lkj\_corr\_chol(1)} in Stan.}
 Second, in order to more accurately estimate variances in the presence of missing data, we have restricted this model to a single
@@ -223,15 +224,13 @@ value of $\tau$ across all cases (for each outcome and regressor) (\ref{beta_m})
 We calculated posterior distributions and credible intervals for each variable of interest using Markov Chain Monte Carlo methods
 as implemented in the Stan probabilistic programming language [@carpenter2016stan]. Full code for all analyses is available at 
 [https://github.com/pearsonlab/legal](https://github.com/pearsonlab/legal). Models were fit by running 4 chains of either 1000 samples (case strength only model) with a thinning fraction of 1 or 2000
-samples (multiple outcome models) with a thinning fraction of 2, of which the first half were discarded as burn-in. This resulted 
+samples (multiple outcome models) with a thinning fraction of 2. For both models, the first half of samples were discarded as burn-in. This resulted 
 in 2000 total samples for each variable, for which we report means as well as 95% equal-tailed credible intervals (bounded 
 by the 2.5% and 97.5% samples from the distribution). We assessed convergence via effective sample size and the
-Gelman-Rubin statistic, for which all runs exhibited $\hat{R} < 1.1$ [@gelman2014bayesian].
-
-In addition, we include effective sample size diagnostics ($n_{\mathrm{eff}}$) for our our single-outcome, two-outcome, and all-outcome models in Supplementary Figures \ref{sv_rhat}, \ref{2v_rhat}, and \ref{mv_rhat}.
+Gelman-Rubin statistic, for which all runs had $\hat{R} < 1.1$ [@gelman2014bayesian]. We include plots of $\hat{R}$ for our our single-outcome, two-outcome, and all-outcome models in Supplementary Figures \ref{sv_rhat}, \ref{2v_rhat}, and \ref{mv_rhat}.
 
 ## Sensitivity Analysis
-Given the large number of model parameters in comparison to the numer of data points, it is quite possible that the particular modeling assumptions above may affect the posteriors. To test this, we performed a sensitivity analysis in which the distributions for case- and subject-specific effects (\ref{beta}), (\ref{gamma}), (\ref{beta_m}), and (\ref{gamma_m}) were changed from Student t to normal. This assumption reflects a belief that few cases and subjects are true outliers, and should result in larger estimates of the relevant variance parameters and more shrinkage of estimates toward the mean. We re-ran all models (single-, double-, and multi-outcome) from our main analyses again using these alternate assumptions.
+Given the large number of model parameters in comparison to the numer of data points, it is quite possible that our particular modeling assumptions might affect posterior inferences. To test this, we performed a sensitivity analysis in which the distributions for case- and subject-specific effects (\ref{beta}), (\ref{gamma}), (\ref{beta_m}), and (\ref{gamma_m}) were changed from Student t to normal. This assumption reflects a belief that few cases and subjects are true outliers, and should result in larger estimates of the relevant variance parameters and more shrinkage of estimates toward the mean. We re-ran all models (single-, double-, and multi-outcome) from our main analyses again using these alternate assumptions.
 
 We found nearly identical results for the two models. Figures 2-4 from the main text are reproduced below as Supplementary Figures \ref{fig_2_norm}--\ref{fig_4_norm}. Indeed, in our single-response models, we verified posterior means $\mathbb{E}\nu > 100$ and $91 > \mathbb{E}\nu' > 61$ for all groups, indicating that our Student t models are very close to normal.
 
@@ -343,7 +342,7 @@ subject_counts <- merge(details_table, merge(experiment_counts, question_counts)
 op <- options(knitr.kable.NA = '')
 
 kable(subject_counts, format="latex", booktabs=T, escape=F,
-      caption="Task variations and subjects.\\label{exp_variants_table}",
+      caption="Task variations and subjects. Numbers in each column are numbers of subjects who answered each question for each experiment.\\label{exp_variants_table}",
       linesep=c('', '', '', '', '', '\\addlinespace')) %>% 
   kable_styling(full_width=F, latex_options = c("HOLD_position", "striped", "scale_down")) %>%
   add_header_above(c(" " = 4, "Question" = 6))
@@ -407,7 +406,7 @@ ci_table <- group_ci_df %>%
 row.names(ci_table) <- row.names(group_ci_df)
 
 kable(ci_table, format="latex", booktabs=T, escape=F,
-      caption="Bayesian 95\\% highest posterior density credible intervals for contrasts 
+      caption="Bayesian 95\\% equal-tailed credible intervals for contrasts 
       between population mean effects. Cf. Figure 3A in main text. Intervals excluding 0 are in bold.\\label{group_effects_table}") %>% 
   kable_styling(full_width=F, latex_options = c("HOLD_position"), font_size=8) %>%
   column_spec(1, width = "10em") %>%
@@ -421,7 +420,7 @@ ci_table <- ratings_ci_df %>%
 row.names(ci_table) <- row.names(ratings_ci_df)
 
 kable(ci_table, format="latex", booktabs=T, escape=F,
-      caption="Bayesian 95\\% highest posterior density credible intervals for contrasts 
+      caption="Bayesian 95\\% equal-tailed credible intervals for contrasts 
       between rating type mean effects. Cf. Figure 4A in main text. Intervals excluding 0 are in bold.\\label{outcome_effects_table}") %>% 
   kable_styling(full_width=F, latex_options = c("HOLD_position"), font_size=8) %>%
   column_spec(1, width = "10em") %>%
@@ -433,7 +432,7 @@ kable(ci_table, format="latex", booktabs=T, escape=F,
 # Supplementary Figures
 
 
-```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.cap="Task learning effect. Comparison of distributions of first and last five ratings given by each participant. \\label{task_learning_effect}"}
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.height=4, fig.cap="Absence of task learning effect. Comparison of distributions of first and last five ratings given by each participant. \\label{task_learning_effect}"}
 source("../ggplot_setup.R")
 
 mturk_ratings <- read.csv('../data/combined_data.csv') %>% 
@@ -596,7 +595,7 @@ plt_5 <- ggplot() +
 plt_5
 ```
 
-```{r message=FALSE, echo=FALSE, warning=FALSE, fig.width=8, fig.cap="Pairwise correlations for baseline effects across all outcome types. Includes both versions of the threat assessment question (cp. Figure 4C). \\label{baseline_correlations}"}
+```{r message=FALSE, echo=FALSE, warning=FALSE, fig.width=8, fig.cap="Pairwise correlations for baseline effects across all outcome types. Includes in addition data for the likelihood question (cp. Figure 4C). \\label{baseline_correlations}"}
 load('../data/stan_postprocess_mv_t.rdata')
 
 outcomes <- levels(effects$outcome)
