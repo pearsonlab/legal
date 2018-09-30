@@ -57,7 +57,9 @@ switch(model,
        'mv' = {
          modelstr <- paste('models/mv_', dist, '.stan', sep='')
          dat <- dat %>% 
-           select(uid, scenario, physical, history, witness, rating, rating_type, group)
+           select(uid, scenario, physical, history, witness, rating, rating_type, group) %>%
+           filter(rating_type != 'guilty') %>%
+           mutate(rating_type=droplevels(rating_type))
        },
        
        'demos' = {

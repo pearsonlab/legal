@@ -63,7 +63,7 @@ for (dd in 1:Noutcomes) {
   mu_list[[length(mu_list) + 1]] <- mm
 }
 
-ratings_ci_df <- make_ci_df(mu_list,  c("Outrage", "Punishment", "Proximity", "Threat", "Confidence"))
+ratings_ci_df <- make_ci_df(mu_list,  c("Outrage", "Punishment", "Likelihood", "Threat", "Confidence"))
 
 save(group_ci_df, ratings_ci_df, file='data/stan_postprocess_ci.rdata')
 
