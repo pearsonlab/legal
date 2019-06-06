@@ -169,8 +169,9 @@ subject $s$ and case $c$:
 \begin{align}
   R_i &\sim \left[\mathcal{N}(\theta_i, \sigma^2)\right]^{100}_0 \label{rating}\\
   \theta_i &= X_{i \,\cdot} \cdot \beta_{s(i) c(i) \,\cdot} \label{theta}\\
-  \beta_{s c p} &\sim \mathcal{T}_{\nu}(\gamma_{c p}, \tau^2_{c p}) \label{beta}\\
-  \gamma_{c p} &\sim \mathcal{T}_{\nu'}(\mu_p, \eta^2_p) \label{gamma}\\
+  \beta_{s c p} = \mu_p + \gamma_{c p} + \epsilon_{s p} \tau_{c p} \label{beta}\\
+  \gamma_{c p} &\sim \mathcal{T}_{\nu}(0, \eta^2_p) \label{gamma}\\
+  \epsilon_{s p} &\sim \mathcal{T}_{\nu'}(0, 1) \label{epsilon}\\
   \mu_p &\sim \mathcal{N}(50, 50) \label{mu} \\
   \eta_p &\sim \mathrm{Ca}^+(0, 50) \\
   \tau_{c p} &\sim \mathrm{Ca}^+(0, 50) \\
@@ -182,9 +183,9 @@ That is:
 
 - ratings are generated from a normal distribution censored to lie in the range $[0, 100]$ (\ref{rating})
 - linear predictors of ratings are weighted sums of subject-, case-, and regressor-specific effects (\ref{theta})
-- $\beta$ effects for each subject are drawn from a case- and regressor-specific distribution (\ref{beta})
+- $\epsilon$ effects for each subject are drawn from regressor-specific distribution (\ref{epsilon})
 - $\gamma$ effects for each case are themselves drawn from a regressor-specific distribution of effects (\ref{gamma})
-- effects at the case and single-subject level are modeled as robuts/fat-tailed, with Student-t distributions (\ref{beta},\ref{gamma})
+- effects at the case and single-subject level are modeled as robuts/fat-tailed, with Student-t distributions (\ref{epsilon},\ref{gamma})
 - variances ($\eta^2$, $\tau^2$, $\sigma^2$) are modeled using weakly informative half-Cauchy priors [@gelman2006prior], 
   while degrees of freedom ($\nu$, $\nu'$) are modeled using weak half-Normal priors
 
@@ -198,9 +199,10 @@ vector of ratings, $R_r$, $r=1\ldots N_r$, similarly:
 \begin{align}
   R_i &\sim \left[\mathcal{N}(\theta_i, \sigma^2_{r(i)})\right]^{100}_0 \label{rating_m}\\
   \theta_i &= X_{i \,\cdot} \cdot \beta_{s(i) c(i) \,\cdot \,r(i)} \label{theta_m}\\
-  \beta_{s c p r} &\sim \mathcal{T}_{\nu}(\gamma_{c p r}, \tau^2_{p r}) \label{beta_m}\\
-  \gamma_{c p} &\sim \mathcal{T}_{\nu'}(\mu_p, \Sigma_p) \label{gamma_m}\\
-  \Sigma_p &= L_p \cdot \mathrm{diag}(\eta_p)\cdot L_p^\top \\
+  \beta_{s c p r} &= \mu_{p,r} + \gamma_{c p r} + \epsilon_{s p r} \label{beta_m}\\
+  \gamma_{c p \,\cdot} &\sim \mathcal{T}_{\nu}(0, \Sigma_p) \label{gamma_m}\\
+  \epsilon_{s p r} &\sim \mathcal{T}_{\nu'}(0, \tau^2{p r}) \label{epsilon_m}\\
+  \Sigma_p &= L_p \mathrm{diag}(\eta_p) L_p^\top \\
   \Omega_p = L_p L_p^\top &\sim \mathrm{LKJ}(1) \label{L_m}\\
   \mu_{p r} &\sim \mathcal{N}(50, 50) \label{mu_m} \\
   \eta_{p r} &\sim \mathrm{Ca}^+(0, 50) \\
