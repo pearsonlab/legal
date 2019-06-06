@@ -169,7 +169,7 @@ subject $s$ and case $c$:
 \begin{align}
   R_i &\sim \left[\mathcal{N}(\theta_i, \sigma^2)\right]^{100}_0 \label{rating}\\
   \theta_i &= X_{i \,\cdot} \cdot \beta_{s(i) c(i) \,\cdot} \label{theta}\\
-  \beta_{s c p} = \mu_p + \gamma_{c p} + \epsilon_{s p} \tau_{c p} \label{beta}\\
+  \beta_{s c p} &= \mu_p + \gamma_{c p} + \epsilon_{s p} \tau_{c p} \label{beta}\\
   \gamma_{c p} &\sim \mathcal{T}_{\nu}(0, \eta^2_p) \label{gamma}\\
   \epsilon_{s p} &\sim \mathcal{T}_{\nu'}(0, 1) \label{epsilon}\\
   \mu_p &\sim \mathcal{N}(50, 50) \label{mu} \\
@@ -203,7 +203,7 @@ vector of ratings, $R_r$, $r=1\ldots N_r$, similarly:
   \gamma_{c p \,\cdot} &\sim \mathcal{T}_{\nu}(0, \Sigma_p) \label{gamma_m}\\
   \epsilon_{s p r} &\sim \mathcal{T}_{\nu'}(0, \tau^2{p r}) \label{epsilon_m}\\
   \Sigma_p &= L_p \mathrm{diag}(\eta_p) L_p^\top \\
-  \Omega_p = L_p L_p^\top &\sim \mathrm{LKJ}(1) \label{L_m}\\
+  \Omega_p &= L_p L_p^\top &\sim \mathrm{LKJ}(1) \label{L_m}\\
   \mu_{p r} &\sim \mathcal{N}(50, 50) \label{mu_m} \\
   \eta_{p r} &\sim \mathrm{Ca}^+(0, 50) \\
   \tau_{p r} &\sim \mathrm{Ca}^+(0, 50) \\
