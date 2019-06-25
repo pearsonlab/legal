@@ -1,4 +1,4 @@
-**Correction: The published supplement incorrectly describes the models in for the paper, `mv_t.stan` and `sv_t.stan`.
+**Correction: The published supplement incorrectly describes the models used in the paper, `mv_t.stan` and `sv_t.stan`.
 The corrected source file for the supplement is available under `docs`, as well as the corrected portion of the supplement in pdf.**
 
 Models, analysis, and reproducible results for the paper ["Modeling the effects of crime type and evidence on judgments about guilt"](https://www.nature.com/articles/s41562-018-0451-z.epdf?author_access_token=gW_gZL0F4bNCBdSfJdfHqtRgN0jAjWel9jnR3ZoTv0OPcExbUXFEBLmRIJVwmtiNjh9IEH2pkC2Nh_cBrWPkHuJj4keS7hpDBQvmnU20N9jF3OGevYkvLVEkxopzUvo61hticf34wy0yLHXrWmQ-AA%3D%3D).
