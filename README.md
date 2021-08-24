@@ -1,4 +1,7 @@
-Models, analysis, and reproducible results for the paper ["Modeling the effects of crime type and evidence on judgments about guilt"](https://link.tbd).
+**Correction: The published supplement incorrectly describes the models used in the paper, `mv_t.stan` and `sv_t.stan`.
+The corrected source file for the supplement is available under `docs`, as well as the corrected portion of the supplement in pdf.**
+
+Models, analysis, and reproducible results for the paper ["Modeling the effects of crime type and evidence on judgments about guilt"](https://www.nature.com/articles/s41562-018-0451-z.epdf?author_access_token=gW_gZL0F4bNCBdSfJdfHqtRgN0jAjWel9jnR3ZoTv0OPcExbUXFEBLmRIJVwmtiNjh9IEH2pkC2Nh_cBrWPkHuJj4keS7hpDBQvmnU20N9jF3OGevYkvLVEkxopzUvo61hticf34wy0yLHXrWmQ-AA%3D%3D).
 
 # What you need (dependencies):
 We used R via [RStudio](https://www.rstudio.com/). RStudio is not strictly necessary, but it may make building some aspects of the project (e.g., the supplement) easier. We also make heavy use of the [Stan](http://mc-stan.org/) probabilistic programming language and the [tidyverse](https://tidyverse.tidyverse.org/index.html). A few other dependencies are used for particular plots or tables.
@@ -14,7 +17,7 @@ In particular, we use:
 - `jsonlite`
 
 # About the data
-The data are recorded in a single file, `combined_data.csv` in the `data` folder. It is the output of `make_public_dataset.R`, which uses files derived from the experiment. 
+The data are recorded in a single file, `combined_data.csv` in the `data` folder. It is the output of `make_public_dataset.R`, which uses files derived from the experiment.
 
 The file is a single table, one line per rating given, with the following columns:
 - `uid`: Unique id for each participant.
